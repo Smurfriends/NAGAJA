@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:804024428721:android:5bd3779c6363cb513c1a90",
         "android_client_info": {
-          "package_name": "com.gachon.nagaja"
+          "package_name": "org.opencv"
         }
       },
       "oauth_client": [
