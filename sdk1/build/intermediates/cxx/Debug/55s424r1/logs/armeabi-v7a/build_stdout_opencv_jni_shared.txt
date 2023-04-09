@@ -1,0 +1,2 @@
+ninja: Entering directory `C:\NAGAJA\sdk1\.cxx\Debug\55s424r1\armeabi-v7a'
+ninja: no work to do.
