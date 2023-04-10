@@ -14,6 +14,7 @@ import org.opencv.android.LoaderCallbackInterface;
 
 import org.opencv.android.OpenCVLoader;
 
+import org.opencv.core.DMatch;
 import org.opencv.core.Mat;
 
 import org.opencv.android.CameraBridgeViewBase;
@@ -42,9 +43,12 @@ import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
 import org.opencv.imgproc.Imgproc;
 import java.io.File;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import androidx.annotation.Nullable;
 import org.opencv.core.Core;
@@ -53,6 +57,14 @@ import org.opencv.core.MatOfInt4;
 import org.opencv.core.Point;
 //import org.opencv.imgproc.HoughLinesP;
 import org.opencv.core.Scalar;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfDMatch;
+import org.opencv.core.MatOfKeyPoint;
+import org.opencv.core.Scalar;
+import org.opencv.features2d.AKAZE;
+import org.opencv.features2d.DescriptorMatcher;
+import org.opencv.features2d.Features2d;
+import org.opencv.imgproc.Imgproc;
 
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_PICK_IMAGE = 1;
@@ -61,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
     ImageView imageView;
     Button button;
     Button selectImageButton;
+    Button detectSubImageButton;
 
     static {
         if (!OpenCVLoader.initDebug()) {
@@ -72,12 +85,24 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sample_image);
+        Bitmap subBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sub_image);
+
+        // Convert the image to grayscale using OpenCV
+        Mat fullMat = new Mat();
+        Utils.bitmapToMat(imageBitmap, fullMat);
+
+        Mat subMat = new Mat();
+        Utils.bitmapToMat(subBitmap, subMat);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         imageView = findViewById(R.id.imageView);
         button = findViewById(R.id.button);
         selectImageButton = findViewById(R.id.select_image_button);
+        detectSubImageButton = findViewById(R.id.detect_image_button);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,7 +117,17 @@ public class MainActivity extends AppCompatActivity {
                 selectImageFromGallery();
             }
         });
+
+        detectSubImageButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                displayOutputImage(findSubImage(fullMat, subMat, true, 0));
+            }
+        });
+
     }
+
+
 
     private void convertImageToGrayscale() {
         try {
@@ -164,5 +199,59 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+
+    public Mat findSubImage(Mat fullImage, Mat subImage, boolean useRGB, double accuracyThreshold) {
+        // Convert images to grayscale if required
+        if (!useRGB) {
+            Imgproc.cvtColor(fullImage, fullImage, Imgproc.COLOR_BGR2GRAY);
+            Imgproc.cvtColor(subImage, subImage, Imgproc.COLOR_BGR2GRAY);
+        }
+
+        // Create the AKAZE feature detector and descriptor
+        AKAZE akaze = AKAZE.create();
+
+        // Detect keypoints and compute descriptors for both images
+        MatOfKeyPoint fullImageKeypoints = new MatOfKeyPoint();
+        Mat fullImageDescriptors = new Mat();
+        akaze.detectAndCompute(fullImage, new Mat(), fullImageKeypoints, fullImageDescriptors);
+
+        MatOfKeyPoint subImageKeypoints = new MatOfKeyPoint();
+        Mat subImageDescriptors = new Mat();
+        akaze.detectAndCompute(subImage, new Mat(), subImageKeypoints, subImageDescriptors);
+
+        // Create the descriptor matcher
+        DescriptorMatcher matcher = DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE_HAMMING);
+
+        // Match the descriptors
+        MatOfDMatch matches = new MatOfDMatch();
+        matcher.match(subImageDescriptors, fullImageDescriptors, matches);
+
+        // Find good matches based on the accuracy threshold
+        List<DMatch> goodMatchesList = new ArrayList<>();
+        for (DMatch match : matches.toList()) {
+//            if (match.distance <= accuracyThreshold) {
+                goodMatchesList.add(match);
+//            }
+        }
+
+        // Draw the good matches on a new image
+        Mat outputImage = new Mat();
+        Features2d.drawMatches(subImage, subImageKeypoints, fullImage, fullImageKeypoints,
+                new MatOfDMatch(goodMatchesList.toArray(new DMatch[0])),
+                outputImage, Scalar.all(-1), Scalar.all(-1), new MatOfByte(), Features2d.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS);
+
+        return outputImage;
+    }
+
+    public void displayOutputImage(Mat outputImage) {
+        // Convert the outputImage Mat to a Bitmap
+        Bitmap outputBitmap = Bitmap.createBitmap(outputImage.cols(), outputImage.rows(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(outputImage, outputBitmap);
+
+        // Set the Bitmap as the content of the ImageView
+        ImageView imageView = findViewById(R.id.imageView);
+        imageView.setImageBitmap(outputBitmap);
     }
 }
