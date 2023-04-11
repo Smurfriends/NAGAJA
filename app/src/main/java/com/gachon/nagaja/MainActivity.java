@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import org.opencv.android.BaseLoaderCallback;
@@ -127,12 +128,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-
     private void convertImageToGrayscale() {
         try {
-            // Load the image from the drawable folder
-            Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sample_image);
+            // Get the selected image from the ImageView
+            ImageView imageView = findViewById(R.id.imageView);
+            Bitmap imageBitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
 
             // Convert the image to grayscale using OpenCV
             Mat rgbaMat = new Mat();
@@ -146,16 +146,43 @@ public class MainActivity extends AppCompatActivity {
             Bitmap resultBitmap = Bitmap.createBitmap(rgbaMat.cols(), rgbaMat.rows(), Bitmap.Config.ARGB_8888);
             Utils.matToBitmap(lineMat, resultBitmap);
             imageView.setImageBitmap(resultBitmap);
+
+            Bitmap grayBitmap = Bitmap.createBitmap(grayMat.cols(), grayMat.rows(), Bitmap.Config.ARGB_8888);
+            Utils.matToBitmap(grayMat, grayBitmap);
+
+            imageView.setImageBitmap(grayBitmap);
+        } catch (Exception e) {
+            Log.e("OpenCV", "Error processing image", e);
+        }
+    }
+
+//    private void convertImageToGrayscale() {
+//        try {
+//            // Load the image from the drawable folder
+//            Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.data1);
+//
+//            // Convert the image to grayscale using OpenCV
+//            Mat rgbaMat = new Mat();
+//            Utils.bitmapToMat(imageBitmap, rgbaMat);
+//
+//            Mat grayMat = new Mat(rgbaMat.size(), CvType.CV_8UC1);
+//            Imgproc.cvtColor(rgbaMat, grayMat, Imgproc.COLOR_RGBA2GRAY);
+//
+//            Mat lineMat = detectLines(rgbaMat, grayMat);
+//
+//            Bitmap resultBitmap = Bitmap.createBitmap(rgbaMat.cols(), rgbaMat.rows(), Bitmap.Config.ARGB_8888);
+//            Utils.matToBitmap(lineMat, resultBitmap);
+//            imageView.setImageBitmap(resultBitmap);
 //
 //            Bitmap grayBitmap = Bitmap.createBitmap(grayMat.cols(), grayMat.rows(), Bitmap.Config.ARGB_8888);
 //            Utils.matToBitmap(grayMat, grayBitmap);
 //
 //
 //            imageView.setImageBitmap(grayBitmap);
-        } catch (Exception e) {
-            Log.e("OpenCV", "Error processing image", e);
-        }
-    }
+//        } catch (Exception e) {
+//            Log.e("OpenCV", "Error processing image", e);
+//        }
+//    }
 
 
     private Mat detectLines(Mat mapMat, Mat grayMat){
