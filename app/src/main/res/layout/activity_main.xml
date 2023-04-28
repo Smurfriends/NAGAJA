@@ -19,7 +19,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="Convert to Grayscale" />
+        android:text="Main function" />
 
     <Button
         android:id="@+id/select_image_button"
