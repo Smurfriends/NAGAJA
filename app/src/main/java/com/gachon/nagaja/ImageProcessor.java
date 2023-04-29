@@ -1,15 +1,23 @@
 package com.gachon.nagaja;
 
+import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
+import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
 import org.opencv.core.Size;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.imgproc.Imgproc;
+
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ImageProcessor {
     public static Bitmap processImage(Bitmap inputImage) {
@@ -17,8 +25,17 @@ public class ImageProcessor {
         Mat inputMat = new Mat();
         Utils.bitmapToMat(inputImage, inputMat);
 
-        // Perform image processing using OpenCV
-        Mat outputMat = detectRooms(inputMat);
+        // Convert to grayscale
+        Mat grayMat = new Mat();
+        Imgproc.cvtColor(inputMat, grayMat, Imgproc.COLOR_BGR2GRAY);
+
+        // Apply Canny edge detection
+        Mat edges = new Mat();
+        Imgproc.Canny(grayMat, edges, 50, 150);
+
+        // Convert to grayscale
+        Mat outputMat = new Mat();
+        Imgproc.cvtColor(edges, outputMat, Imgproc.COLOR_GRAY2RGBA);
 
         // Convert output Mat object to bitmap
         Bitmap outputImage = Bitmap.createBitmap(outputMat.cols(), outputMat.rows(), Bitmap.Config.ARGB_8888);
@@ -27,43 +44,39 @@ public class ImageProcessor {
         return outputImage;
     }
 
-    private static Mat detectRooms(Mat inputMat) {
-        // Convert input image to grayscale
-        Mat grayMat = new Mat();
-        Imgproc.cvtColor(inputMat, grayMat, Imgproc.COLOR_BGR2GRAY);
+    public static void detectExitSign(String imagePath) {
+        Mat src = Imgcodecs.imread(imagePath);
 
-        // Binarize the image using Otsu's thresholding method
-        Mat im_bw = new Mat();
-        Imgproc.threshold(grayMat, im_bw, 30, 255, Imgproc.THRESH_BINARY + Imgproc.THRESH_OTSU);
+        if (src.empty()) {
+            System.err.println("Image not found!");
+            return;
+        }
 
-        // Perform connected component analysis to obtain all the individual components
-        Mat labels = new Mat();
-        Mat stats = new Mat();
-        Mat centroids = new Mat();
-        int nb_components = Imgproc.connectedComponentsWithStats(im_bw, labels, stats, centroids);
+        Mat gray = new Mat();
+        Imgproc.cvtColor(src, gray, Imgproc.COLOR_BGR2GRAY);
 
-        // Filter the components based on their size
-        Mat img2 = new Mat(im_bw.size(), CvType.CV_8UC1, new Scalar(0));
-        int min_size = 150;
-        for (int i = 1; i < nb_components; i++) {
-            if (stats.get(i, Imgproc.CC_STAT_AREA)[0] >= min_size) {
-                Core.compare(labels, new Scalar(i), img2, Core.CMP_EQ);
-                Imgproc.threshold(img2, img2, 0, 255, Imgproc.THRESH_BINARY);
+        Mat edges = new Mat();
+        Imgproc.Canny(gray, edges, 50, 150);
+
+        List<MatOfPoint> contours = new ArrayList<>();
+        Mat hierarchy = new Mat();
+        Imgproc.findContours(edges, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+
+        Mat result = src.clone();
+        for (int i = 0; i < contours.size(); i++) {
+            Rect rect = Imgproc.boundingRect(contours.get(i));
+            if (isExitSign(rect)) {
+                Imgproc.rectangle(result, rect.tl(), rect.br(), new Scalar(0, 255, 0), 2);
             }
         }
 
-        // Apply morphological transformations to fill gaps between the rooms
-        Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5, 5));
-        Mat dilation = new Mat();
-        Imgproc.dilate(img2, dilation, kernel);
-        Mat erosion = new Mat();
-        Imgproc.erode(dilation, erosion, kernel, new Point(-1, -1), 6);
-
-        // Apply morphological transformation to close gaps between the rooms
-        Mat closing = new Mat();
-        Imgproc.morphologyEx(erosion, closing, Imgproc.MORPH_CLOSE, kernel);
-
-        return closing;
+        Imgcodecs.imwrite("path/to/output.jpg", result);
+        System.out.println("Exit sign detection complete.");
     }
 
+
+    private static boolean isExitSign(Rect rect) {
+        double aspectRatio = (double) rect.width / rect.height;
+        return aspectRatio >= 1.0 && aspectRatio <= 2.0;
+    }
 }
