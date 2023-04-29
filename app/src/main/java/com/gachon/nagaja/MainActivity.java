@@ -104,12 +104,14 @@ public class MainActivity extends AppCompatActivity {
         Mat grayMat = convertImageToGrayscale(image);
 
         // Perform line detection
-        Mat lineMat = detectLines(grayMat);
-
-        // Set the resulting line detection image to the ImageView
-        Bitmap lineBitmap = Bitmap.createBitmap(lineMat.cols(), lineMat.rows(), Bitmap.Config.ARGB_8888);
-        Utils.matToBitmap(lineMat, lineBitmap);
-        image.setImageBitmap(lineBitmap);
+//        Mat lineMat = detectLines(grayMat);
+//
+//        // Set the resulting line detection image to the ImageView
+//        Bitmap lineBitmap = Bitmap.createBitmap(lineMat.cols(), lineMat.rows(), Bitmap.Config.ARGB_8888);
+//        Utils.matToBitmap(lineMat, lineBitmap);
+        Bitmap grayBitmap = Bitmap.createBitmap(grayMat.cols(), grayMat.rows(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(grayMat, grayBitmap);
+        image.setImageBitmap(grayBitmap);
     }
 
     // Make Image to gray (ImageView -> Mat)
