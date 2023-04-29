@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sample_image);
+        Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sample_image2);
         Bitmap subBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sub_image);
 
         // Convert the image to grayscale using OpenCV
@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) { mainFunction(imageView); }
+            public void onClick(View v) { mainFunction(); }
         });
 
         selectImageButton.setOnClickListener(new View.OnClickListener() {
@@ -99,75 +99,73 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
-    private void mainFunction(ImageView image){
-        // Convert the image to gray
-        Mat grayMat = convertImageToGrayscale(image);
+    private void mainFunction(){
+        // Load the input image from resources
+        Bitmap inputImage = BitmapFactory.decodeResource(getResources(), R.drawable.sample_black);
 
-        // Perform line detection
-//        Mat lineMat = detectLines(grayMat);
+        // Process the input image using ImageProcessor class
+        Bitmap outputImage = ImageProcessor.processImage(inputImage);
+
+        // Display the output image in an ImageView
+        ImageView imageView = findViewById(R.id.imageView);
+        imageView.setImageBitmap(outputImage);
+
+    }
+
+//    // Make Image to gray (ImageView -> Mat)
+//    private Mat convertImageToGrayscale(ImageView imageView) {
+//        try {
+//            Bitmap imageBitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
 //
-//        // Set the resulting line detection image to the ImageView
-//        Bitmap lineBitmap = Bitmap.createBitmap(lineMat.cols(), lineMat.rows(), Bitmap.Config.ARGB_8888);
-//        Utils.matToBitmap(lineMat, lineBitmap);
-        Bitmap grayBitmap = Bitmap.createBitmap(grayMat.cols(), grayMat.rows(), Bitmap.Config.ARGB_8888);
-        Utils.matToBitmap(grayMat, grayBitmap);
-        image.setImageBitmap(grayBitmap);
-    }
-
-    // Make Image to gray (ImageView -> Mat)
-    private Mat convertImageToGrayscale(ImageView imageView) {
-        try {
-            Bitmap imageBitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
-
-            // Convert the image to grayscale using OpenCV
-            Mat rgbaMat = new Mat();
-            Utils.bitmapToMat(imageBitmap, rgbaMat);
-
-            Mat grayMat = new Mat(rgbaMat.size(), CvType.CV_8UC1);
-            Imgproc.cvtColor(rgbaMat, grayMat, Imgproc.COLOR_RGBA2GRAY);
-
-            return grayMat;
-        } catch (Exception e) {
-            Log.e("OpenCV", "Error processing image", e);
-            return null;
-        }
-    }
-    // Detect lines in the grayscale image
-    private Mat detectLines(Mat grayMat) {
-        // Binarize the image using Otsu's thresholding method
-        Mat im_bw = new Mat();
-        Imgproc.threshold(grayMat, im_bw, 0, 255, Imgproc.THRESH_BINARY + Imgproc.THRESH_OTSU);
-
-        // Perform connected component analysis to obtain all the individual components
-        Mat labels = new Mat();
-        Mat stats = new Mat();
-        Mat centroids = new Mat();
-        int nb_components = Imgproc.connectedComponentsWithStats(im_bw, labels, stats, centroids);
-
-        // Filter the components based on their size
-        Mat img2 = new Mat(im_bw.size(), CvType.CV_8UC1, new Scalar(0));
-        int min_size = 150;
-        for (int i = 1; i < nb_components; i++) {
-            if (stats.get(i, Imgproc.CC_STAT_AREA)[0] >= min_size) {
-                Core.compare(labels, new Scalar(i), img2, Core.CMP_EQ);
-                Imgproc.threshold(img2, img2, 0, 255, Imgproc.THRESH_BINARY);
-            }
-        }
-
-        // Apply morphological transformations to fill gaps between the rooms
-        Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5, 5));
-        Mat dilation = new Mat();
-        Imgproc.dilate(img2, dilation, kernel);
-        Mat erosion = new Mat();
-        Imgproc.erode(dilation, erosion, kernel, new Point(-1, -1), 6);
-
-        // Detect lines using the Hough transform
-        Mat lines = new Mat();
-        Imgproc.HoughLinesP(erosion, lines, 1, Math.PI/180, 50, 50, 10);
-
-        return lines;
-    }
-
+//            // Convert the image to grayscale using OpenCV
+//            Mat rgbaMat = new Mat();
+//            Utils.bitmapToMat(imageBitmap, rgbaMat);
+//
+//            Mat grayMat = new Mat(rgbaMat.size(), CvType.CV_8UC1);
+//            Imgproc.cvtColor(rgbaMat, grayMat, Imgproc.COLOR_RGBA2GRAY);
+//
+//            return grayMat;
+//        } catch (Exception e) {
+//            Log.e("OpenCV", "Error processing image", e);
+//            return null;
+//        }
+//    }
+//    // Detect lines in the grayscale image
+//    private Mat detectLines(Mat grayMat) {
+//        // Binarize the image using Otsu's thresholding method
+//        Mat im_bw = new Mat();
+//        Imgproc.threshold(grayMat, im_bw, 0, 255, Imgproc.THRESH_BINARY + Imgproc.THRESH_OTSU);
+//
+//        // Perform connected component analysis to obtain all the individual components
+//        Mat labels = new Mat();
+//        Mat stats = new Mat();
+//        Mat centroids = new Mat();
+//        int nb_components = Imgproc.connectedComponentsWithStats(im_bw, labels, stats, centroids);
+//
+//        // Filter the components based on their size
+//        Mat img2 = new Mat(im_bw.size(), CvType.CV_8UC1, new Scalar(0));
+//        int min_size = 150;
+//        for (int i = 1; i < nb_components; i++) {
+//            if (stats.get(i, Imgproc.CC_STAT_AREA)[0] >= min_size) {
+//                Core.compare(labels, new Scalar(i), img2, Core.CMP_EQ);
+//                Imgproc.threshold(img2, img2, 0, 255, Imgproc.THRESH_BINARY);
+//            }
+//        }
+//
+//        // Apply morphological transformations to fill gaps between the rooms
+//        Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5, 5));
+//        Mat dilation = new Mat();
+//        Imgproc.dilate(img2, dilation, kernel);
+//        Mat erosion = new Mat();
+//        Imgproc.erode(dilation, erosion, kernel, new Point(-1, -1), 6);
+//
+//        // Detect lines using the Hough transform
+//        Mat lines = new Mat();
+//        Imgproc.HoughLinesP(erosion, lines, 1, Math.PI/180, 50, 50, 10);
+//
+//        return lines;
+//    }
+//
 
     private void selectImageFromGallery() {// Select Image
         Intent pickImageIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
@@ -284,6 +282,7 @@ public class MainActivity extends AppCompatActivity {
         Imgcodecs.imwrite("path/to/output.jpg", result);
         System.out.println("Exit sign detection complete.");
     }
+
 
     private static boolean isExitSign(Rect rect) {
         double aspectRatio = (double) rect.width / rect.height;
