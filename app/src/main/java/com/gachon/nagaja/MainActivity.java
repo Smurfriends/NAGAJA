@@ -24,6 +24,7 @@ import org.opencv.core.CvType;
 import org.opencv.core.MatOfByte;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Rect;
+import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import java.io.InputStream;
@@ -130,24 +131,41 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     // Detect lines in the grayscale image
-    private Mat detectLines(Mat grayMat){
-        Mat edgesMat = new Mat();
+    private Mat detectLines(Mat grayMat) {
+        // Binarize the image using Otsu's thresholding method
+        Mat im_bw = new Mat();
+        Imgproc.threshold(grayMat, im_bw, 0, 255, Imgproc.THRESH_BINARY + Imgproc.THRESH_OTSU);
 
-        Imgproc.Canny(grayMat, edgesMat, 100, 200);
+        // Perform connected component analysis to obtain all the individual components
+        Mat labels = new Mat();
+        Mat stats = new Mat();
+        Mat centroids = new Mat();
+        int nb_components = Imgproc.connectedComponentsWithStats(im_bw, labels, stats, centroids);
 
-        MatOfInt4 lines = new MatOfInt4();
-        Imgproc.HoughLinesP(edgesMat, lines, 1, Math.PI / 180, 100, 100, 10);
-
-
-        for (int i = 0; i < lines.rows(); i++) {
-            double[] line = lines.get(i, 0);
-            double x1 = line[0], y1 = line[1], x2 = line[2], y2 = line[3];
-            Imgproc.line(mapMat, new Point(x1, y1), new Point(x2, y2), new Scalar(0, 255, 0), 2);
+        // Filter the components based on their size
+        Mat img2 = new Mat(im_bw.size(), CvType.CV_8UC1, new Scalar(0));
+        int min_size = 150;
+        for (int i = 1; i < nb_components; i++) {
+            if (stats.get(i, Imgproc.CC_STAT_AREA)[0] >= min_size) {
+                Core.compare(labels, new Scalar(i), img2, Core.CMP_EQ);
+                Imgproc.threshold(img2, img2, 0, 255, Imgproc.THRESH_BINARY);
+            }
         }
 
-        return mapMat;
+        // Apply morphological transformations to fill gaps between the rooms
+        Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5, 5));
+        Mat dilation = new Mat();
+        Imgproc.dilate(img2, dilation, kernel);
+        Mat erosion = new Mat();
+        Imgproc.erode(dilation, erosion, kernel, new Point(-1, -1), 6);
 
+        // Detect lines using the Hough transform
+        Mat lines = new Mat();
+        Imgproc.HoughLinesP(erosion, lines, 1, Math.PI/180, 50, 50, 10);
+
+        return lines;
     }
+
 
     private void selectImageFromGallery() {// Select Image
         Intent pickImageIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
@@ -156,20 +174,20 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(pickImageIntent, REQUEST_CODE_PICK_IMAGE);
     }
 
-    public void setGrayscaleImage(Mat rgbaMat, ImageView imageView) {
-        try {
-            // Convert the image to grayscale using OpenCV
-            Mat grayMat = new Mat();
-            Imgproc.cvtColor(rgbaMat, grayMat, Imgproc.COLOR_RGBA2GRAY);
-
-            Bitmap grayBitmap = Bitmap.createBitmap(grayMat.cols(), grayMat.rows(), Bitmap.Config.ARGB_8888);
-            Utils.matToBitmap(grayMat, grayBitmap);
-
-            imageView.setImageBitmap(grayBitmap);
-        } catch (Exception e) {
-            Log.e("OpenCV", "Error processing image", e);
-        }
-    }
+//    public void setGrayscaleImage(Mat rgbaMat, ImageView imageView) {
+//        try {
+//            // Convert the image to grayscale using OpenCV
+//            Mat grayMat = new Mat();
+//            Imgproc.cvtColor(rgbaMat, grayMat, Imgproc.COLOR_RGBA2GRAY);
+//
+//            Bitmap grayBitmap = Bitmap.createBitmap(grayMat.cols(), grayMat.rows(), Bitmap.Config.ARGB_8888);
+//            Utils.matToBitmap(grayMat, grayBitmap);
+//
+//            imageView.setImageBitmap(grayBitmap);
+//        } catch (Exception e) {
+//            Log.e("OpenCV", "Error processing image", e);
+//        }
+//    }
     public Mat findSubImage(Mat fullImage, Mat subImage, boolean useRGB, double accuracyThreshold) {
         // Convert images to grayscale if required
         if (!useRGB) {
