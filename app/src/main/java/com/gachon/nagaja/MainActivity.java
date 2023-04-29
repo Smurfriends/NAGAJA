@@ -173,7 +173,18 @@ public class MainActivity extends AppCompatActivity {
         pickImageIntent.setType("image/*");
         startActivityForResult(pickImageIntent, REQUEST_CODE_PICK_IMAGE);
     }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_PICK_IMAGE && resultCode == RESULT_OK && data != null) {
+            // Get the URI of the selected image
+            Uri uri = data.getData();
 
+            // Set the image in ImageView
+            ImageView imageView = findViewById(R.id.imageView);
+            imageView.setImageURI(uri);
+        }
+    }
 //    public void setGrayscaleImage(Mat rgbaMat, ImageView imageView) {
 //        try {
 //            // Convert the image to grayscale using OpenCV
