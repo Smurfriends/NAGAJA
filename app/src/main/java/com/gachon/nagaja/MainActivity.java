@@ -135,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
                     imageView.setImageURI(uri);
 
                 }
+                break;
 
         }
     }
