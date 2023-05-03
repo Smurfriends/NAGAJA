@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "804024428721",
+    "firebase_url": "https://nagaja-3bb34-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "nagaja-3bb34",
     "storage_bucket": "nagaja-3bb34.appspot.com"
   },
@@ -8,6 +9,35 @@
     {
       "client_info": {
         "mobilesdk_app_id": "1:804024428721:android:5bd3779c6363cb513c1a90",
+        "android_client_info": {
+          "package_name": "com.gachon.nagaja"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "804024428721-45hhqio7t2ptuhlvmcobhi65ouds0k4c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGpRLLt0vGIBFxP6AMW9m5mYqLOLBTZA8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "804024428721-45hhqio7t2ptuhlvmcobhi65ouds0k4c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:804024428721:android:fd399cbcd3dc1d113c1a90",
         "android_client_info": {
           "package_name": "org.opencv"
         }
