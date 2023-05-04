@@ -7,13 +7,12 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-public class storeFragment extends Fragment {
+public class BookmarkFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_store, container, false);
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_bookmark, container, false);
         return rootView;
     }
 }
