@@ -91,10 +91,16 @@
 
             <!-- 업로드할 피난 안내도의 이미지 및 층 정보 시작  -->
             <Button
-                android:id="@+id/uploadImgBtn"
+                android:id="@+id/cameraBtn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Upload map image" />
+                android:text="Take a photo of map" />
+
+            <Button
+                android:id="@+id/selectImgBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Select map image" />
 
             <ImageView
                 android:id="@+id/imageView"
