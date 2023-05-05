@@ -1,60 +1,39 @@
 package com.gachon.nagaja;
 
-import androidx.appcompat.app.AppCompatActivity;
+import static android.content.ContentValues.TAG;
 
+import androidx.appcompat.app.AppCompatActivity;
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.util.Log;
 import android.content.Intent;
-import android.content.res.AssetFileDescriptor;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import org.opencv.android.OpenCVLoader;
 
-import org.opencv.core.DMatch;
-import org.opencv.core.Mat;
-
-import android.os.Bundle;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import org.opencv.android.Utils;
-import org.opencv.core.CvType;
-import org.opencv.core.MatOfByte;
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.Rect;
-import org.opencv.core.Size;
-import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.imgproc.Imgproc;
+import androidx.core.app.ActivityCompat;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-
-import androidx.annotation.Nullable;
-import org.opencv.core.Core;
-import org.opencv.core.MatOfInt4;
-import org.opencv.core.Point;
-import org.opencv.core.Scalar;
-import org.opencv.core.MatOfDMatch;
-import org.opencv.core.MatOfKeyPoint;
-import org.opencv.features2d.AKAZE;
-import org.opencv.features2d.DescriptorMatcher;
-import org.opencv.features2d.Features2d;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_PICK_IMAGE = 1;
+    final static int TAKE_PICTURE = 2;
 
     ImageView imageView;
     Button button;
     Button selectImageButton;
-    Button detectSubImageButton;
-    
+    Button cameraButton;
+
     static {
         if (!OpenCVLoader.initDebug()) {
             Log.e("OpenCV", "Unable to load OpenCV");
@@ -68,10 +47,27 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // 연동 잘 됐는지 테스트
+//        FirebaseDatabase database = FirebaseDatabase.getInstance();
+//        DatabaseReference myRef = database.getReference("message");
+//        myRef.setValue("Success!");   // 다른 말로 바꿔서 테스트 해보기
+        // 현재는 파이어베이스 규칙 탭에서 권한을 풀어 둔 상태. 나중엔 권한 코드도 넣어야 함.
+
         imageView = findViewById(R.id.imageView);
+        //Button
         button = findViewById(R.id.button);
         selectImageButton = findViewById(R.id.select_image_button);
+        cameraButton = findViewById(R.id.pic_camera);
 
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if(checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                Log.d(TAG, "권한 설정 완료");
+            }
+            else {
+                Log.d(TAG, "권한 설정 요청");
+                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+            }
+        }
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -86,6 +82,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        cameraButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pictureImageByCamera();
+            }
+        });
     }
     private void mainFunction() {
         // Get the current image in the ImageView
@@ -114,18 +116,34 @@ public class MainActivity extends AppCompatActivity {
         pickImageIntent.setType("image/*");
         startActivityForResult(pickImageIntent, REQUEST_CODE_PICK_IMAGE);
     }
+
+    private void pictureImageByCamera(){
+        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(cameraIntent, TAKE_PICTURE);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE_PICK_IMAGE && resultCode == RESULT_OK && data != null) {
-            // Get the URI of the selected image
-            Uri uri = data.getData();
+        switch (requestCode) {
+            case TAKE_PICTURE:
+                if (resultCode == RESULT_OK && data.hasExtra("data")) {
+                    Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+                    if (bitmap != null) {
+                        imageView.setImageBitmap(bitmap);
+                    }
 
-            // Set the image in ImageView
-            ImageView imageView = findViewById(R.id.imageView);
-            imageView.setImageURI(uri);
+                }
+                break;
+            case REQUEST_CODE_PICK_IMAGE:
+                if (resultCode == RESULT_OK && data != null) {
+                    Uri uri = data.getData();
+                    // Set the image in ImageView
+                    imageView.setImageURI(uri);
+
+                }
+                break;
+
         }
     }
-
-
 }
