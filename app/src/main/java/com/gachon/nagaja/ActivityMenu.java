@@ -1,7 +1,10 @@
 package com.gachon.nagaja;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,12 +20,24 @@ public class ActivityMenu extends AppCompatActivity implements BottomNavigationV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
 
+        Button buttonKeywordSearch = findViewById(R.id.buttonKeyword);
+
         mBottomNavigationView = findViewById(R.id.menu_bottom_navigation);
         mBottomNavigationView.setOnNavigationItemSelectedListener(this);
+
         //처으에 앱을 실행했을떄 Bookmark창이 디폴트로 보여지기 위함
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.menu_frame_layout, new BookmarkFragment())
                 .commit();
+
+        // 키워드 검색 버튼 클릭 시,
+        buttonKeywordSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ActivityMenu.this, Map.class);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override

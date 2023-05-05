@@ -40,8 +40,8 @@
         <!-- </activity> -->
         <activity
             android:name=".Map"
-            android:exported="true">
-        
+            android:exported="false">
+        </activity>
 
         <activity android:name=".ActivityMenu"
             android:exported="false"/>
