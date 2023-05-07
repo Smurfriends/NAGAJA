@@ -47,12 +47,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // 연동 잘 됐는지 테스트
-//        FirebaseDatabase database = FirebaseDatabase.getInstance();
-//        DatabaseReference myRef = database.getReference("message");
-//        myRef.setValue("Success!");   // 다른 말로 바꿔서 테스트 해보기
-        // 현재는 파이어베이스 규칙 탭에서 권한을 풀어 둔 상태. 나중엔 권한 코드도 넣어야 함.
-
         imageView = findViewById(R.id.imageView);
         //Button
         button = findViewById(R.id.button);
