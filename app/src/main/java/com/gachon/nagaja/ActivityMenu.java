@@ -20,7 +20,6 @@ public class ActivityMenu extends AppCompatActivity implements BottomNavigationV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
 
-        Button buttonKeywordSearch = findViewById(R.id.buttonKeyword);
 
         mBottomNavigationView = findViewById(R.id.menu_bottom_navigation);
         mBottomNavigationView.setOnNavigationItemSelectedListener(this);
@@ -29,15 +28,6 @@ public class ActivityMenu extends AppCompatActivity implements BottomNavigationV
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.menu_frame_layout, new BookmarkFragment())
                 .commit();
-
-        // 키워드 검색 버튼 클릭 시,
-        buttonKeywordSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ActivityMenu.this, Map.class);
-                startActivity(intent);
-            }
-        });
     }
 
     @Override
@@ -52,13 +42,13 @@ public class ActivityMenu extends AppCompatActivity implements BottomNavigationV
             case R.id.menu_upload:
                 // MENU2 클릭시 실행될 코드
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.menu_frame_layout, new UploadFragment())
+                        .replace(R.id.menu_frame_layout, new MapFragment())
                         .commit();
                 return true;
             case R.id.menu_store:
                 // MENU3 클릭시 실행될 코드
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.menu_frame_layout, new StoreFragment())
+                        .replace(R.id.menu_frame_layout, new UploadFragment())
                         .commit();
                 return true;
             default:
