@@ -1,32 +1,31 @@
 package com.gachon.nagaja;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import static android.app.Activity.RESULT_OK;
 
-import android.app.Activity;
+import androidx.fragment.app.Fragment;
+
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-public class UploadMapActivity extends AppCompatActivity {
+public class UploadMapFragment extends Fragment {
 
 //    private FirebaseAuth mAuth;   // 권한 추가 예정
     private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
@@ -35,21 +34,22 @@ public class UploadMapActivity extends AppCompatActivity {
     private final StorageReference reference = FirebaseStorage.getInstance().getReference();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_upload_map);
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.activity_upload_map, container, false);
 
-        address = findViewById(R.id.address);
-        buildingName = findViewById(R.id.buildingName);
-        floorUndergroundNum = findViewById(R.id.floorUndergroundNum);
-        floorUpgroundNum = findViewById(R.id.floorUpgroundNum);
-        floorOutsideEntrance = findViewById(R.id.floorOutsideEntrance);
+        address = rootView.findViewById(R.id.address);
+        buildingName = rootView.findViewById(R.id.buildingName);
+        floorUndergroundNum = rootView.findViewById(R.id.floorUndergroundNum);
+        floorUpgroundNum = rootView.findViewById(R.id.floorUpgroundNum);
+        floorOutsideEntrance = rootView.findViewById(R.id.floorOutsideEntrance);
 
-        cameraBtn = findViewById(R.id.cameraBtn);
-        selectImgBtn = findViewById(R.id.selectImgBtn);
-        imageView = findViewById(R.id.imageView);
-        floorOfMap = findViewById(R.id.floorOfMap);
-        submitBtn = findViewById(R.id.submitBtn);
+        cameraBtn = rootView.findViewById(R.id.cameraBtn);
+        selectImgBtn = rootView.findViewById(R.id.selectImgBtn);
+        imageView = rootView.findViewById(R.id.imageView);
+        floorOfMap = rootView.findViewById(R.id.floorOfMap);
+        submitBtn = rootView.findViewById(R.id.submitBtn);
 
         submitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,7 +71,7 @@ public class UploadMapActivity extends AppCompatActivity {
                 }
                 else {
                     // 카메라로 찍어서 올린 map이미지 업로드는 아직 구현 못함
-                    Toast.makeText(UploadMapActivity.this, "사진을 선택해주세요.", Toast.LENGTH_SHORT).show();
+                     Toast.makeText(getActivity(), "사진을 선택해주세요.", Toast.LENGTH_SHORT).show();
                 }
 
                 // TODO: then back to main
@@ -93,6 +93,7 @@ public class UploadMapActivity extends AppCompatActivity {
             }
         });
 
+        return rootView;
     }
 
     private void pictureImageByCamera(){
@@ -108,7 +109,7 @@ public class UploadMapActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case TAKE_PICTURE:
@@ -152,7 +153,7 @@ public class UploadMapActivity extends AppCompatActivity {
                         //데이터 넣기
                         databaseReference.child("map").child(address.getText().toString()).setValue(newMap);
                         // 층별 구분 넣기 필요
-                        Toast.makeText(UploadMapActivity.this, "업로드 성공", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "업로드 성공.", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -162,12 +163,11 @@ public class UploadMapActivity extends AppCompatActivity {
 
     //파일타입 가져오기
     private String getFileExtension(Uri uri) {
-
-        ContentResolver cr = getContentResolver();
+        ContentResolver cr = requireContext().getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
-
         return mime.getExtensionFromMimeType(cr.getType(uri));
     }
+
 
 
 

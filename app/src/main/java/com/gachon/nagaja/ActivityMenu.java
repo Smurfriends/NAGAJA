@@ -48,7 +48,7 @@ public class ActivityMenu extends AppCompatActivity implements BottomNavigationV
             case R.id.menu_store:
                 // MENU3 클릭시 실행될 코드
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.menu_frame_layout, new UploadFragment())
+                        .replace(R.id.menu_frame_layout, new UploadMapFragment())
                         .commit();
                 return true;
             default:
