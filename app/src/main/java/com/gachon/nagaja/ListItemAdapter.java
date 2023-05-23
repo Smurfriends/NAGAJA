@@ -13,6 +13,7 @@ public class ListItemAdapter extends BaseAdapter {
     ArrayList<ListItem> items = new ArrayList<ListItem>();
     Context context;
 
+
     @Override
     public int getCount() {
         return items.size();
