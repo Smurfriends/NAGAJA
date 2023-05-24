@@ -6,7 +6,7 @@ public class ListItem {
 
     ListItem(String name, String address){
         this.name = name;
-        this.name = address;
+        this.address = address;
     }
 
     public String getName() {
