@@ -31,11 +31,9 @@ public class FindPath {
     private String x;
     private String y;
 
-    public FindPath(int x, int y,String name){//like mains
+    public FindPath(String name){//like mains
         database=FirebaseDatabase.getInstance().getReference();
         database.child("map").child(name).addValueEventListener(postListener);
-        this.startX = x;
-        this.startY = y;
     }
 
     ValueEventListener postListener = new ValueEventListener() {
@@ -171,4 +169,6 @@ public class FindPath {
     public String getId() {
         return id;
     }
+
+    public void setStartNode(int x, int y){this.startX = x; this.startY = y;};
 }

@@ -46,7 +46,7 @@ public class ImageFragment extends Fragment  {
         String filename = "print" + bName+".jpg";
 
         //findPath 선언 이거 해야 URL등 firebase에서 값 읽어옴
-        FindPath findPath = new FindPath(0,0,bName);
+        FindPath findPath = new FindPath(bName);
         //URL 저장
 
         Timer timer = new Timer();
