@@ -1,12 +1,18 @@
 package com.gachon.nagaja;
 
+import android.net.Uri;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -14,15 +20,22 @@ import java.util.HashMap;
 public class FindPath {
     //Firebase read
     public DatabaseReference database;
-    private int x;
-    private int y;
+    private int startX;
+    private int startY;
     private static final int INFINITY = Integer.MAX_VALUE;
+    private String node;
+    private String idEndNode;
+    private String nodeNum;
+    private String idVergeNode;
+    private String id;
+    private String x;
+    private String y;
 
     public FindPath(int x, int y,String name){//like mains
         database=FirebaseDatabase.getInstance().getReference();
         database.child("map").child(name).addValueEventListener(postListener);
-        this.x = x;
-        this.y = y;
+        this.startX = x;
+        this.startY = y;
     }
 
     ValueEventListener postListener = new ValueEventListener() {
@@ -31,23 +44,26 @@ public class FindPath {
             HashMap<String, Object> hashMap = (HashMap<String, Object>) dataSnapshot.getValue();
 
             // Extract individual values and store them in separate variables
-            String node = getStringValue(hashMap, "node");
-            String idEndNode = getStringValue(hashMap, "idEndNode");
-            String nodeNum = getStringValue(hashMap, "nodeNum");
-            String idVergeNode = getStringValue(hashMap, "idVergeNode");
-            String mapURL = getStringValue(hashMap, "mapURL");
-            String x = getStringValue(hashMap, "x");
-            String y = getStringValue(hashMap, "y");
+            node = getStringValue(hashMap, "node");
+            idEndNode = getStringValue(hashMap, "idEndNode");
+            nodeNum = getStringValue(hashMap, "nodeNum");
+            idVergeNode = getStringValue(hashMap, "idVergeNode");
+            id = getStringValue(hashMap, "id");
+            x = getStringValue(hashMap, "x");
+            y = getStringValue(hashMap, "y");
 
             // Output or perform desired operations with the extracted values
             Log.d("Firebase", "node: " + node);
             Log.d("Firebase", "idEndNode: " + idEndNode);
             Log.d("Firebase", "nodeNum: " + nodeNum);
             Log.d("Firebase", "idVergeNode: " + idVergeNode);
-            Log.d("Firebase", "mapURL: " + mapURL);
+            Log.d("Firebase", "mapURL: " + id);
             Log.d("Firebase", "x: " + x);
             Log.d("Firebase", "y: " + y);
 
+        }
+
+        public void setMatrix(){
             String values = node;
             String[] splitValues = values.split(",");
 
@@ -76,7 +92,6 @@ public class FindPath {
 
             dijkstra(matrix, startNode, endNode);
         }
-
         @Override
         public void onCancelled(DatabaseError databaseError) {
             // Getting Post failed, log a message
@@ -151,5 +166,9 @@ public class FindPath {
 
             Log.d(tag, pathBuilder.toString());
         }
+    }
+
+    public String getId() {
+        return id;
     }
 }

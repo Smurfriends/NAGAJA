@@ -1,6 +1,7 @@
 package com.gachon.nagaja;
 
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -48,7 +49,7 @@ public class ActivityMenu extends AppCompatActivity implements BottomNavigationV
             case R.id.menu_store:
                 // MENU3 클릭시 실행될 코드
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.menu_frame_layout, new UploadMapFragment())
+                        .replace(R.id.menu_frame_layout, new ImageFragment())
                         .commit();
                 return true;
             default:
