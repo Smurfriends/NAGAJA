@@ -15,6 +15,7 @@ generate_cxx_metadata completed in 84ms
 
 # C/C++ build system timings
 generate_cxx_metadata
+<<<<<<< Updated upstream
   [gap of 25ms]
   create-invalidation-state 33ms
   [gap of 23ms]
@@ -26,4 +27,11 @@ generate_cxx_metadata
   create-invalidation-state 37ms
   [gap of 20ms]
 generate_cxx_metadata completed in 101ms
+=======
+  [gap of 24ms]
+  create-invalidation-state 74ms
+  [gap of 24ms]
+  write-metadata-json-to-file 12ms
+generate_cxx_metadata completed in 137ms
+>>>>>>> Stashed changes
 

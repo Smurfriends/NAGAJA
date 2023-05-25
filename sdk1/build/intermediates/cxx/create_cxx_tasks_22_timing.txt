@@ -287,6 +287,7 @@ create_cxx_tasks completed in 79ms
 
 # C/C++ build system timings
 create_cxx_tasks
+<<<<<<< Updated upstream
   create-initial-cxx-model 55ms
   [gap of 15ms]
 create_cxx_tasks completed in 71ms
@@ -329,4 +330,12 @@ create_cxx_tasks
   create-initial-cxx-model 46ms
   [gap of 20ms]
 create_cxx_tasks completed in 66ms
+=======
+  create-initial-cxx-model
+    create-variant-model 10ms
+    [gap of 45ms]
+  create-initial-cxx-model completed in 60ms
+  [gap of 13ms]
+create_cxx_tasks completed in 74ms
+>>>>>>> Stashed changes
 

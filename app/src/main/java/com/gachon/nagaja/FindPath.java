@@ -4,6 +4,8 @@ import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.firebase.database.DataSnapshot;
@@ -31,9 +33,13 @@ public class FindPath {
     private String x;
     private String y;
 
+    private String buildingName;
+    private String floorNum;
+
     public FindPath(String name){//like mains
         database=FirebaseDatabase.getInstance().getReference();
         database.child("map").child(name).addValueEventListener(postListener);
+        database.child("building").child(name).addValueEventListener(postListener1);
     }
 
     ValueEventListener postListener = new ValueEventListener() {
@@ -61,35 +67,6 @@ public class FindPath {
 
         }
 
-        public void setMatrix(){
-            String values = node;
-            String[] splitValues = values.split(",");
-
-            int matrixSize = Integer.parseInt(nodeNum); // Size of the matrix
-            int[][] matrix = new int[matrixSize][matrixSize];
-
-            // Convert the split values to integers and populate the matrix
-            int index = 0;
-            for (int i = 0; i < matrixSize; i++) {
-                for (int j = 0; j < matrixSize; j++) {
-                    matrix[i][j] = Integer.parseInt(splitValues[index]);
-                    index++;
-                }
-            }
-
-            // Log the resulting matrix
-            for (int i = 0; i < matrixSize; i++) {
-                StringBuilder rowBuilder = new StringBuilder();
-                for (int j = 0; j < matrixSize; j++) {
-                    rowBuilder.append(matrix[i][j]).append(" ");
-                }
-                Log.d("Matrix", rowBuilder.toString());
-            }
-            int startNode = 0;
-            int endNode = 4;
-
-            dijkstra(matrix, startNode, endNode);
-        }
         @Override
         public void onCancelled(DatabaseError databaseError) {
             // Getting Post failed, log a message
@@ -97,16 +74,72 @@ public class FindPath {
         }
 
         // Helper method to safely retrieve a String value from HashMap
-        private String getStringValue(HashMap<String, Object> hashMap, String key) {
-            Object value = hashMap.get(key);
-            if (value != null) {
-                return String.valueOf(value);
-            } else {
-                return ""; // Return empty string if the value is null
+
+    };
+    private String getStringValue(HashMap<String, Object> hashMap, String key) {
+        Object value = hashMap.get(key);
+        if (value != null) {
+            return String.valueOf(value);
+        } else {
+            return ""; // Return empty string if the value is null
+        }
+    }
+    public void setMatrix(){
+        String values = node;
+        String[] splitValues = values.split(",");
+
+        int matrixSize = Integer.parseInt(nodeNum); // Size of the matrix
+        int[][] matrix = new int[matrixSize][matrixSize];
+
+        // Convert the split values to integers and populate the matrix
+        int index = 0;
+        for (int i = 0; i < matrixSize; i++) {
+            for (int j = 0; j < matrixSize; j++) {
+                matrix[i][j] = Integer.parseInt(splitValues[index]);
+                index++;
             }
+        }
+
+        // Log the resulting matrix
+        for (int i = 0; i < matrixSize; i++) {
+            StringBuilder rowBuilder = new StringBuilder();
+            for (int j = 0; j < matrixSize; j++) {
+                rowBuilder.append(matrix[i][j]).append(" ");
+            }
+            Log.d("Matrix", rowBuilder.toString());
+        }
+        int startNode = 0;
+        int endNode = 4;
+
+        dijkstra(matrix, startNode, endNode);
+    }
+    ValueEventListener postListener1 = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+            HashMap<String, Object> hashMap = (HashMap<String, Object>) snapshot.getValue();
+
+            buildingName = getStringValue(hashMap, "buildingName");
+            floorNum = getStringValue(hashMap, "floorNum");
+
+            // Output or perform desired operations with the extracted values
+            Log.d("Firebase", "buildingName: " + buildingName);
+            Log.d("Firebase", "floorNum: " + buildingName);
+
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
+            Log.w("loadPost:onCancelled", error.toException());
         }
     };
 
+    public String getBuildingName() {
+        return buildingName;
+    }
+
+    public String getFloorNum() {
+        return floorNum;
+    }
 
     public static void dijkstra(int[][] graph, int startNode, int endNode) {
         int numNodes = graph.length;
@@ -171,4 +204,20 @@ public class FindPath {
     }
 
     public void setStartNode(int x, int y){this.startX = x; this.startY = y;};
+
+    public String getNodeNum() {
+        return nodeNum;
+    }
+
+    public String getX() {
+        return x;
+    }
+
+    public String getY() {
+        return y;
+    }
+
+    public String getNode() {
+        return node;
+    }
 }

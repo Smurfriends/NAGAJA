@@ -3,10 +3,12 @@ package com.gachon.nagaja;
 public class ListItem {
     private String name;
     private String address;
+    private String imageName;
 
-    ListItem(String name, String address){
+    ListItem(String name, String address,String imageName){
         this.name = name;
         this.address = address;
+        this.imageName = imageName;
     }
 
     public String getName() {
