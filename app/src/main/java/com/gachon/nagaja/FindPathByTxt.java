@@ -17,8 +17,8 @@ public class FindPathByTxt extends FindPath {
     String id;
     String node;
 
-    public FindPathByTxt(String buildingName, String floorNum, String nodeNum, String x, String y, String id, String node) {
-        super(buildingName);
+    public FindPathByTxt(String bname, String buildingName, String floorNum, String nodeNum, String x, String y, String id, String node) {
+        super(bname);
         this.node = node;
         this.nodeNum = nodeNum;
         this.id = id;

@@ -10,6 +10,7 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -23,11 +24,16 @@ public class LoadingActivity extends AppCompatActivity {
         String fileContent = "This is a sample bookmark list.";
 
         try {
-            // 내부 저장소에 파일 생성
-            FileOutputStream fos = openFileOutput(fileName, Context.MODE_PRIVATE);
-            fos.write(fileContent.getBytes());
-            fos.close();
-            Log.d("LoadingActivity", "bookmarklist.txt 파일이 생성되었습니다.");
+            File file = new File(getFilesDir(), fileName);
+            if (file.exists()) {
+                // File doesn't exist, create it
+                FileOutputStream fos = openFileOutput(fileName, Context.MODE_PRIVATE);
+                fos.write(fileContent.getBytes());
+                fos.close();
+                Log.d("LoadingActivity", "bookmarklist.txt 파일이 생성되었습니다.");
+            } else {
+                Log.d("LoadingActivity", "bookmarklist.txt 파일이 이미 존재합니다.");
+            }
         } catch (IOException e) {
             e.printStackTrace();
             Log.e("LoadingActivity", "bookmarklist.txt 파일 생성 중 오류가 발생했습니다.");

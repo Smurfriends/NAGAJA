@@ -58,8 +58,9 @@ public class ImageFragment extends Fragment  {
     Button downloadButton;
 
     int check;
-    int fireId;
+    int fileId;
     Bitmap bitmap = null;
+    String bname;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -77,20 +78,20 @@ public class ImageFragment extends Fragment  {
         FirebaseStorage storage = FirebaseStorage.getInstance("gs://nagaja-3bb34.appspot.com");
         StorageReference storageRef = storage.getReference();
 
-        String bName = "경기도 어쩌구 수정구 저쩌구";
+        bname = "경기도 어쩌구 수정구 저쩌구";
         //파일명 만들기
 
         //findPath 선언 이거 해야 URL등 firebase에서 값 읽어옴
-        FindPath findPath = new FindPath(bName);
+        FindPath findPath = new FindPath(bname);
         //URL 저장
 
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                fireId = Integer.parseInt(findPath.getId());
+                fileId = Integer.parseInt(findPath.getId());
                 // 딜레이 후 실행될 코드 작성
-                storageRef.child("image" + fireId + ".png").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                storageRef.child("image" + fileId + ".png").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
 
@@ -155,7 +156,7 @@ public class ImageFragment extends Fragment  {
                     }
                 });
             }
-        }, 1000);
+        }, 2000);
 
         File fileDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES + "/map_img");
 
@@ -193,7 +194,7 @@ public class ImageFragment extends Fragment  {
                 if (check == 0) {
                     Toast.makeText(getActivity(), "ImageFail", Toast.LENGTH_SHORT).show();
                 } else {
-                    String filename = "image" + fireId+".png";
+                    String filename = "image" + fileId+".png";
                     File file = new File(getActivity().getFilesDir(), filename);
                     FileOutputStream fos = null;
                     try {
@@ -205,7 +206,7 @@ public class ImageFragment extends Fragment  {
                         throw new RuntimeException(e);
                     }
 
-                    StorageReference downLoadRef = storageRef.child("image" + fireId + ".png");
+                    StorageReference downLoadRef = storageRef.child("image" + fileId + ".png");
 
                     downLoadRef.getFile(file).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                         @Override
@@ -213,16 +214,17 @@ public class ImageFragment extends Fragment  {
                             Log.d("onSuccess", file.getPath());
                             Toast.makeText(getActivity(), "Download success", Toast.LENGTH_SHORT).show();
 
+                            String bname = findPath.getName();
                             String buildingName = findPath.getBuildingName();
                             String floorNum = findPath.getFloorNum();
+                            String id = findPath.getId();
                             String nodeNum = findPath.getNodeNum();
                             String x = findPath.getX();
                             String y = findPath.getY();
-                            String id = findPath.getId();
                             String node = findPath.getNode();
 
                             // 내부 저장소의 bookmarklist.txt 파일 업데이트
-                            updateBookmarkList(buildingName, floorNum, nodeNum, x, y, id, node);
+                            updateBookmarkList(bname,buildingName, floorNum, nodeNum, x, y, id, node);
 
                         }
                     }).addOnFailureListener(new OnFailureListener() {
@@ -237,7 +239,7 @@ public class ImageFragment extends Fragment  {
         return rootView;
     }
 
-    private void updateBookmarkList(String buildingName, String floorNum,String nodeNum,String x, String y, String id, String node) {
+    private void updateBookmarkList(String bname,String buildingName, String floorNum,String nodeNum,String x, String y, String id, String node) {
         String fileName = "bookmarklist.txt";
 
         try {
@@ -254,6 +256,7 @@ public class ImageFragment extends Fragment  {
 
             // 기존 내용에 추가 정보 붙이기
             content.append("?\n");
+            content.append("name: ").append(bname).append("\n");
             content.append("buildingName: ").append(buildingName).append("\n");
             content.append("floorNum: ").append(floorNum).append("\n");
             content.append("ImgURL: ").append(id).append("\n");

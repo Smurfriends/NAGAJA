@@ -36,7 +36,13 @@ public class FindPath {
     private String buildingName;
     private String floorNum;
 
+    private String name;
+
     public FindPath(String name){//like mains
+        this.name = name;
+        setData();
+    }
+    private void setData(){
         database=FirebaseDatabase.getInstance().getReference();
         database.child("map").child(name).addValueEventListener(postListener);
         database.child("building").child(name).addValueEventListener(postListener1);
@@ -197,6 +203,10 @@ public class FindPath {
 
             Log.d(tag, pathBuilder.toString());
         }
+    }
+
+    public String getName() {
+        return name;
     }
 
     public String getId() {

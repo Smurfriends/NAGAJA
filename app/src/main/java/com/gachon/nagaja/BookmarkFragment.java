@@ -25,7 +25,11 @@ public class BookmarkFragment extends Fragment {
     // Global variables to store the selected bookmark information
     private String selectedBuildingName;
     private String selectedFloorNum;
-    private String fireId;
+    private String fileId;
+    private String nodeNum;
+    private String x;
+    private String y;
+    private String node;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -35,8 +39,6 @@ public class BookmarkFragment extends Fragment {
 
         adapter = new ListItemAdapter();
 
-        ListItem item1 = new ListItem("buildingName", "floorNum", "imgUrl");
-        adapter.addItem(item1);
         readBookmarkList();
         listView.setAdapter(adapter);
 
@@ -47,13 +49,10 @@ public class BookmarkFragment extends Fragment {
                 // Get the clicked ListItem
                 ListItem clickedItem = (ListItem) adapter.getItem(position);
 
-                // Update the selected bookmark information
-                selectedBuildingName = clickedItem.getBuildingName();
-                selectedFloorNum = clickedItem.getFloorNum();
-                fireId = clickedItem.getId();
 
                 // Create a new instance of BookmarkInnerFragment
-                BookmarkInnerFragment innerFragment = BookmarkInnerFragment.newInstance(selectedBuildingName, selectedFloorNum, fireId);
+                BookmarkInnerFragment innerFragment = BookmarkInnerFragment.newInstance(clickedItem);
+                innerFragment.setPosition(position);
 
                 // Navigate to BookmarkInnerFragment
                 FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
@@ -87,12 +86,18 @@ public class BookmarkFragment extends Fragment {
                 // Check if the line indicates the start of a new item
                 if (line.equals("?")) {
                     // Read the item details 수정해야함 그냥 위에서 3개 읽어버림 멍청함
+                    String bname = reader.readLine().split(": ")[1];
                     String buildingName = reader.readLine().split(": ")[1];
                     String floorNum = reader.readLine().split(": ")[1];
                     String fireId = reader.readLine().split(": ")[1];
+                    String nodeNum = reader.readLine().split(": ")[1];
+                    String x = reader.readLine().split(": ")[1];
+                    String y = reader.readLine().split(": ")[1];
+                    String node = reader.readLine().split(": ")[1];
+
                     Log.d("BookmarkFragment", fireId);
                     // Create a new ListItem and add it to the adapter
-                    ListItem item = new ListItem(buildingName, floorNum, fireId);
+                    ListItem item = new ListItem(bname,buildingName, floorNum, fireId,nodeNum,x,y,node);
                     adapter.addItem(item);
                 }
             }
