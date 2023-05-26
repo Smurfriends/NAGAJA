@@ -5,11 +5,11 @@
     android:layout_height="match_parent"
     tools:context=".ImageFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <ImageView
-        android:id="@+id/canvasView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    <FrameLayout
+        android:layout_width="360dp"
+        android:layout_height="640dp"
+        android:id="@+id/frameLayout">
+    </FrameLayout>
 
     <Button
         android:id="@+id/downloadButton"
