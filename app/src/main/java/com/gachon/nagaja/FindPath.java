@@ -24,7 +24,7 @@ public class FindPath {
     public DatabaseReference database;
     private int startX;
     private int startY;
-    private static final int INFINITY = Integer.MAX_VALUE;
+    private static final double INFINITY = Double.POSITIVE_INFINITY;
     private String node;
     private String idEndNode;
     private String nodeNum;
@@ -38,12 +38,13 @@ public class FindPath {
 
     private String name;
 
-    public FindPath(String name){//like mains
+    public FindPath(String name) {//like mains
         this.name = name;
         setData();
     }
-    private void setData(){
-        database=FirebaseDatabase.getInstance().getReference();
+
+    private void setData() {
+        database = FirebaseDatabase.getInstance().getReference();
         database.child("map").child(name).addValueEventListener(postListener);
         database.child("building").child(name).addValueEventListener(postListener1);
     }
@@ -82,6 +83,7 @@ public class FindPath {
         // Helper method to safely retrieve a String value from HashMap
 
     };
+
     private String getStringValue(HashMap<String, Object> hashMap, String key) {
         Object value = hashMap.get(key);
         if (value != null) {
@@ -90,18 +92,23 @@ public class FindPath {
             return ""; // Return empty string if the value is null
         }
     }
-    public void setMatrix(){
+
+    public void setMatrix() {
         String values = node;
         String[] splitValues = values.split(",");
 
         int matrixSize = Integer.parseInt(nodeNum); // Size of the matrix
-        int[][] matrix = new int[matrixSize][matrixSize];
+        double[][] matrix = new double[matrixSize][matrixSize];
 
-        // Convert the split values to integers and populate the matrix
+        // Convert the split values to doubles and populate the matrix
         int index = 0;
         for (int i = 0; i < matrixSize; i++) {
             for (int j = 0; j < matrixSize; j++) {
-                matrix[i][j] = Integer.parseInt(splitValues[index]);
+                if (splitValues[index].equals("100000")) {
+                    matrix[i][j] = Double.POSITIVE_INFINITY; // or any other appropriate value
+                } else {
+                    matrix[i][j] = Double.parseDouble(splitValues[index]);
+                }
                 index++;
             }
         }
@@ -114,11 +121,13 @@ public class FindPath {
             }
             Log.d("Matrix", rowBuilder.toString());
         }
+
         int startNode = 0;
         int endNode = 4;
 
         dijkstra(matrix, startNode, endNode);
     }
+
     ValueEventListener postListener1 = new ValueEventListener() {
         @Override
         public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -129,7 +138,7 @@ public class FindPath {
 
             // Output or perform desired operations with the extracted values
             Log.d("Firebase", "buildingName: " + buildingName);
-            Log.d("Firebase", "floorNum: " + buildingName);
+            Log.d("Firebase", "floorNum: " + floorNum);
 
         }
 
@@ -147,11 +156,11 @@ public class FindPath {
         return floorNum;
     }
 
-    public static void dijkstra(int[][] graph, int startNode, int endNode) {
+    public static void dijkstra(double[][] graph, int startNode, int endNode) {
         int numNodes = graph.length;
         boolean[] visited = new boolean[numNodes];
-        int[] distance = new int[numNodes];
-        int[] previous = new int[numNodes];
+        double[] distance = new double[numNodes];
+        double[] previous = new double[numNodes];
         Arrays.fill(distance, INFINITY);
         Arrays.fill(previous, -1);
         distance[startNode] = 0;
@@ -171,8 +180,9 @@ public class FindPath {
 
         logShortestPath(startNode, endNode, previous);
     }
-    private static int getMinDistanceNode(int[] distance, boolean[] visited) {
-        int minDistance = INFINITY;
+
+    private static int getMinDistanceNode(double[] distance, boolean[] visited) {
+        double minDistance = INFINITY;
         int minDistanceNode = -1;
         int numNodes = distance.length;
 
@@ -185,7 +195,8 @@ public class FindPath {
 
         return minDistanceNode;
     }
-    private static void logShortestPath(int startNode, int endNode, int[] previous) {
+
+    private static void logShortestPath(int startNode, int endNode, double[] previous) {
         String tag = "Dijkstra";
         Log.d(tag, "Shortest path from Node " + startNode + " to Node " + endNode + ":");
 
@@ -197,22 +208,19 @@ public class FindPath {
 
             int node = endNode;
             while (node != startNode) {
-                node = previous[node];
+                node = (int) previous[node];
                 pathBuilder.insert(0, node + " -> ");
             }
 
             Log.d(tag, pathBuilder.toString());
         }
     }
-
     public String getName() {
         return name;
     }
-
     public String getId() {
         return id;
     }
-
     public void setStartNode(int x, int y){this.startX = x; this.startY = y;};
 
     public String getNodeNum() {

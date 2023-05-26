@@ -168,7 +168,7 @@ public class ImageFragment extends Fragment  {
         canvasView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-
+                findPath.setMatrix();
                 view.onTouchEvent(motionEvent);
 
 
