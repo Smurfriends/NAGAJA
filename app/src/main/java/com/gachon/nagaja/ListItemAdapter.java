@@ -43,8 +43,8 @@ public class ListItemAdapter extends BaseAdapter {
         TextView nameText = convertView.findViewById(R.id.name);
         TextView addressText = convertView.findViewById(R.id.address);
 
-        nameText.setText(listItem.getName());
-        addressText.setText(listItem.getAddress());
+        nameText.setText(listItem.getBuildingName());
+        addressText.setText(listItem.getFloorNum());
 
         return convertView;
     }

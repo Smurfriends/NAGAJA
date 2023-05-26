@@ -1,29 +1,26 @@
 package com.gachon.nagaja;
 
 public class ListItem {
-    private String name;
-    private String address;
-    private String imageName;
+    private String BuildingName;
+    private String floorNum;
+    private String id;
 
-    ListItem(String name, String address,String imageName){
-        this.name = name;
-        this.address = address;
-        this.imageName = imageName;
+    ListItem(String BuildingName, String floorNum, String id) {
+        this.BuildingName = BuildingName;
+        this.floorNum = floorNum;
+        this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getBuildingName() {
+        return BuildingName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getFloorNum() {
+        return floorNum;
     }
 
-    public String getAddress() {
-        return address;
+    public String getId() {
+        return id;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
 }

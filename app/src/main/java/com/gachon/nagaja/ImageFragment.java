@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
@@ -29,6 +30,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.android.gms.auth.api.signin.internal.Storage;
@@ -49,7 +51,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class ImageFragment extends Fragment  {
-
+    ImageView imageView;
     FrameLayout frameLayout;
     CanvasView canvasView;
     FindPath findPath;
@@ -57,6 +59,7 @@ public class ImageFragment extends Fragment  {
 
     int check;
     int fireId;
+    Bitmap bitmap = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -64,7 +67,6 @@ public class ImageFragment extends Fragment  {
         View rootView = inflater.inflate(R.layout.fragment_image, container, false);
         frameLayout = rootView.findViewById(R.id.frameLayout);
         downloadButton = rootView.findViewById(R.id.downloadButton);
-
         check = 0;
 
         // add canvas view
@@ -91,6 +93,7 @@ public class ImageFragment extends Fragment  {
                 storageRef.child("image" + fireId + ".png").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
+
                         Glide.with(getActivity())
                                 .asBitmap()
                                 .load(uri)
@@ -98,6 +101,8 @@ public class ImageFragment extends Fragment  {
                                           @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
                                           @Override
                                           public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+                                              bitmap = resource;
+                                              check = 1;
 
                                               // 긴 쪽이 세로로 보이도록 회전
                                               if (resource.getWidth() > resource.getHeight()) {
@@ -150,7 +155,7 @@ public class ImageFragment extends Fragment  {
                     }
                 });
             }
-            }, 1000);
+        }, 1000);
 
         File fileDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES + "/map_img");
 
@@ -185,19 +190,28 @@ public class ImageFragment extends Fragment  {
         downloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(check == 0){
-                    Toast.makeText(getActivity(),"ImageFail",Toast.LENGTH_SHORT).show();
-                }
-                else{
-                    String filename = "print_" + bName+".jpg";
-                    File downloadFile = new File(fileDir,filename);
-                    StorageReference downLoadRef = storageRef.child("image"+fireId+".png");
+                if (check == 0) {
+                    Toast.makeText(getActivity(), "ImageFail", Toast.LENGTH_SHORT).show();
+                } else {
+                    String filename = "image" + fireId+".png";
+                    File file = new File(getActivity().getFilesDir(), filename);
+                    FileOutputStream fos = null;
+                    try {
+                        fos = new FileOutputStream(file);
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                        fos.flush();
+                        fos.close();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
 
-                    downLoadRef.getFile(downloadFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                    StorageReference downLoadRef = storageRef.child("image" + fireId + ".png");
+
+                    downLoadRef.getFile(file).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                            Log.d("onSuccess",downloadFile.getPath());
-                            Toast.makeText(getActivity(),"Download success",Toast.LENGTH_SHORT).show();
+                            Log.d("onSuccess", file.getPath());
+                            Toast.makeText(getActivity(), "Download success", Toast.LENGTH_SHORT).show();
 
                             String buildingName = findPath.getBuildingName();
                             String floorNum = findPath.getFloorNum();
@@ -208,13 +222,13 @@ public class ImageFragment extends Fragment  {
                             String node = findPath.getNode();
 
                             // 내부 저장소의 bookmarklist.txt 파일 업데이트
-                            updateBookmarkList(buildingName, floorNum,nodeNum,x,y,id,node);
+                            updateBookmarkList(buildingName, floorNum, nodeNum, x, y, id, node);
 
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Log.d("onFailure",downloadFile.getPath());
+                            Log.d("onFailure", file.getPath());
                         }
                     });
                 }
@@ -242,10 +256,10 @@ public class ImageFragment extends Fragment  {
             content.append("?\n");
             content.append("buildingName: ").append(buildingName).append("\n");
             content.append("floorNum: ").append(floorNum).append("\n");
+            content.append("ImgURL: ").append(id).append("\n");
             content.append("nodeNum: ").append(nodeNum).append("\n");
             content.append("x: ").append(x).append("\n");
             content.append("y: ").append(y).append("\n");
-            content.append("ImgURL: ").append(id).append("\n");
             content.append("node: ").append(node).append("\n");
 
             // 내부 저장소에 업데이트된 내용 저장

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipToOutline="true"
-    tools:context=".Bookmark_innerPage">
+    tools:context=".BookmarkInnerFragment">
 
     <TextView
         android:id="@+id/bookmark"
