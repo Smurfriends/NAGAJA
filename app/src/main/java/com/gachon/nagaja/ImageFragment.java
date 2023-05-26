@@ -1,24 +1,36 @@
 package com.gachon.nagaja;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.android.gms.auth.api.signin.internal.Storage;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -38,25 +50,28 @@ import java.util.TimerTask;
 
 public class ImageFragment extends Fragment  {
 
-    ImageView imageView;
+    FrameLayout frameLayout;
+    CanvasView canvasView;
     FindPath findPath;
-
     Button downloadButton;
 
     int check;
     int fireId;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_image, container, false);
-        imageView = rootView.findViewById(R.id.canvasView);
+        frameLayout = rootView.findViewById(R.id.frameLayout);
         downloadButton = rootView.findViewById(R.id.downloadButton);
 
         check = 0;
 
-        //터치시 시작 좌표 받아오는 코드 추가해야함
+        // add canvas view
+        canvasView = new CanvasView(getActivity().getApplicationContext());
+        frameLayout.addView(canvasView);
 
-//        Storage 객체 만들기
+        // Storage 객체 만들기
         FirebaseStorage storage = FirebaseStorage.getInstance("gs://nagaja-3bb34.appspot.com");
         StorageReference storageRef = storage.getReference();
 
@@ -77,8 +92,55 @@ public class ImageFragment extends Fragment  {
                     @Override
                     public void onSuccess(Uri uri) {
                         Glide.with(getActivity())
+                                .asBitmap()
                                 .load(uri)
-                                .into(imageView);
+                                .into(new SimpleTarget<Bitmap>() {
+                                          @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
+                                          @Override
+                                          public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+
+                                              // 긴 쪽이 세로로 보이도록 회전
+                                              if (resource.getWidth() > resource.getHeight()) {
+                                                  Matrix matrix = new Matrix();
+                                                  matrix.postRotate(90);
+                                                  resource = Bitmap.createBitmap(resource, 0, 0,
+                                                          resource.getWidth(), resource.getHeight(), matrix, true);
+
+                                              }
+
+                                              // 360dp*640dp 화면에 맞춰 scale 조정
+                                              float widthScale = resource.getWidth() / 360f;  // 아악 float 아아ㅏ아악
+                                              float heightScale = resource.getHeight() / 640f;
+
+                                              Matrix matrix = new Matrix();
+                                              if (widthScale > heightScale) {
+                                                  matrix.preScale(1 / widthScale, 1 / widthScale);
+                                              } else {
+                                                  matrix.preScale(1 / heightScale, 1 / heightScale);
+                                              }
+                                              resource = Bitmap.createBitmap(resource, 0, 0,
+                                                      resource.getWidth(), resource.getHeight(), matrix, true);
+
+                                              Log.d("Resource", "width: " + resource.getWidth() + ", height: " + resource.getHeight());
+
+                                              // 360dp*640dp 화면에서 딱 맞지 않는 부분은 투명으로 채우기
+                                              Bitmap result = Bitmap.createBitmap(360, 640, Bitmap.Config.ARGB_8888); // 기본이 투명
+                                              Canvas canvas = new Canvas(result);
+                                              Paint paint = new Paint();
+
+                                              if (widthScale > heightScale) {
+                                                  canvas.drawBitmap(resource, 0, (640 - resource.getHeight()) / 2f, paint);
+                                              } else {
+                                                  canvas.drawBitmap(resource, (360 - resource.getWidth()) / 2f, 0, paint);
+                                              }
+
+                                              // 비트맵을 drawable로 변환
+                                              Drawable drawable = new BitmapDrawable(result);
+
+                                              // 캔버스뷰에 background로 세팅
+                                              canvasView.setBackground(drawable); // background로 넣어야지만 drawPath 가능
+                                          }
+                                      });
                         check = 1;
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -88,13 +150,38 @@ public class ImageFragment extends Fragment  {
                     }
                 });
             }
-        }, 1000);
+            }, 1000);
 
         File fileDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES + "/map_img");
 
         if(!fileDir.isDirectory()){
             fileDir.mkdir();
         }
+
+        // 터치 시 좌표 받아 오기
+        canvasView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+
+                view.onTouchEvent(motionEvent);
+
+
+                float[] point = new float[] {motionEvent.getX(), motionEvent.getY()};
+                Log.d("Touch", "변환 전: ("+point[0] + " , " + point[1] + ")");
+
+                // match with image
+                float density = getResources().getDisplayMetrics().density;
+                point[0] /= density;
+                point[1] /= density;
+
+                if (motionEvent.getAction() ==  MotionEvent.ACTION_DOWN)
+                {
+                    Log.d("Point", "변환 후: ("+point[0] + " , " + point[1] + ")");
+                }
+                return false;
+            }
+        });
+
         downloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -131,7 +218,6 @@ public class ImageFragment extends Fragment  {
                         }
                     });
                 }
-
             }
         });
         return rootView;
