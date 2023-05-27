@@ -2,6 +2,7 @@ package com.gachon.nagaja;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
@@ -34,9 +35,11 @@ public class Map extends AppCompatActivity {
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 // search activity로부터의 결과 값이 이곳으로 전달 된다.. (setResult에 의해)
+
                 if (result.getResultCode() == RESULT_OK){
                     if (result.getData() != null){
                         String data = result.getData().getStringExtra("data");
+                        Log.d("Result: ", data);
                         mEtAddress.setText(data);
                     }
                 }

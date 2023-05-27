@@ -29,7 +29,7 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-//                webView.loadUrl("javascript:sample2_execDaumPostCode();");
+                webView.loadUrl("javascript:sample2_execDaumPostCode();");
             }
         });
 
@@ -41,10 +41,13 @@ public class SearchActivity extends AppCompatActivity {
 
     private class BridgeInterface {
         @JavascriptInterface
+        @SuppressWarnings("unused")
         public void processDATA(String data){
+
             // 주소 검색 api의 결과값이 브릿지 통로를 통해 전달받는다. (자바스크립트로부터)
             Intent intent = new Intent();
 
+            Log.d("processDATA Result: ", data);
             intent.putExtra("data", data);
             setResult(RESULT_OK, intent);
             finish();
