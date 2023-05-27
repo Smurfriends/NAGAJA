@@ -17,13 +17,7 @@
         android:title="Home"
         app:showAsAction="always"
         />
-
-    <item
-        android:id="@+id/menu_upload"
-        android:enabled="true"
-        android:icon="@drawable/baseline_file_upload_24"
-        android:title="Upload"
-        app:showAsAction="always"/>
+    
 
     <item
         android:id="@+id/menu_store"
