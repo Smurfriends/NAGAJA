@@ -1,30 +1,194 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".UploadFragment">
+    android:orientation="vertical">
 
-    <!-- TODO: Update blank fragment layout -->
-    <ImageView
-        android:id="@+id/imageView"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="480dp"
-        android:scaleType="centerInside"
-        android:src="@drawable/ic_launcher_foreground" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="448dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_android_black_24dp"
+                android:background="@color/black"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp"
+                >
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/orange"
+                    android:text="Upload map data" />
+
+                <!-- TODO: 주소 입력: map api에서 검색 후 가져오는 방식으로 바꿀 예정 -->
+                <EditText
+                    android:id="@+id/address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:hint="Address"
+                    android:imeOptions="actionNext"
+                    android:theme="@style/editText"
+                    />
+
+                <EditText
+                    android:id="@+id/buildingName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:hint="Building Name"
+                    android:imeOptions="actionNext"
+                    android:theme="@style/editText"
+                    />
+
+                <!-- 전체 층수 및 층 이름 정보 시작 -->
+                <!-- TODO: UI & UX 변경 예정 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_marginTop="25dp"
+                    >
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/orange"
+                        android:text="Floor Info of the building" />
+
+                    <!-- 피난 안내도의 층을, 위에 입력한 전체 층 범위 내에서 입력 받기 -->
+                    <EditText
+                        android:id="@+id/floorOfMap"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:hint="the floor of the map"
+                        android:imeOptions="actionNext"
+                        android:theme="@style/editText"
+                        />
+
+                    <!-- 지하층의 수 -->
+                    <EditText
+                        android:id="@+id/floorUndergroundNum"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:hint="the number of floors underground"
+                        android:imeOptions="actionNext"
+                        android:theme="@style/editText"
+                        />
+
+                    <!-- 지상층의 수 -->
+                    <EditText
+                        android:id="@+id/floorUpgroundNum"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:hint="the number of ground floors"
+                        android:imeOptions="actionNext"
+                        android:theme="@style/editText"
+                        />
+
+                    <!-- TODO: "외부 출입로"가 있는 층을, 위에 입력한 전체 층 범위 내에서 입력 받기 -->
+                    <!-- 일단 숫자 하나만 -->
+                    <EditText
+                        android:id="@+id/floorOutsideEntrance"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:hint="floor that has outside entrance"
+                        android:imeOptions="actionDone"
+                        />
+
+                </LinearLayout>
+
+                <!-- 전체 층수 및 층 이름 정보 끝 -->
+
+                <!--
+                여기서 다음 페이지(액티비티)로 분리하는 게 좋을 듯
+                매 층 업로드할 때마다 전체 층 정보를 입력하지 않도록
+                같은 건물이면 전체 층 정보는 자동으로 불러와서 확인만 하게 하고
+                "+"버튼으로 한번에 여러 층 등록 가능하게 하기
+                -->
+            </LinearLayout>
+
+
+            <!-- 업로드할 피난 안내도의 이미지 및 층 정보 끝  -->
+
+
+            <!--
+            이후 피난 안내도 이미지에 상호작용하여
+            외부출입구, 계단, 엘리베이터 등의 위치 확인 기능 생각해보기
+            -->
+
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="5dp"
+        android:padding="2dp"
+        >
+        <!-- 업로드할 피난 안내도의 이미지 및 층 정보 시작  -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/cameraBtn"
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:layout_weight="1"
+            android:layout_marginRight="2dp"
+            android:paddingLeft="43dp"
+            android:drawablePadding="5dp"
+            android:gravity="center_vertical"
+            android:drawableStart="@drawable/baseline_photo_camera_24"
+            android:background="@drawable/button_style"
+            android:textSize="20dp"
+            android:text="Camera" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/selectImgBtn"
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:layout_weight="1"
+            android:paddingLeft="53dp"
+            android:drawablePadding="5dp"
+            android:gravity="center_vertical"
+            android:drawableStart="@drawable/baseline_image_24"
+            android:background="@drawable/button_style"
+            android:textSize="20dp"
+            android:text="IMAGE" />
+
+
+    </LinearLayout>
 
     <Button
-        android:id="@+id/select_image_button"
-        android:layout_width="201dp"
-        android:layout_height="251dp"
-        android:layout_below="@+id/imageView"
-        android:text="Select Image" />
+        android:id="@+id/submitBtn"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
 
-    <Button
-        android:id="@+id/pic_camera"
-        android:layout_width="209dp"
-        android:layout_height="251dp"
-        android:layout_below="@+id/imageView"
-        android:layout_alignParentRight="true"
-        android:text="Camera" />
-</RelativeLayout>
+        android:textSize="30dp"
+        android:background="@color/orange"
+        android:textColor="@color/white"
+        android:text="Submit data" />
+
+
+</LinearLayout>
