@@ -1,45 +1,54 @@
 package com.gachon.nagaja;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.DownloadListener;
-import android.webkit.WebChromeClient;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import android.view.LayoutInflater;
+import android.widget.EditText;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
 
 public class MapFragment extends Fragment {
-    private String TAG = MapFragment.class.getSimpleName();
-
-    private WebView webView = null;
+    private EditText mEtAddress;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_map, container, false);
-        webView = rootView.findViewById(R.id.webview);
+        View rootView = inflater.inflate(R.layout.activity_map, container, false);
 
-        webView.setWebViewClient(new WebViewClient());  // 새 창 띄우기 않기
-        webView.setWebChromeClient(new WebChromeClient());
-
-        webView.getSettings().setLoadWithOverviewMode(true);  // WebView 화면크기에 맞추도록 설정 - setUseWideViewPort 와 같이 써야함
-        webView.getSettings().setUseWideViewPort(true);  // wide viewport 설정 - setLoadWithOverviewMode 와 같이 써야함
-
-        webView.getSettings().setSupportZoom(false);  // 줌 설정 여부
-        webView.getSettings().setBuiltInZoomControls(false);  // 줌 확대/축소 버튼 여부
-
-        webView.getSettings().setJavaScriptEnabled(true); // 자바스크립트 사용여부
-//        webview.addJavascriptInterface(new AndroidBridge(), "android");
-        webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true); // javascript가 window.open()을 사용할 수 있도록 설정
-        webView.getSettings().setSupportMultipleWindows(true); // 멀티 윈도우 사용 여부
-
-        webView.getSettings().setDomStorageEnabled(true);  // 로컬 스토리지 (localStorage) 사용여부
-
-        webView.loadUrl("http://nagaja-3bb34.web.app");
+        mEtAddress = rootView.findViewById(R.id.et_address);
+        // block touch
+        mEtAddress.setFocusable(false);
+        mEtAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 주소 검색 웹 뷰 화면으로 이동
+                Intent intent = new Intent(getActivity(), SearchActivity.class);
+                getSearchResult.launch(intent);
+            }
+        });
 
         return rootView;
+
     }
+
+    private final ActivityResultLauncher<Intent> getSearchResult = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                // search activity로부터의 결과 값이 이곳으로 전달 된다.. (setResult에 의해)
+
+                if (result.getResultCode() == getActivity().RESULT_OK) {
+                    if (result.getData() != null) {
+                        String data = result.getData().getStringExtra("data");
+                        Log.d("Result: ", data);
+                        mEtAddress.setText(data);
+                    }
+                }
+            }
+    );
 }
+
