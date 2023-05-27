@@ -36,17 +36,17 @@ public class FindPath {
     private String address;
     private String floorNum;
 
-    private String name;
+    private String buildingName;
 
-    public FindPath(String name) {//like mains
-        this.name = name;
+    public FindPath(String buildingName) {//like mains
+        this.buildingName = buildingName;
         setData();
     }
 
     private void setData() {
         database = FirebaseDatabase.getInstance().getReference();
-        database.child("map").child(name).addValueEventListener(postListener);
-        database.child("building").child(name).addValueEventListener(postListener1);
+        database.child("map").child(buildingName).addValueEventListener(postListener);
+        database.child("building").child(buildingName).addValueEventListener(postListener1);
     }
 
     ValueEventListener postListener = new ValueEventListener() {
@@ -98,34 +98,40 @@ public class FindPath {
         String[] splitValues = values.split(",");
 
         int matrixSize = Integer.parseInt(nodeNum); // Size of the matrix
-        double[][] matrix = new double[matrixSize][matrixSize];
+        if (matrixSize == -1) {
+            // findPath의 nodeNum 값이 -1인 경우 아무런 반응이 없도록 처리
+            Log.e("matrix","No node info");
+        }else {
+            double[][] matrix = new double[matrixSize][matrixSize];
 
-        // Convert the split values to doubles and populate the matrix
-        int index = 0;
-        for (int i = 0; i < matrixSize; i++) {
-            for (int j = 0; j < matrixSize; j++) {
-                if (splitValues[index].equals("100000")) {
-                    matrix[i][j] = Double.POSITIVE_INFINITY; // or any other appropriate value
-                } else {
-                    matrix[i][j] = Double.parseDouble(splitValues[index]);
+            // Convert the split values to doubles and populate the matrix
+            int index = 0;
+            for (int i = 0; i < matrixSize; i++) {
+                for (int j = 0; j < matrixSize; j++) {
+                    if (splitValues[index].equals("100000")) {
+                        matrix[i][j] = Double.POSITIVE_INFINITY; // or any other appropriate value
+                    } else {
+                        matrix[i][j] = Double.parseDouble(splitValues[index]);
+                    }
+                    index++;
                 }
-                index++;
             }
+
+            // Log the resulting matrix
+            for (int i = 0; i < matrixSize; i++) {
+                StringBuilder rowBuilder = new StringBuilder();
+                for (int j = 0; j < matrixSize; j++) {
+                    rowBuilder.append(matrix[i][j]).append(" ");
+                }
+                Log.d("Matrix", rowBuilder.toString());
+            }
+
+            int startNode = 0;
+            int endNode = 4;
+
+            dijkstra(matrix, startNode, endNode);
         }
 
-        // Log the resulting matrix
-        for (int i = 0; i < matrixSize; i++) {
-            StringBuilder rowBuilder = new StringBuilder();
-            for (int j = 0; j < matrixSize; j++) {
-                rowBuilder.append(matrix[i][j]).append(" ");
-            }
-            Log.d("Matrix", rowBuilder.toString());
-        }
-
-        int startNode = 0;
-        int endNode = 4;
-
-        dijkstra(matrix, startNode, endNode);
     }
 
     ValueEventListener postListener1 = new ValueEventListener() {
@@ -148,8 +154,8 @@ public class FindPath {
         }
     };
 
-    public String getAddress() {
-        return address;
+    public String getBuildingName() {
+        return buildingName;
     }
 
     public String getFloorNum() {
@@ -214,9 +220,6 @@ public class FindPath {
 
             Log.d(tag, pathBuilder.toString());
         }
-    }
-    public String getName() {
-        return name;
     }
     public String getId() {
         return id;

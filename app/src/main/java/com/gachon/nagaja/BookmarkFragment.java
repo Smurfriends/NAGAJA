@@ -86,28 +86,77 @@ public class BookmarkFragment extends Fragment {
 
                 // Check if the line indicates the start of a new item
                 if (line.equals("?")) {
-                    // Read the item details 수정해야함 그냥 위에서 3개 읽어버림 멍청함
-                    String bname = reader.readLine().split(": ")[1];
-                    String buildingName = reader.readLine().split(": ")[1];
-                    String floorNum = reader.readLine().split(": ")[1];
-                    String fireId = reader.readLine().split(": ")[1];
-                    String nodeNum = reader.readLine().split(": ")[1];
-                    String x = reader.readLine().split(": ")[1];
-                    String y = reader.readLine().split(": ")[1];
-                    String node = reader.readLine().split(": ")[1];
+                    // Read the item details
+                    String buildingName = null;
+                    String address = null;
+                    String floorNum = null;
+                    String fileId = null;
+                    String nodeNum = null;
+                    String x = null;
+                    String y = null;
+                    String node = null;
 
-                    Log.d("BookmarkFragment", fireId);
+                    while ((line = reader.readLine()) != null) {
+                        if (line.startsWith("buildingName: ")) {
+                            String[] parts = line.split(": ");
+                            if (parts.length > 1) {
+                                buildingName = parts[1];
+                            }
+                        } else if (line.startsWith("address: ")) {
+                            String[] parts = line.split(": ");
+                            if (parts.length > 1) {
+                                address = parts[1];
+                            }
+                        } else if (line.startsWith("floorNum: ")) {
+                            String[] parts = line.split(": ");
+                            if (parts.length > 1) {
+                                floorNum = parts[1];
+                            }
+                        } else if (line.startsWith("fileId: ")) {
+                            String[] parts = line.split(": ");
+                            if (parts.length > 1) {
+                                fileId = parts[1];
+                            }
+                        } else if (line.startsWith("nodeNum: ")) {
+                            String[] parts = line.split(": ");
+                            if (parts.length > 1) {
+                                nodeNum = parts[1];
+                            }
+                        } else if (line.startsWith("x: ")) {
+                            String[] parts = line.split(": ");
+                            if (parts.length > 1) {
+                                x = parts[1];
+                            }
+                        } else if (line.startsWith("y: ")) {
+                            String[] parts = line.split(": ");
+                            if (parts.length > 1) {
+                                y = parts[1];
+                            }
+                        } else if (line.startsWith("node: ")) {
+                            String[] parts = line.split(": ");
+                            if (parts.length > 1) {
+                                node = parts[1];
+                            }
+                        } else if (line.equals("?")) {
+                            // End of item details
+                            break;
+                        }
+                    }
+
+                    Log.d("BookmarkFragment", fileId);
                     // Create a new ListItem and add it to the adapter
-                    ListItem item = new ListItem(bname,buildingName, floorNum, fireId,nodeNum,x,y,node);
+                    ListItem item = new ListItem(buildingName, address, floorNum, fileId, nodeNum, x, y, node);
                     adapter.addItem(item);
+                    // TODO: Add the item to the adapter or perform any desired operations
                 }
             }
 
-            reader.close();
+            fis.close();
         } catch (IOException e) {
             e.printStackTrace();
-            Log.e("BookmarkFragment", "bookmarklist.txt 파일 읽기 오류");
+            Log.e("BookmarkFragment", "Error reading bookmarklist.txt file");
         }
     }
+
 
 }

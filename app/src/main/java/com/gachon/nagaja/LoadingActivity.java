@@ -25,7 +25,7 @@ public class LoadingActivity extends AppCompatActivity {
 
         try {
             File file = new File(getFilesDir(), fileName);
-            if (file.exists()) {
+            if (!file.exists()) {
                 // File doesn't exist, create it
                 FileOutputStream fos = openFileOutput(fileName, Context.MODE_PRIVATE);
                 fos.write(fileContent.getBytes());

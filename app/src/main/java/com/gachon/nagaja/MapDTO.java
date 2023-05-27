@@ -13,7 +13,7 @@ public class MapDTO {
     public MapDTO(int fileId, String mapURL) {
         this.id = fileId;
         this.mapURL = mapURL;
-        nodeNum = "";
+        nodeNum = "-1";
         x = "";
         y = "";
         node = "";

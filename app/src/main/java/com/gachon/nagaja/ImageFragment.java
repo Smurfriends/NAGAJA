@@ -217,8 +217,8 @@ public class ImageFragment extends Fragment  {
                             Log.d("onSuccess", file.getPath());
                             Toast.makeText(getActivity(), "Download success", Toast.LENGTH_SHORT).show();
 
-                            String bname = findPath.getName();
-                            String buildingName = findPath.getAddress();
+                            String buildingName = findPath.getBuildingName();
+                            String address = findPath.getBuildingName();
                             String floorNum = findPath.getFloorNum();
                             String id = findPath.getId();
                             String nodeNum = findPath.getNodeNum();
@@ -227,7 +227,7 @@ public class ImageFragment extends Fragment  {
                             String node = findPath.getNode();
 
                             // 내부 저장소의 bookmarklist.txt 파일 업데이트
-                            updateBookmarkList(bname,buildingName, floorNum, nodeNum, x, y, id, node);
+                            updateBookmarkList(buildingName,address, floorNum, nodeNum, x, y, id, node);
 
                         }
                     }).addOnFailureListener(new OnFailureListener() {
@@ -242,7 +242,7 @@ public class ImageFragment extends Fragment  {
         return rootView;
     }
 
-    private void updateBookmarkList(String bname,String buildingName, String floorNum,String nodeNum,String x, String y, String id, String node) {
+    private void updateBookmarkList(String buildingName,String address, String floorNum,String nodeNum,String x, String y, String id, String node) {
         String fileName = "bookmarklist.txt";
 
         try {
@@ -259,10 +259,10 @@ public class ImageFragment extends Fragment  {
 
             // 기존 내용에 추가 정보 붙이기
             content.append("?\n");
-            content.append("name: ").append(bname).append("\n");
             content.append("buildingName: ").append(buildingName).append("\n");
+            content.append("address: ").append(address).append("\n");
             content.append("floorNum: ").append(floorNum).append("\n");
-            content.append("ImgURL: ").append(id).append("\n");
+            content.append("fileId: ").append(id).append("\n");
             content.append("nodeNum: ").append(nodeNum).append("\n");
             content.append("x: ").append(x).append("\n");
             content.append("y: ").append(y).append("\n");

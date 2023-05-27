@@ -143,55 +143,6 @@ public class UploadMapFragment extends Fragment {
         }
     }
 
-    //파이어베이스 이미지 업로드
-//    private void uploadToFirebase(Uri imgUri) {
-//        DatabaseReference databaseReference1 = FirebaseDatabase.getInstance().getReference().child("map");
-//        databaseReference1.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                if (dataSnapshot.exists()) {
-//                    fileId = 0;
-//                    for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
-//                        // Loop through each child node and increment count
-//                        fileId++;
-//                    }
-//                    // Use the count value as needed
-//                    Log.d("Data Count", String.valueOf(fileId));
-//                } else {
-//                    // Handle the case when there are no data nodes
-//                    Log.d("Data Count", "No data available");
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//                // Handle any errors that occur
-//            }
-//        });
-//
-//        StorageReference fileRef = reference.child("image"+fileId+ "." + getFileExtension(imgUri));
-//
-//        fileRef.putFile(imgUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//            @Override
-//            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//
-//                fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-//                    @Override
-//                    public void onSuccess(Uri uri) {
-//
-//                        //이미지 모델에 담기
-//                        MapDTO newMap = new MapDTO(fileId,uri.toString());
-//
-//                        //데이터 넣기
-//                        databaseReference.child("map").child(bname).setValue(newMap);
-//                        // 층별 구분 넣기 필요
-//                        Toast.makeText(getActivity(), "업로드 성공.", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
-//
-//            }
-//        });
-//    }
     private void uploadToFirebase(Uri imgUri) {
         DatabaseReference databaseReference1 = FirebaseDatabase.getInstance().getReference().child("map");
         databaseReference1.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -206,7 +157,7 @@ public class UploadMapFragment extends Fragment {
                     // Use the count value as needed
                     Log.d("Data Count", String.valueOf(fileId));
 
-                    StorageReference fileRef = reference.child("image" + fileId + "." + getFileExtension(imgUri));
+                    StorageReference fileRef = reference.child("image" + fileId + ".png");
 
                     fileRef.putFile(imgUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override

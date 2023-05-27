@@ -88,16 +88,28 @@ public class BookmarkInnerFragment extends Fragment {
 
 
         try {
-            String filename = "image" + fileId + ".png";
-            File file = new File(getActivity().getFilesDir(), filename);
+            String filename = "image" + fileId;
+            File pngFile = new File(getActivity().getFilesDir(), filename + ".png");
+            File jpgFile = new File(getActivity().getFilesDir(), filename + ".jpg");
 
-//            File file = new File(fileDir, filename);
-            Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
-            imageView.setImageBitmap(bitmap);
-            Toast.makeText(getActivity(), "파일 로드 성공", Toast.LENGTH_SHORT).show();
+            Bitmap bitmap = null;
+
+            if (pngFile.exists()) {
+                bitmap = BitmapFactory.decodeFile(pngFile.getAbsolutePath());
+            } else if (jpgFile.exists()) {
+                bitmap = BitmapFactory.decodeFile(jpgFile.getAbsolutePath());
+            }
+
+            if (bitmap != null) {
+                imageView.setImageBitmap(bitmap);
+                Toast.makeText(getActivity(), "파일 로드 성공", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getActivity(), "파일 로드 실패", Toast.LENGTH_SHORT).show();
+            }
         } catch (Exception e) {
             Toast.makeText(getActivity(), "파일 로드 실패", Toast.LENGTH_SHORT).show();
         }
+
         bookmark.setText(buildingName);
         info.setText(floorNum);
 
