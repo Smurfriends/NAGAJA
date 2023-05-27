@@ -1,0 +1,2 @@
+ninja: Entering directory `C:\Users\user\Documents\nagaja_new\NAGAJA\sdk1\.cxx\Debug\55s424r1\x86_64'
+ninja: no work to do.

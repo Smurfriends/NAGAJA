@@ -2,6 +2,7 @@ package com.gachon.nagaja;
 
 import static android.content.ContentValues.TAG;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -14,14 +15,20 @@ import android.net.Uri;
 import android.os.Bundle;
 import org.opencv.android.OpenCVLoader;
 
+
 import android.graphics.Bitmap;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.core.app.ActivityCompat;
 
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
+import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -33,6 +40,13 @@ public class MainActivity extends AppCompatActivity {
     Button button;
     Button selectImageButton;
     Button cameraButton;
+
+    //메인 화면들 불러오기-UI
+    homeFragment homeFragment;
+    bookmarkFragment bookmarkFragment;
+    uploadFragment uploadFragment;
+    storeFragment storeFragment;
+
 
     static {
         if (!OpenCVLoader.initDebug()) {
@@ -46,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         // 연동 잘 됐는지 테스트
 //        FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -86,6 +101,38 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 pictureImageByCamera();
+            }
+        });
+
+
+        homeFragment = new homeFragment();
+        bookmarkFragment = new bookmarkFragment();
+        uploadFragment = new uploadFragment();
+        storeFragment = new storeFragment();
+
+        getSupportFragmentManager().beginTransaction().replace(R.id.menu_frame_layout, homeFragment).commit();
+
+        NavigationBarView navigationBarView = findViewById(R.id.menu_bottom_bar);
+
+        navigationBarView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+                switch (item.getItemId()){
+                    case R.id.menu_home:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.menu_frame_layout, homeFragment).commit();
+                        return true;
+                    case R.id.menu_bookmark:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.menu_frame_layout, bookmarkFragment).commit();
+                        return true;
+                    case R.id.menu_upload:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.menu_frame_layout, uploadFragment).commit();
+                        return true;
+                    case R.id.menu_store:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.menu_frame_layout, storeFragment).commit();
+                        return true;
+                }
+                return false;
             }
         });
     }
@@ -146,4 +193,6 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
+
+
 }

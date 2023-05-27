@@ -1,2 +1,0 @@
-ninja: Entering directory `C:\NAGAJA\sdk1\.cxx\Debug\1a2v052v\arm64-v8a'
-ninja: no work to do.
