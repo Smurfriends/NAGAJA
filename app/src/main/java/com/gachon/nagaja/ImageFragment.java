@@ -62,6 +62,9 @@ public class ImageFragment extends Fragment  {
     Bitmap bitmap = null;
     String bname;
 
+    public ImageFragment(String buildingName){
+        this.bname = buildingName;
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -78,7 +81,7 @@ public class ImageFragment extends Fragment  {
         FirebaseStorage storage = FirebaseStorage.getInstance("gs://nagaja-3bb34.appspot.com");
         StorageReference storageRef = storage.getReference();
 
-        bname = "경기도 어쩌구 수정구 저쩌구";
+//        bname = "경기도 어쩌구 수정구 저쩌구";
         //파일명 만들기
 
         //findPath 선언 이거 해야 URL등 firebase에서 값 읽어옴
@@ -215,7 +218,7 @@ public class ImageFragment extends Fragment  {
                             Toast.makeText(getActivity(), "Download success", Toast.LENGTH_SHORT).show();
 
                             String bname = findPath.getName();
-                            String buildingName = findPath.getBuildingName();
+                            String buildingName = findPath.getAddress();
                             String floorNum = findPath.getFloorNum();
                             String id = findPath.getId();
                             String nodeNum = findPath.getNodeNum();

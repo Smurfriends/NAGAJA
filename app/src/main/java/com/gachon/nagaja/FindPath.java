@@ -33,7 +33,7 @@ public class FindPath {
     private String x;
     private String y;
 
-    private String buildingName;
+    private String address;
     private String floorNum;
 
     private String name;
@@ -133,11 +133,11 @@ public class FindPath {
         public void onDataChange(@NonNull DataSnapshot snapshot) {
             HashMap<String, Object> hashMap = (HashMap<String, Object>) snapshot.getValue();
 
-            buildingName = getStringValue(hashMap, "buildingName");
+            address = getStringValue(hashMap, "address");
             floorNum = getStringValue(hashMap, "floorNum");
 
             // Output or perform desired operations with the extracted values
-            Log.d("Firebase", "buildingName: " + buildingName);
+            Log.d("Firebase", "address: " + address);
             Log.d("Firebase", "floorNum: " + floorNum);
 
         }
@@ -148,8 +148,8 @@ public class FindPath {
         }
     };
 
-    public String getBuildingName() {
-        return buildingName;
+    public String getAddress() {
+        return address;
     }
 
     public String getFloorNum() {

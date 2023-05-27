@@ -48,15 +48,15 @@
                     android:theme="@style/editText"
                     />
 
-                <EditText
-                    android:id="@+id/buildingName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:hint="Building Name"
-                    android:imeOptions="actionNext"
-                    android:theme="@style/editText"
-                    />
+<!--                <EditText-->
+<!--                    android:id="@+id/buildingName"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:inputType="text"-->
+<!--                    android:hint="Building Name"-->
+<!--                    android:imeOptions="actionNext"-->
+<!--                    android:theme="@style/editText"-->
+<!--                    />-->
 
                 <!-- 전체 층수 및 층 이름 정보 시작 -->
                 <!-- TODO: UI & UX 변경 예정 -->

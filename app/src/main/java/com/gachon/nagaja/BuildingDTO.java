@@ -5,7 +5,7 @@ public class BuildingDTO{
 
     // TODO: proguard-rules.pro 파일에 추가해도 오류가 안 고쳐져서 임시방편으로 public 씀
     // https://stackoverflow.com/questions/37743661/firebase-no-properties-to-serialize-found-on-class
-    public String buildingName;
+    public String address;
     public int floorOfMap;
 
     // TODO: 층별 이름의 list (String)
@@ -13,13 +13,13 @@ public class BuildingDTO{
     // TODO: timestamp
 
     public BuildingDTO() {}
-    public BuildingDTO(String buildingName, int floorOfMap) {
-        this.buildingName = buildingName;
+    public BuildingDTO(String address, int floorOfMap) {
+        this.address = address;
         this.floorOfMap = floorOfMap;
     }
 
-    public void setBuildingName(String buildingName) {
-        this.buildingName = buildingName;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public void setFloorOfMap(int floorOfMap) {
