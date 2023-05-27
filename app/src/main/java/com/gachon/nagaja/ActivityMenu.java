@@ -40,10 +40,10 @@ public class ActivityMenu extends AppCompatActivity implements BottomNavigationV
                         .replace(R.id.menu_frame_layout, new BookmarkFragment())
                         .commit();
                 return true;
-            case R.id.menu_upload:
+            case R.id.menu_home:
                 // MENU2 클릭시 실행될 코드
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.menu_frame_layout, new MapFragment())
+                        .replace(R.id.menu_frame_layout, new UploadMapFragment())
                         .commit();
                 return true;
             case R.id.menu_store:

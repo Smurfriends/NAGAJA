@@ -37,6 +37,7 @@ public class BookmarkFragment extends Fragment {
 
         listView = rootView.findViewById(R.id.bookmarkList);
 
+        ListItem item = new ListItem("bname","buildingName", "floorNum", "fireId","nodeNum","x","y","node");
         adapter = new ListItemAdapter();
 
         readBookmarkList();

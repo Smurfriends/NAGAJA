@@ -89,9 +89,9 @@ public class BookmarkInnerFragment extends Fragment {
 
         try {
             String filename = "image" + fileId + ".png";
-            File fileDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES + "/map_img");
+            File file = new File(getActivity().getFilesDir(), filename);
 
-            File file = new File(fileDir, filename);
+//            File file = new File(fileDir, filename);
             Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
             imageView.setImageBitmap(bitmap);
             Toast.makeText(getActivity(), "파일 로드 성공", Toast.LENGTH_SHORT).show();

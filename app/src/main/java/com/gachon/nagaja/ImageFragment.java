@@ -156,7 +156,7 @@ public class ImageFragment extends Fragment  {
                     }
                 });
             }
-        }, 2000);
+        }, 1000);
 
         File fileDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES + "/map_img");
 

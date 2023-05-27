@@ -37,13 +37,12 @@ public class UploadMapFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                 Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.activity_upload_map, container, false);
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_upload, container, false);
 
         address = rootView.findViewById(R.id.address);
         buildingName = rootView.findViewById(R.id.buildingName);
-        floorUndergroundNum = rootView.findViewById(R.id.floorUndergroundNum);
-        floorUpgroundNum = rootView.findViewById(R.id.floorUpgroundNum);
-        floorOutsideEntrance = rootView.findViewById(R.id.floorOutsideEntrance);
+//        floorUpgroundNum = rootView.findViewById(R.id.floorNum);
+//        floorOutsideEntrance = rootView.findViewById(R.id.floorOutsideEntrance);
 
         cameraBtn = rootView.findViewById(R.id.cameraBtn);
         selectImgBtn = rootView.findViewById(R.id.selectImgBtn);
@@ -58,11 +57,11 @@ public class UploadMapFragment extends Fragment {
                     return;
 
                 // upload building data
-                String undergroundNum = floorUndergroundNum.getText().toString();
+                String floorNum = floorOfMap.getText().toString();
                 String upgroundNum = floorUpgroundNum.getText().toString();
 
-                BuildingDTO building = new BuildingDTO(buildingName.getText().toString(),
-                        Integer.parseInt(undergroundNum), Integer.parseInt(upgroundNum));
+                BuildingDTO building = new BuildingDTO(buildingName.getText().toString(), Integer.parseInt(floorNum));
+
                 databaseReference.child("building").child(address.getText().toString()).setValue(building);
 
                 // upload map data
@@ -75,7 +74,6 @@ public class UploadMapFragment extends Fragment {
                 }
 
                 // TODO: then back to main
-
             }
         });
 

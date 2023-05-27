@@ -30,13 +30,13 @@ public class LoadingActivity extends AppCompatActivity {
                 FileOutputStream fos = openFileOutput(fileName, Context.MODE_PRIVATE);
                 fos.write(fileContent.getBytes());
                 fos.close();
-                Log.d("LoadingActivity", "bookmarklist.txt 파일이 생성되었습니다.");
+                Log.d("LoadingActivityBookmark", "bookmarklist.txt 파일이 생성되었습니다.");
             } else {
-                Log.d("LoadingActivity", "bookmarklist.txt 파일이 이미 존재합니다.");
+                Log.d("LoadingActivityBookmark", "bookmarklist.txt 파일이 이미 존재합니다.");
             }
         } catch (IOException e) {
             e.printStackTrace();
-            Log.e("LoadingActivity", "bookmarklist.txt 파일 생성 중 오류가 발생했습니다.");
+            Log.e("LoadingActivityBookmark", "bookmarklist.txt 파일 생성 중 오류가 발생했습니다.");
         }
 
         new Handler().postDelayed(new Runnable() {
