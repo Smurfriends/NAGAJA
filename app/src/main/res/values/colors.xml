@@ -7,4 +7,8 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="bookmark_color">#9C8D83</color>
+    <color name="light_gray">#EAEAEA</color>
+    <color name="dark_gray">#C0C0C0</color>
+    <color name="orange">#FD4D07</color>
 </resources>

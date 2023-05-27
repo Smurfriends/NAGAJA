@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="bookmark">
+        <item name="android:textSize">30sp</item>
+        <item name="android:textColor">@color/bookmark_color</item>
+    </style>
+    <style name="info">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/bookmark_color</item>
+    </style>
+    <style name="editText" parent="Widget.AppCompat.EditText">
+        <item name="colorAccent">@color/orange</item>
+        <item name="colorControlNormal">@color/bookmark_color</item>
+    </style>
+</resources>

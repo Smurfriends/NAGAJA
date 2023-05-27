@@ -1,16 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/menu_bookmark"
-        android:title="북마크" />
+        android:enabled="true"
+        android:icon="@drawable/baseline_bookmarks_24"
+        android:title="Bookmark"
+        app:showAsAction="always"
+        />
 
     <item
-        android:id="@+id/menu_upload"
-        android:title="홈" />
+        android:id="@+id/menu_home"
+        android:enabled="true"
+        android:icon="@drawable/baseline_home_24"
+        android:title="Home"
+        app:showAsAction="always"
+        />
+    
 
     <item
         android:id="@+id/menu_store"
-        android:title="상점" />
+        android:enabled="true"
+        android:icon="@drawable/baseline_local_grocery_store_24"
+        android:title="Store"
+        app:showAsAction="always"/>
 
 </menu>
