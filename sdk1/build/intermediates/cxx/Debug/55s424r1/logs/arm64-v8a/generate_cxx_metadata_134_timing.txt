@@ -13,3 +13,37 @@ generate_cxx_metadata
   [gap of 20ms]
 generate_cxx_metadata completed in 84ms
 
+# C/C++ build system timings
+generate_cxx_metadata
+<<<<<<< Updated upstream
+  [gap of 25ms]
+  create-invalidation-state 33ms
+  [gap of 23ms]
+generate_cxx_metadata completed in 81ms
+
+# C/C++ build system timings
+generate_cxx_metadata
+  [gap of 44ms]
+  create-invalidation-state 37ms
+  [gap of 20ms]
+generate_cxx_metadata completed in 101ms
+=======
+  [gap of 24ms]
+  create-invalidation-state 74ms
+  [gap of 24ms]
+  write-metadata-json-to-file 12ms
+generate_cxx_metadata completed in 137ms
+>>>>>>> Stashed changes
+
+# C/C++ build system timings
+generate_cxx_metadata
+  [gap of 15ms]
+  create-invalidation-state 61ms
+  execute-generate-process
+    exec-configure 561ms
+    [gap of 39ms]
+  execute-generate-process completed in 602ms
+  [gap of 32ms]
+  write-metadata-json-to-file 15ms
+generate_cxx_metadata completed in 730ms
+

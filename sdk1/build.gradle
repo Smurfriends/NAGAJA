@@ -116,6 +116,7 @@ android {
             packagingOptions {
                 doNotStrip '**/*.so'  // controlled by OpenCV CMake scripts
             }
+            minifyEnabled false
         }
         release {
             packagingOptions {
