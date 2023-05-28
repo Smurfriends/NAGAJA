@@ -1,20 +1,14 @@
 package com.gachon.nagaja;
 
-import android.net.Uri;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -162,7 +156,7 @@ public class FindPath {
         return floorNum;
     }
 
-    public static void dijkstra(double[][] graph, int startNode, int endNode) {
+    public static StringBuilder dijkstra(double[][] graph, int startNode, int endNode) {
         int numNodes = graph.length;
         boolean[] visited = new boolean[numNodes];
         double[] distance = new double[numNodes];
@@ -184,7 +178,7 @@ public class FindPath {
             }
         }
 
-        logShortestPath(startNode, endNode, previous);
+        return logShortestPath(startNode, endNode, previous);
     }
 
     private static int getMinDistanceNode(double[] distance, boolean[] visited) {
@@ -202,12 +196,13 @@ public class FindPath {
         return minDistanceNode;
     }
 
-    private static void logShortestPath(int startNode, int endNode, double[] previous) {
+    private static StringBuilder logShortestPath(int startNode, int endNode, double[] previous) {
         String tag = "Dijkstra";
-        Log.d(tag, "Shortest path from Node " + startNode + " to Node " + endNode + ":");
+//        Log.d(tag, "Shortest path from Node " + startNode + " to Node " + endNode + ":");
 
         if (previous[endNode] == -1) {
-            Log.d(tag, "No path found.");
+//            Log.d(tag, "No path found.");
+            return null;
         } else {
             StringBuilder pathBuilder = new StringBuilder();
             pathBuilder.append(endNode);
@@ -218,7 +213,8 @@ public class FindPath {
                 pathBuilder.insert(0, node + " -> ");
             }
 
-            Log.d(tag, pathBuilder.toString());
+//            Log.d(tag, pathBuilder.toString());
+            return pathBuilder;
         }
     }
     public String getId() {
