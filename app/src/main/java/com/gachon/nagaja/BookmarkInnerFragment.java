@@ -1,6 +1,7 @@
 package com.gachon.nagaja;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,7 +20,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class BookmarkInnerFragment extends Fragment {
 
@@ -68,6 +76,8 @@ public class BookmarkInnerFragment extends Fragment {
         info = rootView.findViewById(R.id.info);
         imageView = rootView.findViewById(R.id.img);
 
+        Button deleteBtn = rootView.findViewById(R.id.deleteButton);
+
         bname = item.getBname();
         buildingName = item.getBuildingName();
         floorNum = item.getFloorNum();
@@ -90,14 +100,11 @@ public class BookmarkInnerFragment extends Fragment {
         try {
             String filename = "image" + fileId;
             File pngFile = new File(getActivity().getFilesDir(), filename + ".png");
-            File jpgFile = new File(getActivity().getFilesDir(), filename + ".jpg");
 
             Bitmap bitmap = null;
 
             if (pngFile.exists()) {
                 bitmap = BitmapFactory.decodeFile(pngFile.getAbsolutePath());
-            } else if (jpgFile.exists()) {
-                bitmap = BitmapFactory.decodeFile(jpgFile.getAbsolutePath());
             }
 
             if (bitmap != null) {
@@ -138,10 +145,87 @@ public class BookmarkInnerFragment extends Fragment {
             }
         });
 
+        deleteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                RemoveBookmarkList(position);
+            }
+        });
+
         return rootView;
     }
 
     public void setPosition(int position) {
         this.position = position;
     }
+
+    public int getPosition() {
+        return position;
+    }
+
+    private void RemoveBookmarkList(int position) {
+        String fileName = "bookmarklist.txt";
+        FileInputStream fis;
+        try {
+            fis = getActivity().openFileInput(fileName);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
+        StringBuilder stringBuilder = new StringBuilder();
+        String line;
+
+        try {
+            while ((line = reader.readLine()) != null) {
+                stringBuilder.append(line).append("\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                fis.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        String bookmarkListData = stringBuilder.toString();
+
+        String content = DeleteFromBookmarkList(bookmarkListData, position);
+
+        // Update the bookmark list with the modified content
+        FileOutputStream fos;
+        try {
+            fos = getActivity().openFileOutput(fileName, Context.MODE_PRIVATE);
+            fos.write(content.getBytes());
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String DeleteFromBookmarkList(String bookmarkListData, int position) {
+        String[] lines = bookmarkListData.split("\n");
+        StringBuilder content = new StringBuilder();
+
+        int count = 0;
+        boolean skip = false;
+
+        for (String line : lines) {
+            if (line.equals("?")) {
+                if (count == position) {
+                    skip = true;
+                } else {
+                    skip = false;
+                    content.append(line).append("\n");
+                }
+                count++;
+            } else if (!skip) {
+                content.append(line).append("\n");
+            }
+        }
+
+        return content.toString();
+    }
+
 }
