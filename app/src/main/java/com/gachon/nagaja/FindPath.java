@@ -123,7 +123,8 @@ public class FindPath {
             int startNode = 0;
             int endNode = 4;
 
-            dijkstra(matrix, startNode, endNode);
+            StringBuilder road = dijkstra(matrix, startNode, endNode);
+            Log.d("dijkstra",road.toString());
         }
 
     }
