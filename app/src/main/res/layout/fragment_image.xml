@@ -1,21 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".ImageFragment">
 
     <FrameLayout
         android:layout_width="360dp"
         android:layout_height="640dp"
+        android:layout_gravity="center"
         android:id="@+id/frameLayout">
     </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center">
 
     <Button
         android:id="@+id/downloadButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Download"
-        android:layout_gravity="center_vertical|center_horizontal|bottom" />
+        android:layout_gravity="center"
+        android:layout_marginRight="10dp"/>
 
-</FrameLayout>
+    <Button
+        android:id="@+id/adjustNodeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Adjust node data" />
+
+    </LinearLayout>
+
+</LinearLayout>

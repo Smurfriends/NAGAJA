@@ -1,5 +1,6 @@
 package com.gachon.nagaja;
 
+import android.graphics.Point;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -10,19 +11,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
 public class FindPath {
     //Firebase read
     public DatabaseReference database;
-    private int startX;
-    private int startY;
     private static final double INFINITY = Double.POSITIVE_INFINITY;
     private String node;
-    private String idEndNode;
     private String nodeNum;
-    private String idVergeNode;
     private String id;
     private String x;
     private String y;
@@ -31,6 +31,10 @@ public class FindPath {
     private String floorNum;
 
     private String buildingName;
+
+    private double[][] matrix;
+
+    private ArrayList<Point> nodeArrayList;
 
     public FindPath(String buildingName) {//like mains
         this.buildingName = buildingName;
@@ -50,18 +54,17 @@ public class FindPath {
 
             // Extract individual values and store them in separate variables
             node = getStringValue(hashMap, "node");
-            idEndNode = getStringValue(hashMap, "idEndNode");
             nodeNum = getStringValue(hashMap, "nodeNum");
-            idVergeNode = getStringValue(hashMap, "idVergeNode");
             id = getStringValue(hashMap, "id");
             x = getStringValue(hashMap, "x");
             y = getStringValue(hashMap, "y");
 
+            setMatrix();
+            setNodeArrayList();
+
             // Output or perform desired operations with the extracted values
             Log.d("Firebase", "node: " + node);
-            Log.d("Firebase", "idEndNode: " + idEndNode);
             Log.d("Firebase", "nodeNum: " + nodeNum);
-            Log.d("Firebase", "idVergeNode: " + idVergeNode);
             Log.d("Firebase", "mapURL: " + id);
             Log.d("Firebase", "x: " + x);
             Log.d("Firebase", "y: " + y);
@@ -96,7 +99,7 @@ public class FindPath {
             // findPath의 nodeNum 값이 -1인 경우 아무런 반응이 없도록 처리
             Log.e("matrix","No node info");
         }else {
-            double[][] matrix = new double[matrixSize][matrixSize];
+            matrix = new double[matrixSize][matrixSize];
 
             // Convert the split values to doubles and populate the matrix
             int index = 0;
@@ -120,13 +123,22 @@ public class FindPath {
                 Log.d("Matrix", rowBuilder.toString());
             }
 
-            int startNode = 0;
-            int endNode = 4;
-
-            StringBuilder road = dijkstra(matrix, startNode, endNode);
-            Log.d("dijkstra",road.toString());
+//            StringBuilder road = dijkstra(matrix, startNode, endNode);
+//            Log.d("dijkstra",road.toString());
         }
 
+    }
+
+    public void setNodeArrayList() {
+        String[] splitValuesX = x.split(", ");
+        String[] splitValuesY = y.split(", ");
+        nodeArrayList = new ArrayList<>();
+
+        // Convert x and y values into Point objects
+        for (int i = 0; i < splitValuesX.length; i++) {
+            Point point = new Point(Integer.parseInt(splitValuesX[i]), Integer.parseInt(splitValuesY[i]));
+            nodeArrayList.add(point);
+        }
     }
 
     ValueEventListener postListener1 = new ValueEventListener() {
@@ -157,11 +169,11 @@ public class FindPath {
         return floorNum;
     }
 
-    public static StringBuilder dijkstra(double[][] graph, int startNode, int endNode) {
+    public static double dijkstra(double[][] graph, int startNode, int endNode) {
         int numNodes = graph.length;
         boolean[] visited = new boolean[numNodes];
         double[] distance = new double[numNodes];
-        double[] previous = new double[numNodes];
+        int[] previous = new int[numNodes];
         Arrays.fill(distance, INFINITY);
         Arrays.fill(previous, -1);
         distance[startNode] = 0;
@@ -178,8 +190,9 @@ public class FindPath {
                 }
             }
         }
+        logShortestPath(startNode, endNode, previous);
 
-        return logShortestPath(startNode, endNode, previous);
+        return distance[endNode];
     }
 
     private static int getMinDistanceNode(double[] distance, boolean[] visited) {
@@ -197,31 +210,36 @@ public class FindPath {
         return minDistanceNode;
     }
 
-    private static StringBuilder logShortestPath(int startNode, int endNode, double[] previous) {
+    private static void logShortestPath(int startNode, int endNode, int[] previous) {
         String tag = "Dijkstra";
 //        Log.d(tag, "Shortest path from Node " + startNode + " to Node " + endNode + ":");
 
         if (previous[endNode] == -1) {
-//            Log.d(tag, "No path found.");
-            return null;
+            Log.d(tag, "No path found.");
         } else {
-            StringBuilder pathBuilder = new StringBuilder();
-            pathBuilder.append(endNode);
+//            StringBuilder pathBuilder = new StringBuilder();
+//            pathBuilder.append(endNode);
+//
+//            int node = endNode;
+//            while (node != startNode) {
+//                node = (int) previous[node];
+//                pathBuilder.insert(0, node + " -> ");
+//            }
 
+            ArrayList<Integer> path = new ArrayList<>();
             int node = endNode;
             while (node != startNode) {
-                node = (int) previous[node];
-                pathBuilder.insert(0, node + " -> ");
+                node = previous[node];
+                path.add(0, node);
             }
-
-//            Log.d(tag, pathBuilder.toString());
-            return pathBuilder;
+            path.add(endNode);
+            path.remove(0);
+            RouteCanvasView.pathIndex = path;
         }
     }
     public String getId() {
         return id;
     }
-    public void setStartNode(int x, int y){this.startX = x; this.startY = y;};
 
     public String getNodeNum() {
         return nodeNum;
@@ -237,5 +255,13 @@ public class FindPath {
 
     public String getNode() {
         return node;
+    }
+
+    public double[][] getMatrix() {
+        return matrix;
+    }
+
+    public ArrayList<Point> getNodeArrayList() {
+        return nodeArrayList;
     }
 }

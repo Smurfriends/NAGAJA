@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    tools:context=".Edit1CornerFragment">
+
+    <FrameLayout
+        android:layout_width="360dp"
+        android:layout_height="640dp"
+        android:id="@+id/frameLayout">
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/addNodeButton"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginRight="8dp"
+            android:text="Add" />
+
+        <Button
+            android:id="@+id/deleteNodeButton"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginRight="10dp"
+            android:text="Delete" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+            <Button
+                android:id="@+id/moveToUpButton"
+                android:layout_width="45dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginRight="2dp"
+                android:text="↑" />
+            <Button
+                android:id="@+id/moveToDownButton"
+                android:layout_width="45dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginRight="2dp"
+                android:text="↓" />
+            <Button
+                android:id="@+id/moveToLeftButton"
+                android:layout_width="45dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginRight="2dp"
+                android:text="←" />
+            <Button
+                android:id="@+id/moveToRightButton"
+                android:layout_width="45dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginRight="2dp"
+                android:text="→" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/nextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:text="N" />
+        <!-- UI 크기 모자라서 Next를 N까지밖에 못적음... 수정 필요 -->
+
+    </LinearLayout>
+
+</LinearLayout>

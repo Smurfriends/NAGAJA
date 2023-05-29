@@ -3,6 +3,7 @@ package com.gachon.nagaja;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
@@ -15,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import android.os.Environment;
 import android.util.Log;
@@ -53,9 +55,10 @@ import java.util.TimerTask;
 public class ImageFragment extends Fragment  {
     ImageView imageView;
     FrameLayout frameLayout;
-    CanvasView canvasView;
+    RouteCanvasView routeCanvasView;
     FindPath findPath;
     Button downloadButton;
+    Button adjustNodeButton;
 
     int check;
     int fileId;
@@ -71,11 +74,8 @@ public class ImageFragment extends Fragment  {
         View rootView = inflater.inflate(R.layout.fragment_image, container, false);
         frameLayout = rootView.findViewById(R.id.frameLayout);
         downloadButton = rootView.findViewById(R.id.downloadButton);
+        adjustNodeButton = rootView.findViewById(R.id.adjustNodeButton);
         check = 0;
-
-        // add canvas view
-        canvasView = new CanvasView(getActivity().getApplicationContext());
-        frameLayout.addView(canvasView);
 
         // Storage 객체 만들기
         FirebaseStorage storage = FirebaseStorage.getInstance("gs://nagaja-3bb34.appspot.com");
@@ -88,6 +88,12 @@ public class ImageFragment extends Fragment  {
         FindPath findPath = new FindPath(bname);
         //URL 저장
 
+        // TODO: 파베에서 좌표 정보 받아오는 코드
+        // 받아 온 좌표를 CanvasView에 있는 node_corner ArrayList에 넣기
+        routeCanvasView.node = findPath.getNodeArrayList();
+        routeCanvasView.matrix.add(findPath.getMatrix());
+
+        // 파이어베이스에서 이미지 가져오기. scale 조정은 나중에 빼기.
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
@@ -146,8 +152,12 @@ public class ImageFragment extends Fragment  {
                                               // 비트맵을 drawable로 변환
                                               Drawable drawable = new BitmapDrawable(result);
 
+                                              // add canvas view
+                                              routeCanvasView = new RouteCanvasView(getActivity().getApplicationContext());
+                                              frameLayout.addView(routeCanvasView);
+
                                               // 캔버스뷰에 background로 세팅
-                                              canvasView.setBackground(drawable); // background로 넣어야지만 drawPath 가능
+                                              routeCanvasView.setBackground(drawable); // background로 넣어야지만 drawPath 가능
                                           }
                                       });
                         check = 1;
@@ -161,35 +171,14 @@ public class ImageFragment extends Fragment  {
             }
         }, 1000);
 
+
         File fileDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES + "/map_img");
 
         if(!fileDir.isDirectory()){
             fileDir.mkdir();
         }
 
-        // 터치 시 좌표 받아 오기
-        canvasView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                findPath.setMatrix();
-                view.onTouchEvent(motionEvent);
 
-
-                float[] point = new float[] {motionEvent.getX(), motionEvent.getY()};
-                Log.d("Touch", "변환 전: ("+point[0] + " , " + point[1] + ")");
-
-                // match with image
-                float density = getResources().getDisplayMetrics().density;
-                point[0] /= density;
-                point[1] /= density;
-
-                if (motionEvent.getAction() ==  MotionEvent.ACTION_DOWN)
-                {
-                    Log.d("Point", "변환 후: ("+point[0] + " , " + point[1] + ")");
-                }
-                return false;
-            }
-        });
 
         downloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -239,6 +228,18 @@ public class ImageFragment extends Fragment  {
                 }
             }
         });
+
+        adjustNodeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.menu_frame_layout, new Edit1CornerFragment())
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
+
         return rootView;
     }
 
