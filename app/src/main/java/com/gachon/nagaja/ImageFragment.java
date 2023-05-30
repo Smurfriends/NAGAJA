@@ -230,8 +230,10 @@ public class ImageFragment extends Fragment  {
             @Override
             public void onClick(View v) {
                 FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+                Edit1CornerFragment edit1CornerFragment = new Edit1CornerFragment();
+                edit1CornerFragment.setBackground(bitmap); // bitmap 변수나 drawable을 전달하여 배경 설정
                 fragmentManager.beginTransaction()
-                        .replace(R.id.menu_frame_layout, new Edit1CornerFragment())
+                        .replace(R.id.menu_frame_layout, edit1CornerFragment)
                         .addToBackStack(null)
                         .commit();
             }

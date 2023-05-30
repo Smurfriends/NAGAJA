@@ -8,8 +8,10 @@
     tools:context=".Edit1CornerFragment">
 
     <FrameLayout
-        android:layout_width="360dp"
-        android:layout_height="640dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
         android:id="@+id/frameLayout">
     </FrameLayout>
 
@@ -33,6 +35,12 @@
             android:layout_gravity="bottom"
             android:layout_marginRight="10dp"
             android:text="Delete" />
+        <Button
+            android:id="@+id/nextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:text="N" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -68,12 +76,7 @@
                 android:text="→" />
         </LinearLayout>
 
-        <Button
-            android:id="@+id/nextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:text="N" />
+
         <!-- UI 크기 모자라서 Next를 N까지밖에 못적음... 수정 필요 -->
 
     </LinearLayout>

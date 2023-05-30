@@ -1,6 +1,8 @@
 package com.gachon.nagaja;
 
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.Image;
 import android.os.Bundle;
 
@@ -14,6 +16,8 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 
 public class Edit3ExitFragment extends Fragment  {
+    private Bitmap backgroundBitmap;
+    private View rootView;
     FrameLayout frameLayout;
     CanvasView canvasView;
     FindPath findPath;
@@ -22,11 +26,16 @@ public class Edit3ExitFragment extends Fragment  {
     Button confirmButton;
     Button doneButton;
 
-
+    public void setBackground(Bitmap bitmap) {
+        backgroundBitmap = bitmap;
+        if (rootView != null && backgroundBitmap != null) {
+            rootView.setBackground(new BitmapDrawable(getResources(), backgroundBitmap));
+        }
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_edit3_exit, container, false);
+        rootView = inflater.inflate(R.layout.fragment_edit3_exit, container, false);
         frameLayout = rootView.findViewById(R.id.frameLayout);
         deselectButton = rootView.findViewById(R.id.deselectButton);
         addExitButton = rootView.findViewById(R.id.addExitButton);
@@ -39,7 +48,7 @@ public class Edit3ExitFragment extends Fragment  {
 
         // TODO: 파베에서 이미지 받아와서 canvasView에 background로 띄우는 코드
         // 원래는 이미지 들어가는데 테스트 용으로 지금만 color 넣음
-        canvasView.setBackgroundColor(Color.WHITE);
+//        canvasView.setBackgroundColor(Color.WHITE);
 //        canvasView.setBackground(파베에서 받아온 사진 파일 drawable);
 
         // node 선택 해제 버튼
