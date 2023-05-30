@@ -49,16 +49,7 @@ public class BookmarkInnerFragment extends Fragment {
 
 
     FindPathByTxt findPathByTxt;
-//    public static BookmarkInnerFragment newInstance(String selectedBuildingName, String selectedFloorNum, String fireId) {
-//        BookmarkInnerFragment fragment = new BookmarkInnerFragment();
-//        fragment.buildingName = selectedBuildingName;
-//        fragment.fireId = fireId;
-//        fragment.floorNum = selectedFloorNum;
-//
-//
-//
-//        return fragment;
-//    }
+
     public static BookmarkInnerFragment newInstance(ListItem thisItem) {
         BookmarkInnerFragment fragment = new BookmarkInnerFragment();
         fragment.item = thisItem;
@@ -209,18 +200,14 @@ public class BookmarkInnerFragment extends Fragment {
         StringBuilder content = new StringBuilder();
 
         int count = 0;
-        boolean skip = false;
 
         for (String line : lines) {
             if (line.equals("?")) {
-                if (count == position) {
-                    skip = true;
-                } else {
-                    skip = false;
+                if (count != position) {
                     content.append(line).append("\n");
                 }
                 count++;
-            } else if (!skip) {
+            } else {
                 content.append(line).append("\n");
             }
         }

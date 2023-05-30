@@ -35,6 +35,7 @@ public class FindPath {
     private double[][] matrix;
 
     private ArrayList<Point> nodeArrayList;
+    private ArrayList<Integer> pathIndex;
 
     public FindPath(String buildingName) {//like mains
         this.buildingName = buildingName;
@@ -169,7 +170,7 @@ public class FindPath {
         return floorNum;
     }
 
-    public static double dijkstra(double[][] graph, int startNode, int endNode) {
+    public double dijkstra(double[][] graph, int startNode, int endNode) {
         int numNodes = graph.length;
         boolean[] visited = new boolean[numNodes];
         double[] distance = new double[numNodes];
@@ -210,22 +211,12 @@ public class FindPath {
         return minDistanceNode;
     }
 
-    private static void logShortestPath(int startNode, int endNode, int[] previous) {
+    public void logShortestPath(int startNode, int endNode, int[] previous) {
         String tag = "Dijkstra";
-//        Log.d(tag, "Shortest path from Node " + startNode + " to Node " + endNode + ":");
 
         if (previous[endNode] == -1) {
             Log.d(tag, "No path found.");
         } else {
-//            StringBuilder pathBuilder = new StringBuilder();
-//            pathBuilder.append(endNode);
-//
-//            int node = endNode;
-//            while (node != startNode) {
-//                node = (int) previous[node];
-//                pathBuilder.insert(0, node + " -> ");
-//            }
-
             ArrayList<Integer> path = new ArrayList<>();
             int node = endNode;
             while (node != startNode) {
@@ -234,9 +225,11 @@ public class FindPath {
             }
             path.add(endNode);
             path.remove(0);
-            RouteCanvasView.pathIndex = path;
+
+            this.pathIndex = path;
         }
     }
+
     public String getId() {
         return id;
     }
@@ -263,5 +256,9 @@ public class FindPath {
 
     public ArrayList<Point> getNodeArrayList() {
         return nodeArrayList;
+    }
+
+    public ArrayList<Integer> getPathIndex() {
+        return pathIndex;
     }
 }

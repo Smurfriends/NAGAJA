@@ -5,33 +5,28 @@
 //
 //import static org.junit.Assert.*;
 //
+//import java.util.ArrayList;
+//
 //public class FindPathUnitTest {
 //
-//    private double[][] graph;
+//    private int[] previous;
 //    int startNode;
 //    int endNode;
 //
 //    @Before
 //    public void setUp() {
-//        graph = new double[][]{
-//                {0, 2, 4, 0, 0},
-//                {2, 0, 1, 3, 0},
-//                {4, 1, 0, 2, 3},
-//                {0, 3, 2, 0, 6},
-//                {0, 0, 3, 6, 0}
-//        };
+//        previous = new int[9];
 //
 //        startNode = 0;
-//        endNode = 4;
+//        endNode = 2;
 //
 //
 //    }
 //
 //    @Test
 //    public void addTest() {
-//        StringBuilder expected = new StringBuilder();
-//        expected.append("0 -> 1 -> 2 -> 4");
-////        StringBuilder result = FindPath.dijkstra(graph, startNode, endNode);
+//        ArrayList<Integer> expected = new ArrayList<Integer>();;
+//        ArrayList<Integer> result = FindPath.logShortestPath(startNode,endNode,previous);
 //        assertEquals(expected.toString(), result.toString());
 //    }
 //}

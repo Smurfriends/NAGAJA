@@ -89,9 +89,6 @@ public class ImageFragment extends Fragment  {
         //URL 저장
 
         // TODO: 파베에서 좌표 정보 받아오는 코드
-        // 받아 온 좌표를 CanvasView에 있는 node_corner ArrayList에 넣기
-        routeCanvasView.node = findPath.getNodeArrayList();
-        routeCanvasView.matrix.add(findPath.getMatrix());
 
         // 파이어베이스에서 이미지 가져오기. scale 조정은 나중에 빼기.
         Timer timer = new Timer();
@@ -153,7 +150,7 @@ public class ImageFragment extends Fragment  {
                                               Drawable drawable = new BitmapDrawable(result);
 
                                               // add canvas view
-                                              routeCanvasView = new RouteCanvasView(getActivity().getApplicationContext());
+                                              routeCanvasView = new RouteCanvasView(getActivity().getApplicationContext(),findPath);
                                               frameLayout.addView(routeCanvasView);
 
                                               // 캔버스뷰에 background로 세팅

@@ -22,15 +22,6 @@ public class BookmarkFragment extends Fragment {
     ListView listView;
     public ListItemAdapter adapter;
 
-    // Global variables to store the selected bookmark information
-    private String selectedBuildingName;
-    private String selectedFloorNum;
-    private String fileId;
-    private String nodeNum;
-    private String x;
-    private String y;
-    private String node;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_bookmark, container, false);
