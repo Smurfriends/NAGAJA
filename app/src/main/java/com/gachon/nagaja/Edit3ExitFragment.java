@@ -35,6 +35,9 @@ public class Edit3ExitFragment extends Fragment  {
     public void setFindPath(FindPath findPath){
         this.findPath = findPath;
     }
+    public void setCanvasView(CanvasView canvasView){
+        this.canvasView = canvasView;
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -49,7 +52,7 @@ public class Edit3ExitFragment extends Fragment  {
         doneButton = rootView.findViewById(R.id.doneButton);
 
         // add canvas view
-        canvasView = new CanvasView(getActivity().getApplicationContext(), findPath);
+//        canvasView = new CanvasView(getActivity().getApplicationContext(), findPath);
         frameLayout.addView(canvasView);
 
         // TODO: 파베에서 이미지 받아와서 canvasView에 background로 띄우는 코드

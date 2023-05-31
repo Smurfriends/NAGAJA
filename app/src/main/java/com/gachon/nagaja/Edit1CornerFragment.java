@@ -171,6 +171,7 @@ public class Edit1CornerFragment extends Fragment  {
                 Edit2HallwayFragment edit2HallwayFragment = new Edit2HallwayFragment();
                 edit2HallwayFragment.setBackground(backgroundBitmap);
                 edit2HallwayFragment.setFindPath(findPath);
+                edit2HallwayFragment.setCanvasView(canvasView);
                 fragmentManager.beginTransaction()
                         .replace(R.id.menu_frame_layout, edit2HallwayFragment)
                         .addToBackStack(null)

@@ -33,10 +33,10 @@ public class RouteCanvasView extends View {
     public int node2;
 
     // TODO: 파베에서 정보 받아오는 코드 넣고 나면, 아래에 있는 테스트용 초기화 정보 지우고 선언만 남기기
-    public static ArrayList<Point> node = new ArrayList<>(
-            Arrays.asList(new Point(20,60),new Point(100,60),new Point(20,300), new Point(20,540), new Point(130,300), new Point(160,540), new Point(180,540))
-    );  // 테스트 용으로 초기화 값 넣어둠
-//    public ArrayList<Point> node = new ArrayList<>(); //원래는 이런식으로만
+//    public static ArrayList<Point> node = new ArrayList<>(
+//            Arrays.asList(new Point(20,60),new Point(100,60),new Point(20,300), new Point(20,540), new Point(130,300), new Point(160,540), new Point(180,540))
+//    );  // 테스트 용으로 초기화 값 넣어둠
+    public ArrayList<Point> node = new ArrayList<>(); //원래는 이런식으로만
     public ArrayList<double[][]> matrix = new ArrayList<>();    // 공간은 하나만 씀. 매번 배열 크기를 다르게 써야해서 사용
     public ArrayList<Integer> pathIndex;
 

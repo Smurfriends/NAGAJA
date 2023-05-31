@@ -33,6 +33,9 @@ public class Edit2HallwayFragment extends Fragment  {
     public void setFindPath(FindPath findPath){
         this.findPath = findPath;
     }
+    public void setCanvasView(CanvasView canvasView){
+        this.canvasView = canvasView;
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -46,7 +49,7 @@ public class Edit2HallwayFragment extends Fragment  {
         nextButton = rootView.findViewById(R.id.nextButton);
 
         // add canvas view
-        canvasView = new CanvasView(getActivity().getApplicationContext(),findPath);
+//        canvasView = new CanvasView(getActivity().getApplicationContext(),findPath);
         frameLayout.addView(canvasView);
 
         // TODO: 파베에서 이미지 받아와서 canvasView에 background로 띄우는 코드
@@ -120,6 +123,7 @@ public class Edit2HallwayFragment extends Fragment  {
                 Edit3ExitFragment edit3ExitFragment = new Edit3ExitFragment();
                 edit3ExitFragment.setBackground(backgroundBitmap);
                 edit3ExitFragment.setFindPath(findPath);
+                edit3ExitFragment.setCanvasView(canvasView);
                 fragmentManager.beginTransaction()
                         .replace(R.id.menu_frame_layout, edit3ExitFragment)
                         .addToBackStack(null)

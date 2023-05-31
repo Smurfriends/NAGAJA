@@ -23,10 +23,10 @@ public class CanvasView extends View {
     int curDrag = -1; // 라인 위에서만 좌표 위치 선택하게 할 때 사용
 
     // TODO: 파베에서 정보 받아오는 코드 넣고 나면, 아래에 있는 테스트용 초기화 정보 지우고 선언만 남기기
-    public ArrayList<Point> node_corner = new ArrayList<>(
-            Arrays.asList(new Point(20,60),new Point(100,60),new Point(20,300), new Point(20,540), new Point(130,300), new Point(160,540), new Point(180,540))
-    );  // 테스트 용으로 초기화 값 넣어둠
-//    public static ArrayList<Point> node_corner = new ArrayList<>(); //원래는 이런식으로만
+//    public ArrayList<Point> node_corner = new ArrayList<>(
+//            Arrays.asList(new Point(20,60),new Point(100,60),new Point(20,300), new Point(20,540), new Point(130,300), new Point(160,540), new Point(180,540))
+//    );  // 테스트 용으로 초기화 값 넣어둠
+    public static ArrayList<Point> node_corner = new ArrayList<>(); //원래는 이런식으로만
     public ArrayList<NewNodeData> node_exit = new ArrayList<>();
     public ArrayList<double[][]> matrix = new ArrayList<>();    // 공간은 하나만 씀. 매번 배열 크기를 다르게 써야해서 사용
     
@@ -48,6 +48,7 @@ public class CanvasView extends View {
 
 //        matrix.add(tempMatrix); // 임시로. 나중에 삭제
         matrix.add(findPath.getMatrix());
+        node_corner = findPath.getNodeArrayList();
     }
 
     @Override
