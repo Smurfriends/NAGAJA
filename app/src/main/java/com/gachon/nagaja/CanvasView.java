@@ -23,31 +23,31 @@ public class CanvasView extends View {
     int curDrag = -1; // 라인 위에서만 좌표 위치 선택하게 할 때 사용
 
     // TODO: 파베에서 정보 받아오는 코드 넣고 나면, 아래에 있는 테스트용 초기화 정보 지우고 선언만 남기기
-    public static ArrayList<Point> node_corner = new ArrayList<>(
-            Arrays.asList(new Point(20,60),new Point(100,60),new Point(20,300), new Point(20,600), new Point(130,300), new Point(160,600), new Point(180,600))
+    public ArrayList<Point> node_corner = new ArrayList<>(
+            Arrays.asList(new Point(20,60),new Point(100,60),new Point(20,300), new Point(20,540), new Point(130,300), new Point(160,540), new Point(180,540))
     );  // 테스트 용으로 초기화 값 넣어둠
 //    public static ArrayList<Point> node_corner = new ArrayList<>(); //원래는 이런식으로만
-    public static ArrayList<NewNodeData> node_exit = new ArrayList<>();
-    public static ArrayList<int[][]> matrix = new ArrayList<>();    // 공간은 하나만 씀. 매번 배열 크기를 다르게 써야해서 사용
+    public ArrayList<NewNodeData> node_exit = new ArrayList<>();
+    public ArrayList<double[][]> matrix = new ArrayList<>();    // 공간은 하나만 씀. 매번 배열 크기를 다르게 써야해서 사용
     
-     int[][] tempMatrix = { { 0, 80, 240, 100000, 100000, 100000, 100000 },
-            { 80, 0, 100000, 100000, 241, 100000, 100000 },
-            { 240, 100000, 0, 300, 110, 100000, 100000 },
-            { 100000, 100000, 300, 0, 100000, 140, 100000 },
-            { 100000, 241, 110, 100000, 0, 301, 100000},
-            { 100000, 100000, 100000, 140, 301, 0, 20, },
-            { 100000, 100000, 100000, 100000, 100000, 20, 0 } };    // 테스트 용으로 초기화 값 넣어둠
+//     double[][] tempMatrix = { { 0, 80, 240, 100000, 100000, 100000, 100000 },
+//            { 80, 0, 100000, 100000, 241, 100000, 100000 },
+//            { 240, 100000, 0, 300, 110, 100000, 100000 },
+//            { 100000, 100000, 300, 0, 100000, 140, 100000 },
+//            { 100000, 241, 110, 100000, 0, 301, 100000},
+//            { 100000, 100000, 100000, 140, 301, 0, 20, },
+//            { 100000, 100000, 100000, 100000, 100000, 20, 0 } };    // 테스트 용으로 초기화 값 넣어둠
     // 얘는 이제 어디선가 만들어지고 "matrix" ArrayList에 저장될 예정. 여기에 선언 안함
 
-    public CanvasView(Context context) {
+    public CanvasView(Context context, FindPath findPath) {
         super(context);
 
         // paint 기본 설정
         paint.setStrokeWidth(10f);
         paint.setStyle(Paint.Style.STROKE);
 
-        matrix.add(tempMatrix); // 임시로. 나중에 삭제
-
+//        matrix.add(tempMatrix); // 임시로. 나중에 삭제
+        matrix.add(findPath.getMatrix());
     }
 
     @Override
@@ -59,7 +59,7 @@ public class CanvasView extends View {
         if (curEdit == -2 || curEdit == -3) {
             paint.setColor(Color.rgb(255,228,225)); // 분홍색
 
-            int[][] temp = matrix.get(0);
+            double[][] temp = matrix.get(0);
 
             for (int row = 0; row < temp.length; row++) {
                 for (int col = 0; col < temp.length; col++) {
@@ -255,7 +255,7 @@ public class CanvasView extends View {
         int a = curEditTwo[0];
         int b = curEditTwo[1];
 
-        int[][] temp = matrix.get(0);
+        double[][] temp = matrix.get(0);
 
         if (temp[a][b] == 100000) {    // connect
             int weight = (int) Math.sqrt(Math.pow(node_corner.get(a).x - node_corner.get(b).x, 2) + (Math.pow(node_corner.get(a).y - node_corner.get(b).y, 2)));
@@ -279,7 +279,7 @@ public class CanvasView extends View {
 
         if (curEditTwo[0] != -1 && curEditTwo[1] != -1) {
 
-            int[][] temp = matrix.get(0);
+            double[][] temp = matrix.get(0);
             if (temp[curEditTwo[0]][curEditTwo[1]] != 100000) {
 
                 // 중간 좌표 계산
@@ -311,9 +311,9 @@ public class CanvasView extends View {
 
     // Exit node 정보를 matrix에 추가
     public void addEdgeOfExitNodeToMatrix() {
-        int[][] cornerMatrix = matrix.get(0);   // 원래 매트릭스 가져오기
+        double[][] cornerMatrix = matrix.get(0);   // 원래 매트릭스 가져오기
         int size = node_corner.size() + node_exit.size();
-        int[][] finalMatrix = new int[size][size];
+        double[][] finalMatrix = new double[size][size];
 
         // finalMatrix 초기화
         for (int i = 0; i < size; i++) {

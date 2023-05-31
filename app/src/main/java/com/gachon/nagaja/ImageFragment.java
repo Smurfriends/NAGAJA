@@ -56,7 +56,6 @@ public class ImageFragment extends Fragment  {
     ImageView imageView;
     FrameLayout frameLayout;
     RouteCanvasView routeCanvasView;
-    FindPath findPath;
     Button downloadButton;
     Button adjustNodeButton;
 
@@ -108,8 +107,7 @@ public class ImageFragment extends Fragment  {
                                           @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
                                           @Override
                                           public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
-                                              bitmap = resource;
-                                              check = 1;
+
 
                                               // 긴 쪽이 세로로 보이도록 회전
                                               if (resource.getWidth() > resource.getHeight()) {
@@ -148,9 +146,11 @@ public class ImageFragment extends Fragment  {
 
                                               // 비트맵을 drawable로 변환
                                               Drawable drawable = new BitmapDrawable(result);
+                                              bitmap = result;
+                                              check = 1;
 
                                               // add canvas view
-                                              routeCanvasView = new RouteCanvasView(getActivity().getApplicationContext(),bname);
+                                              routeCanvasView = new RouteCanvasView(getActivity().getApplicationContext(),findPath);
                                               frameLayout.addView(routeCanvasView);
 
                                               // 캔버스뷰에 background로 세팅
@@ -230,8 +230,11 @@ public class ImageFragment extends Fragment  {
             @Override
             public void onClick(View v) {
                 FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+                Edit1CornerFragment edit1CornerFragment = new Edit1CornerFragment();
+                edit1CornerFragment.setBackground(bitmap); // bitmap 변수나 drawable을 전달하여 배경 설정
+                edit1CornerFragment.setFindPath(findPath); // edit1에 findPath 정보 넘겨주기
                 fragmentManager.beginTransaction()
-                        .replace(R.id.menu_frame_layout, new Edit1CornerFragment())
+                        .replace(R.id.menu_frame_layout, edit1CornerFragment)
                         .addToBackStack(null)
                         .commit();
             }

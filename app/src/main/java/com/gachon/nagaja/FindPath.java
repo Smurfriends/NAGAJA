@@ -35,7 +35,7 @@ public class FindPath {
     private double[][] matrix;
 
     private ArrayList<Point> nodeArrayList;
-    private ArrayList<Integer> path;
+    private ArrayList<Integer> pathIndex;
 
     public FindPath(String buildingName) {//like mains
         this.buildingName = buildingName;
@@ -109,7 +109,7 @@ public class FindPath {
                     if (splitValues[index].equals("100000")) {
                         matrix[i][j] = Double.POSITIVE_INFINITY; // or any other appropriate value
                     } else {
-                        matrix[i][j] = Double.parseDouble(splitValues[index]);
+                        matrix[i][j] = Double.parseDouble(splitValues[index])/2;//크기를 반으로 줄이기 때문에 2를 나눠야함
                     }
                     index++;
                 }
@@ -137,7 +137,7 @@ public class FindPath {
 
         // Convert x and y values into Point objects
         for (int i = 0; i < splitValuesX.length; i++) {
-            Point point = new Point(Integer.parseInt(splitValuesX[i]), Integer.parseInt(splitValuesY[i]));
+            Point point = new Point(Integer.parseInt(splitValuesX[i])/2, Integer.parseInt(splitValuesY[i])/2); //크기를 반으로 줄이기 때문에 2를 나눠야함
             nodeArrayList.add(point);
         }
     }
@@ -170,7 +170,9 @@ public class FindPath {
         return floorNum;
     }
 
-    public static double dijkstra(double[][] graph, int startNode, int endNode) {
+    public double dijkstra(double[][] graph, int startNode, int endNode) {
+        String tag = "Dijkstra";
+        Log.d(tag, "No path found.");
         int numNodes = graph.length;
         boolean[] visited = new boolean[numNodes];
         double[] distance = new double[numNodes];
@@ -191,7 +193,7 @@ public class FindPath {
                 }
             }
         }
-//        logShortestPath(startNode, endNode, previous);
+        logShortestPath(startNode, endNode, previous);
 
         return distance[endNode];
     }
@@ -213,14 +215,13 @@ public class FindPath {
 
     public void logShortestPath(int startNode, int endNode, int[] previous) {
         String tag = "Dijkstra";
-//        Log.d(tag, "Shortest path from Node " + startNode + " to Node " + endNode + ":");
 
         if (previous[endNode] == -1) {
             Log.d(tag, "No path found.");
         } else {
-
             ArrayList<Integer> path = new ArrayList<>();
             int node = endNode;
+
             while (node != startNode) {
                 node = previous[node];
                 path.add(0, node);
@@ -228,10 +229,10 @@ public class FindPath {
             path.add(endNode);
             path.remove(0);
 
-            this.path = path;
+            this.pathIndex = path;
         }
-
     }
+
     public String getId() {
         return id;
     }
@@ -260,7 +261,7 @@ public class FindPath {
         return nodeArrayList;
     }
 
-    public ArrayList<Integer> getPath() {
-        return path;
+    public ArrayList<Integer> getPathIndex() {
+        return pathIndex;
     }
 }
