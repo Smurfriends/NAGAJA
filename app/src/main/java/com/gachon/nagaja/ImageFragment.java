@@ -150,7 +150,7 @@ public class ImageFragment extends Fragment  {
                                               Drawable drawable = new BitmapDrawable(result);
 
                                               // add canvas view
-                                              routeCanvasView = new RouteCanvasView(getActivity().getApplicationContext(),findPath);
+                                              routeCanvasView = new RouteCanvasView(getActivity().getApplicationContext(),bname);
                                               frameLayout.addView(routeCanvasView);
 
                                               // 캔버스뷰에 background로 세팅
@@ -230,10 +230,8 @@ public class ImageFragment extends Fragment  {
             @Override
             public void onClick(View v) {
                 FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-                Edit1CornerFragment edit1CornerFragment = new Edit1CornerFragment();
-                edit1CornerFragment.setBackground(bitmap); // bitmap 변수나 drawable을 전달하여 배경 설정
                 fragmentManager.beginTransaction()
-                        .replace(R.id.menu_frame_layout, edit1CornerFragment)
+                        .replace(R.id.menu_frame_layout, new Edit1CornerFragment())
                         .addToBackStack(null)
                         .commit();
             }

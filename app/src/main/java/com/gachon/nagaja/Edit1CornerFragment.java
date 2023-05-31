@@ -54,9 +54,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class Edit1CornerFragment extends Fragment  {
-    private Bitmap backgroundBitmap;
-    private View rootView;
-
     FrameLayout frameLayout;
     CanvasView canvasView;
     FindPath findPath;
@@ -68,20 +65,11 @@ public class Edit1CornerFragment extends Fragment  {
     Button moveToRightButton;
     Button nextButton;
 
-    public void setBackground(Bitmap bitmap) {
-        backgroundBitmap = bitmap;
-        if (rootView != null && backgroundBitmap != null) {
-            rootView.setBackground(new BitmapDrawable(getResources(), backgroundBitmap));
-        }
-    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         // Inflate the layout for this fragment
-        rootView = inflater.inflate(R.layout.fragment_edit1_corner, container, false);
-        if (backgroundBitmap != null) {
-            rootView.setBackground(new BitmapDrawable(getResources(), backgroundBitmap));
-        }
+        View rootView = inflater.inflate(R.layout.fragment_edit1_corner, container, false);
         frameLayout = rootView.findViewById(R.id.frameLayout);
         addNodeButton = rootView.findViewById(R.id.addNodeButton);
         deleteNodeButton = rootView.findViewById(R.id.deleteNodeButton);
@@ -97,7 +85,7 @@ public class Edit1CornerFragment extends Fragment  {
 
         // TODO: 파베에서 이미지 받아와서 canvasView에 background로 띄우는 코드
         // 원래는 이미지 들어가는데 테스트 용으로 지금만 color 넣음
-//        canvasView.setBackgroundColor(Color.WHITE);
+        canvasView.setBackgroundColor(Color.WHITE);
 //        canvasView.setBackground(파베에서 받아온 사진 파일 drawable);
 
         // TODO: 파베에서 좌표 정보 받아오는 코드
@@ -162,10 +150,8 @@ public class Edit1CornerFragment extends Fragment  {
                 // TODO: 넘어가는 코드
                 // 변수 안꼬이게 activity 넘기고 나서 쓰는 finish()같은 거 넣어 주기. 이전 화면으로 못돌아오도록
                 FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-                Edit2HallwayFragment edit2HallwayFragment = new Edit2HallwayFragment();
-                edit2HallwayFragment.setBackground(backgroundBitmap);
                 fragmentManager.beginTransaction()
-                        .replace(R.id.menu_frame_layout, edit2HallwayFragment)
+                        .replace(R.id.menu_frame_layout, new Edit2HallwayFragment())
                         .addToBackStack(null)
                         .commit();
 

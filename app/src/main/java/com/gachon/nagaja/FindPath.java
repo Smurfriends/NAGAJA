@@ -35,7 +35,7 @@ public class FindPath {
     private double[][] matrix;
 
     private ArrayList<Point> nodeArrayList;
-    private ArrayList<Integer> pathIndex;
+    private ArrayList<Integer> path;
 
     public FindPath(String buildingName) {//like mains
         this.buildingName = buildingName;
@@ -170,7 +170,7 @@ public class FindPath {
         return floorNum;
     }
 
-    public double dijkstra(double[][] graph, int startNode, int endNode) {
+    public static double dijkstra(double[][] graph, int startNode, int endNode) {
         int numNodes = graph.length;
         boolean[] visited = new boolean[numNodes];
         double[] distance = new double[numNodes];
@@ -191,7 +191,7 @@ public class FindPath {
                 }
             }
         }
-        logShortestPath(startNode, endNode, previous);
+//        logShortestPath(startNode, endNode, previous);
 
         return distance[endNode];
     }
@@ -213,10 +213,12 @@ public class FindPath {
 
     public void logShortestPath(int startNode, int endNode, int[] previous) {
         String tag = "Dijkstra";
+//        Log.d(tag, "Shortest path from Node " + startNode + " to Node " + endNode + ":");
 
         if (previous[endNode] == -1) {
             Log.d(tag, "No path found.");
         } else {
+
             ArrayList<Integer> path = new ArrayList<>();
             int node = endNode;
             while (node != startNode) {
@@ -226,10 +228,10 @@ public class FindPath {
             path.add(endNode);
             path.remove(0);
 
-            this.pathIndex = path;
+            this.path = path;
         }
-    }
 
+    }
     public String getId() {
         return id;
     }
@@ -258,7 +260,7 @@ public class FindPath {
         return nodeArrayList;
     }
 
-    public ArrayList<Integer> getPathIndex() {
-        return pathIndex;
+    public ArrayList<Integer> getPath() {
+        return path;
     }
 }

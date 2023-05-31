@@ -1,8 +1,6 @@
 package com.gachon.nagaja;
 
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -15,8 +13,6 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 
 public class Edit2HallwayFragment extends Fragment  {
-    private Bitmap backgroundBitmap;
-    private View rootView;
     FrameLayout frameLayout;
     CanvasView canvasView;
     FindPath findPath;
@@ -24,16 +20,11 @@ public class Edit2HallwayFragment extends Fragment  {
     Button connectButton;
     Button nextButton;
 
-    public void setBackground(Bitmap bitmap) {
-        backgroundBitmap = bitmap;
-        if (rootView != null && backgroundBitmap != null) {
-            rootView.setBackground(new BitmapDrawable(getResources(), backgroundBitmap));
-        }
-    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        rootView = inflater.inflate(R.layout.fragment_edit2_hallway, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_edit2_hallway, container, false);
         frameLayout = rootView.findViewById(R.id.frameLayout);
         deselectButton = rootView.findViewById(R.id.deselectButton);
         connectButton = rootView.findViewById(R.id.connectButton);
@@ -45,7 +36,7 @@ public class Edit2HallwayFragment extends Fragment  {
 
         // TODO: 파베에서 이미지 받아와서 canvasView에 background로 띄우는 코드
         // 원래는 이미지 들어가는데 테스트 용으로 지금만 color 넣음
-//        canvasView.setBackgroundColor(Color.WHITE);
+        canvasView.setBackgroundColor(Color.WHITE);
 //        canvasView.setBackground(파베에서 받아온 사진 파일 drawable);
 
         // TODO: 파베에서 matrix 정보 받아오는 코드
@@ -111,10 +102,8 @@ public class Edit2HallwayFragment extends Fragment  {
                 // TODO: 넘어가는 코드
                 // 변수 안꼬이게 activity 넘기고 나서 쓰는 finish()같은 거 넣어 주기. 이전 화면으로 못돌아오도록
                 FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-                Edit3ExitFragment edit3ExitFragment = new Edit3ExitFragment();
-                edit3ExitFragment.setBackground(backgroundBitmap);
                 fragmentManager.beginTransaction()
-                        .replace(R.id.menu_frame_layout, edit3ExitFragment)
+                        .replace(R.id.menu_frame_layout, new Edit3ExitFragment())
                         .addToBackStack(null)
                         .commit();
 

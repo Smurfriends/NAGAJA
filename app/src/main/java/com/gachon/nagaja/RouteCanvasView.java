@@ -13,11 +13,9 @@ import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Timer;
 
 public class RouteCanvasView extends View {
 
@@ -25,7 +23,7 @@ public class RouteCanvasView extends View {
     float density = getResources().getDisplayMetrics().density;
     int count = 0;  // for drag
     public boolean showPath = false;   // drawPath 보여줄지말지
-
+    
     // 시작노드를 위한 변수들
     public Point curLocation = new Point();    // 현 위치 터치 좌표
     public Point curLocationNode = new Point();    // 현 위치 노드 좌표 (수선의 발)
@@ -38,7 +36,7 @@ public class RouteCanvasView extends View {
 //    );  // 테스트 용으로 초기화 값 넣어둠
     public ArrayList<Point> node = new ArrayList<>(); //원래는 이런식으로만
     public ArrayList<double[][]> matrix = new ArrayList<>();    // 공간은 하나만 씀. 매번 배열 크기를 다르게 써야해서 사용
-    public ArrayList<Integer> pathIndex;
+    public ArrayList<Integer> pathIndex = new ArrayList<>();
 
     private FindPath findPath;
     public RouteCanvasView(Context context, FindPath findPath) { //findPath에서 가져오면 안됌 이름을 넘겨받고 데이터를 받아오는게 나음
@@ -50,16 +48,7 @@ public class RouteCanvasView extends View {
 
         this.findPath = findPath;
 
-        //받아 온 좌표를 CanvasView에 있는 node_corner ArrayList에 넣기
-        //routeCanvasView.pathIndex = findPath.getPath();
-        pathIndex = findPath.getPathIndex();
-
-        //routeCanvasView.node = findPath.getNodeArrayList();
-        node = findPath.getNodeArrayList();
-        //routeCanvasView.matrix.add(findPath.getMatrix());
-        matrix.add(findPath.getMatrix());
 //        matrix.add(tempMatrix); // 임시로. 나중에 삭제
-
 
     }
 
@@ -67,12 +56,6 @@ public class RouteCanvasView extends View {
     protected void onDraw(Canvas canvas) {
 
         if (showPath == true) {
-            if (pathIndex == null) {
-                // Show toast message indicating no path found
-                Toast.makeText(getContext(), "No path found.", Toast.LENGTH_SHORT).show();
-                return; // Exit the method if pathIndex is null
-            }
-
 
             Path path = new Path();
 
@@ -143,7 +126,8 @@ public class RouteCanvasView extends View {
                         // 현 위치 좌표 세팅
                         curLocation.x = x;
                         curLocation.y = y;
-
+                        setStartNode(); // test
+                        invalidate();
                     }
                     break;
 
@@ -285,15 +269,15 @@ public class RouteCanvasView extends View {
                 Log.d("pathMatrix", "" + pathMatrix[i][j]);
             }
         }
-//        Log.d("pathMatrix", "" + pathMatrix[0]);
-//        Log.d("pathMatrix", "" + pathMatrix[1]);
-//        Log.d("pathMatrix", "" + pathMatrix[2]);
-//        Log.d("pathMatrix", "" + pathMatrix[3]);
-//        Log.d("pathMatrix", "" + pathMatrix[4]);
-//        Log.d("pathMatrix", "" + pathMatrix[5]);
-//        Log.d("pathMatrix", "" + pathMatrix[6]);
-//        Log.d("pathMatrix", "" + pathMatrix[7]);
-//
+        Log.d("pathMatrix", "" + pathMatrix[0]);
+        Log.d("pathMatrix", "" + pathMatrix[1]);
+        Log.d("pathMatrix", "" + pathMatrix[2]);
+        Log.d("pathMatrix", "" + pathMatrix[3]);
+        Log.d("pathMatrix", "" + pathMatrix[4]);
+        Log.d("pathMatrix", "" + pathMatrix[5]);
+        Log.d("pathMatrix", "" + pathMatrix[6]);
+        Log.d("pathMatrix", "" + pathMatrix[7]);
+        
         matrix.add(pathMatrix); // index 1에 들어감
     }
 
@@ -304,7 +288,7 @@ public class RouteCanvasView extends View {
 
         double min = Double.POSITIVE_INFINITY;
         for (int i = firstIndexOfExitNode; i < node.size(); i++) {
-            double result = findPath.dijkstra(matrix.get(1), node.size(), i);
+            double result = FindPath.dijkstra(matrix.get(1), node.size(), i);
             if (result < min) {
                 min = result;
                 shortestExit = i;
@@ -312,9 +296,12 @@ public class RouteCanvasView extends View {
         }
 
         // 가장 짧은 exit을 endNode로 하는 다익스트라를 다시 호출해서 저장되게 하기 (비효율적이지만 돌아는 감)
-        findPath.dijkstra(matrix.get(1), node.size(), shortestExit);
+        FindPath.dijkstra(matrix.get(1), node.size(), shortestExit);
 
     }
-
+//// 받아 온 좌표를 CanvasView에 있는 node_corner ArrayList에 넣기
+//    routeCanvasView.pathIndex = findPath.getPath();
+//    routeCanvasView.node = findPath.getNodeArrayList();
+//        routeCanvasView.matrix.add(findPath.getMatrix());
 }
 
