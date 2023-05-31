@@ -1,1 +1,1 @@
-C:\NAGAJA\sdk1\libcxx_helper\CMakeLists.txt
+C:\Users\jiwon kim\Documents\GitHub\NAGAJA\sdk1\libcxx_helper\CMakeLists.txt
