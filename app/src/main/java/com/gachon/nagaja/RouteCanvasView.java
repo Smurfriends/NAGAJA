@@ -72,14 +72,14 @@ public class RouteCanvasView extends View {
 
             double[][] temp = matrix.get(0);
 
-            for (int row = 0; row < temp.length; row++) {
-                for (int col = 0; col < temp.length; col++) {
-                    if (temp[row][col] != 0 && temp[row][col] != 50000) {
-                        paint.setColor(Color.rgb(255,228,225));   // 분홍색
-                        canvas.drawLine(node.get(row).x *density, node.get(row).y *density, node.get(col).x *density, node.get(col).y *density, paint);
-                    }   // 두 번 그려지긴 하는데 별 상관 없음
-                }
-            }
+//            for (int row = 0; row < temp.length; row++) {
+//                for (int col = 0; col < temp.length; col++) {
+//                    if (temp[row][col] != 0 && temp[row][col] != 50000) {
+//                        paint.setColor(Color.rgb(255,228,225));   // 분홍색
+//                        canvas.drawLine(node.get(row).x *density, node.get(row).y *density, node.get(col).x *density, node.get(col).y *density, paint);
+//                    }   // 두 번 그려지긴 하는데 별 상관 없음
+//                }
+//            }
 
             Path path = new Path();
 
@@ -164,7 +164,7 @@ public class RouteCanvasView extends View {
 
                     setStartNode(); // 시작 노드 설정
                     addEdgeOfStartNodeToMatrix();   // 시작 노드의 edge 2개를 matrix에 추가
-                    findShortestPathToAllExits(4);    // exit 노드 개수만큼 다익스트라 //firstExitNodeIndex. nodeNum
+                    findShortestPathToAllExits(6);    // exit 노드 개수만큼 다익스트라 //firstExitNodeIndex. nodeNum
                     showPath = true;    // 다음 화면에서 drawPath 코드 실행되도록
 
                     invalidate();
@@ -180,11 +180,11 @@ public class RouteCanvasView extends View {
         double[][] temp = matrix.get(0);   // edge matrix
         ArrayList<int[]> minEdge = new ArrayList<>(); // int[4] 안에 node1, node2, footX, footY 임시 저장
 
-        int footX = 0;  // 수선의 발
-        int footY = 0;
+        double footX = 0;  // 수선의 발
+        double footY = 0;
         double lengthOfPerpendicular = 0;  // 수선의 길이
-        float coefficient = 0;
-        float constant = 0;
+        double coefficient = 0;
+        double constant = 0;
 
         double min = 50000;
         for (int row = 0; row < node.size(); row++) {
@@ -210,15 +210,15 @@ public class RouteCanvasView extends View {
                         constant = node.get(row).y;
                     }
                     else {  // y=ax+b 형태
-                        coefficient = (float) differenceY / (float) differenceX;  // 방정식의 계수
+                        coefficient = (double) differenceY / (double) differenceX;  // 방정식의 계수
                         constant = node.get(col).y - (coefficient * node.get(col).x); // 방정식의 상수
 
-                        float coefficientOfPerpendicular = (1 / coefficient) * -1;  // 수선의 방정식의 계수
-                        float constantOfPerpendicular = curLocation.y - (curLocation.x * coefficientOfPerpendicular);  // 수선의 방정식의 상수
+                        double coefficientOfPerpendicular = (1 / coefficient) * -1;  // 수선의 방정식의 계수
+                        double constantOfPerpendicular = curLocation.y - (curLocation.x * coefficientOfPerpendicular);  // 수선의 방정식의 상수
 
                         // 수선의 발 구하기
-                        footX = (int) ((constantOfPerpendicular - constant) / (coefficient - coefficientOfPerpendicular));
-                        footY = (int) ((coefficient * footX) + constant);
+                        footX = (constantOfPerpendicular - constant) / (coefficient - coefficientOfPerpendicular);
+                        footY = (coefficient * footX) + constant;
 
                         // 수선의 발과의 거리 구하기
                         lengthOfPerpendicular = Math.sqrt(Math.pow(curLocation.x - footX, 2) + Math.pow(curLocation.y - footY, 2));
@@ -291,7 +291,7 @@ public class RouteCanvasView extends View {
                             }
 
                             // minEdge index 0:node1, 1:node2, 2:curLocationNode.x, 3:curLocationNode.y
-                            int[] data = {row, col, footX, footY};
+                            int[] data = {row, col, (int) footX, (int) footY};
                             minEdge.add(data);
                         }
                     }
@@ -319,7 +319,6 @@ public class RouteCanvasView extends View {
             }
         }
     }
-//            int a = matrix.get(0)[2][3];  // 이거 이런 식으로 불러오기 가능한 거 이제 알았네 와 진짜 matrix.get().get() 막 이러고 있었는데... 진짜 감자다...
 
 
     // 시작 노드를 edge matrix에 추가하는 함수

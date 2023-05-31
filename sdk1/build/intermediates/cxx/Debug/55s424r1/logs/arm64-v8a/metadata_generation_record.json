@@ -2,7 +2,7 @@
   {
     "level_": 0,
     "message_": "Start JSON generation. Platform version: 21 min SDK version: arm64-v8a",
-    "file_": "C:\\NAGAJA\\sdk1\\libcxx_helper\\CMakeLists.txt",
+    "file_": "C:\\Users\\jiwon kim\\Documents\\GitHub\\NAGAJA\\sdk1\\libcxx_helper\\CMakeLists.txt",
     "tag_": "debug|arm64-v8a",
     "diagnosticCode_": 0,
     "memoizedIsInitialized": 1,
@@ -11,12 +11,12 @@
       "fieldsDescending": {}
     },
     "memoizedSize": -1,
-    "memoizedHashCode": 1664066168
+    "memoizedHashCode": 523178670
   },
   {
     "level_": 0,
-    "message_": "JSON \u0027C:\\NAGAJA\\sdk1\\.cxx\\Debug\\55s424r1\\arm64-v8a\\android_gradle_build.json\u0027 was up-to-date",
-    "file_": "C:\\NAGAJA\\sdk1\\libcxx_helper\\CMakeLists.txt",
+    "message_": "JSON \u0027C:\\Users\\jiwon kim\\Documents\\GitHub\\NAGAJA\\sdk1\\.cxx\\Debug\\55s424r1\\arm64-v8a\\android_gradle_build.json\u0027 was up-to-date",
+    "file_": "C:\\Users\\jiwon kim\\Documents\\GitHub\\NAGAJA\\sdk1\\libcxx_helper\\CMakeLists.txt",
     "tag_": "debug|arm64-v8a",
     "diagnosticCode_": 0,
     "memoizedIsInitialized": 1,
@@ -25,12 +25,12 @@
       "fieldsDescending": {}
     },
     "memoizedSize": -1,
-    "memoizedHashCode": -1483183817
+    "memoizedHashCode": 502659202
   },
   {
     "level_": 0,
     "message_": "JSON generation completed without problems",
-    "file_": "C:\\NAGAJA\\sdk1\\libcxx_helper\\CMakeLists.txt",
+    "file_": "C:\\Users\\jiwon kim\\Documents\\GitHub\\NAGAJA\\sdk1\\libcxx_helper\\CMakeLists.txt",
     "tag_": "debug|arm64-v8a",
     "diagnosticCode_": 0,
     "memoizedIsInitialized": 1,
@@ -39,6 +39,6 @@
       "fieldsDescending": {}
     },
     "memoizedSize": -1,
-    "memoizedHashCode": -1528195049
+    "memoizedHashCode": 1625884749
   }
 ]
