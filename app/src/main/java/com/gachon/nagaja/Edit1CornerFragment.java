@@ -71,9 +71,9 @@ public class Edit1CornerFragment extends Fragment  {
 
     public void setBackground(Bitmap bitmap) {
         backgroundBitmap = bitmap;
-        if (rootView != null && backgroundBitmap != null) {
-            rootView.setBackground(new BitmapDrawable(getResources(), backgroundBitmap));
-        }
+//        if (rootView != null && backgroundBitmap != null) {
+//            frameLayout.setBackground(new BitmapDrawable(getResources(), backgroundBitmap));
+//        }
     }
 
     public void setFindPath(FindPath findPath){
@@ -85,9 +85,7 @@ public class Edit1CornerFragment extends Fragment  {
 
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_edit1_corner, container, false);
-        if (backgroundBitmap != null) {
-            rootView.setBackground(new BitmapDrawable(getResources(), backgroundBitmap));
-        }
+
         frameLayout = rootView.findViewById(R.id.frameLayout);
         addNodeButton = rootView.findViewById(R.id.addNodeButton);
         deleteNodeButton = rootView.findViewById(R.id.deleteNodeButton);
@@ -96,6 +94,11 @@ public class Edit1CornerFragment extends Fragment  {
         moveToLeftButton = rootView.findViewById(R.id.moveToLeftButton);
         moveToRightButton = rootView.findViewById(R.id.moveToRightButton);
         nextButton = rootView.findViewById(R.id.nextButton);
+
+        // frameLayout에 지도 이미지 세팅
+        if (backgroundBitmap != null) {
+            frameLayout.setBackground(new BitmapDrawable(getResources(), backgroundBitmap));
+        }
 
         // add canvas view
         canvasView = new CanvasView(getActivity().getApplicationContext(),findPath);

@@ -173,6 +173,8 @@ public class RouteCanvasView extends View {
         int footX = 0;  // 수선의 발
         int footY = 0;
         double lengthOfPerpendicular = 0;  // 수선의 길이
+        float coefficient = 0;
+        float constant = 0;
 
         double min = 100000;
         for (int row = 0; row < node.size(); row++) {
@@ -187,15 +189,19 @@ public class RouteCanvasView extends View {
                         footX = node.get(row).x;
                         footY = curLocation.y;
                         lengthOfPerpendicular = Math.abs(curLocation.x - node.get(row).x);
+                        coefficient = 0;
+                        constant = 0;
                     }
                     else if (differenceY == 0) {  // y=a 형태
                         footX = curLocation.x;
                         footY = node.get(row).y;
                         lengthOfPerpendicular = Math.abs(curLocation.y - node.get(row).y);
+                        coefficient = 0;
+                        constant = node.get(row).y;
                     }
                     else {  // y=ax+b 형태
-                        float coefficient = (float) differenceY / (float) differenceX;  // 방정식의 계수
-                        float constant = node.get(col).y - (coefficient * node.get(col).x); // 방정식의 상수
+                        coefficient = (float) differenceY / (float) differenceX;  // 방정식의 계수
+                        constant = node.get(col).y - (coefficient * node.get(col).x); // 방정식의 상수
 
                         float coefficientOfPerpendicular = (1 / coefficient) * -1;  // 수선의 방정식의 계수
                         float constantOfPerpendicular = curLocation.y - (curLocation.x * coefficientOfPerpendicular);  // 수선의 방정식의 상수
@@ -208,16 +214,76 @@ public class RouteCanvasView extends View {
                         lengthOfPerpendicular = Math.sqrt(Math.pow(curLocation.x - footX, 2) + Math.pow(curLocation.y - footY, 2));
                     }
 
-                    // 최솟값을 저장
-                    if (lengthOfPerpendicular <= min) {
-                        min = lengthOfPerpendicular;
-                        
-                        // min이랑 같지 않고, 더 작은 최솟값이면 ArrayList 비우기
-                        if (lengthOfPerpendicular < min) { minEdge.clear(); }
 
-                        // minEdge index 0:node1, 1:node2, 2:curLocationNode.x, 3:curLocationNode.y
-                        int[] data = {row, col, footX, footY};
-                        minEdge.add(data);
+                    // 직선 범위 내에 있는지 확인
+                    boolean isInRange = true;   // 그 직선 위에 있는지
+                    if (coefficient == 0 && constant == 0) { // x=a
+                        if (differenceY > 0) {  // row의 y가 더 클 때
+                            if (curLocation.y >= node.get(row).y || curLocation.y <= node.get(col).y) {
+                                isInRange = false;
+                            }
+                        }
+                        else {
+                            if (curLocation.y >= node.get(col).y || curLocation.y <= node.get(row).y) {
+                                isInRange = false;
+                            }
+                        }
+                    }
+                    else if (coefficient == 0) {    // y=a
+                        if (differenceX > 0) {  // row의 x가 더 클 때
+                            if (curLocation.x >= node.get(row).x || curLocation.x <= node.get(col).x) {
+                                isInRange = false;
+                            }
+                        }
+                        else {
+                            if (curLocation.x >= node.get(col).x || curLocation.x <= node.get(row).x) {
+                                isInRange = false;
+                            }
+                        }
+                    }
+                    else if (coefficient > 0) {   // +/+, -/-
+                        if (differenceX > 0) {  // +/+
+                            if (curLocation.x <= node.get(col).x || curLocation.x >= node.get(row).x
+                            || curLocation.y <= node.get(col).y || curLocation.y >= node.get(row).y) {
+                                isInRange = false;
+                            }
+                        }
+                        else {  // -/-
+                            if (curLocation.x <= node.get(row).x || curLocation.x >= node.get(col).x
+                                    || curLocation.y <= node.get(row).y || curLocation.y >= node.get(col).y) {
+                                isInRange = false;
+                            }
+                        }
+                    }
+                    else if (coefficient < 0) {   // -/+, +/-
+                        if (differenceX > 0) {  // -/+
+                            if (curLocation.x <= node.get(col).x || curLocation.x >= node.get(row).x
+                                    || curLocation.y <= node.get(row).y || curLocation.y >= node.get(col).y) {
+                                isInRange = false;
+                            }
+                        }
+                        else {  // +/-
+                            if (curLocation.x <= node.get(row).x || curLocation.x >= node.get(col).x
+                                    || curLocation.y <= node.get(col).y || curLocation.y >= node.get(row).y) {
+                                isInRange = false;
+                            }
+                        }
+                    }
+
+                    if (isInRange) {    // 직선 범위 내에 있다면
+                        // 최솟값을 저장
+                        if (lengthOfPerpendicular <= min) {
+                            min = lengthOfPerpendicular;
+
+                            // min이랑 같지 않고, 더 작은 최솟값이면 ArrayList 비우기
+                            if (lengthOfPerpendicular < min) {
+                                minEdge.clear();
+                            }
+
+                            // minEdge index 0:node1, 1:node2, 2:curLocationNode.x, 3:curLocationNode.y
+                            int[] data = {row, col, footX, footY};
+                            minEdge.add(data);
+                        }
                     }
                 }
             }
@@ -287,16 +353,13 @@ public class RouteCanvasView extends View {
                 Log.d("pathMatrix", "" + pathMatrix[i][j]);
             }
         }
-//        Log.d("pathMatrix", "" + pathMatrix[0]);
-//        Log.d("pathMatrix", "" + pathMatrix[1]);
-//        Log.d("pathMatrix", "" + pathMatrix[2]);
-//        Log.d("pathMatrix", "" + pathMatrix[3]);
-//        Log.d("pathMatrix", "" + pathMatrix[4]);
-//        Log.d("pathMatrix", "" + pathMatrix[5]);
-//        Log.d("pathMatrix", "" + pathMatrix[6]);
-//        Log.d("pathMatrix", "" + pathMatrix[7]);
-//
-        matrix.add(pathMatrix); // index 1에 들어감
+
+        if (matrix.size() == 1) {
+            matrix.add(pathMatrix);
+        }
+        else {
+            matrix.set(1, pathMatrix); // index 1에 들어감
+        }
     }
 
     // exit 노드 개수만큼 다익스트라

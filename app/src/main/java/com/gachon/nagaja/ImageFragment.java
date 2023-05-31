@@ -118,9 +118,9 @@ public class ImageFragment extends Fragment  {
 
                                               }
 
-                                              // 360dp*640dp 화면에 맞춰 scale 조정
+                                              // 360dp*600dp 화면에 맞춰 scale 조정
                                               float widthScale = resource.getWidth() / 360f;  // 아악 float 아아ㅏ아악
-                                              float heightScale = resource.getHeight() / 640f;
+                                              float heightScale = resource.getHeight() / 600f;
 
                                               Matrix matrix = new Matrix();
                                               if (widthScale > heightScale) {
@@ -134,12 +134,12 @@ public class ImageFragment extends Fragment  {
                                               Log.d("Resource", "width: " + resource.getWidth() + ", height: " + resource.getHeight());
 
                                               // 360dp*640dp 화면에서 딱 맞지 않는 부분은 투명으로 채우기
-                                              Bitmap result = Bitmap.createBitmap(360, 640, Bitmap.Config.ARGB_8888); // 기본이 투명
+                                              Bitmap result = Bitmap.createBitmap(360, 600, Bitmap.Config.ARGB_8888); // 기본이 투명
                                               Canvas canvas = new Canvas(result);
                                               Paint paint = new Paint();
 
                                               if (widthScale > heightScale) {
-                                                  canvas.drawBitmap(resource, 0, (640 - resource.getHeight()) / 2f, paint);
+                                                  canvas.drawBitmap(resource, 0, (600 - resource.getHeight()) / 2f, paint);
                                               } else {
                                                   canvas.drawBitmap(resource, (360 - resource.getWidth()) / 2f, 0, paint);
                                               }
