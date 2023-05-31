@@ -70,6 +70,16 @@ public class RouteCanvasView extends View {
                 return; // Exit the method if pathIndex is null
             }
 
+            double[][] temp = matrix.get(0);
+
+            for (int row = 0; row < temp.length; row++) {
+                for (int col = 0; col < temp.length; col++) {
+                    if (temp[row][col] != 0 && temp[row][col] != 50000) {
+                        paint.setColor(Color.rgb(255,228,225));   // 분홍색
+                        canvas.drawLine(node.get(row).x *density, node.get(row).y *density, node.get(col).x *density, node.get(col).y *density, paint);
+                    }   // 두 번 그려지긴 하는데 별 상관 없음
+                }
+            }
 
             Path path = new Path();
 
@@ -176,10 +186,10 @@ public class RouteCanvasView extends View {
         float coefficient = 0;
         float constant = 0;
 
-        double min = 100000;
+        double min = 50000;
         for (int row = 0; row < node.size(); row++) {
             for (int col = 0; col < node.size(); col++) {
-                if (row != col && temp[row][col] != 100000) {   // 연결 되어 있다면
+                if (row != col && temp[row][col] != 50000) {   // 연결 되어 있다면
                     // 수선의 발 & 수선의 길이 (점과 직선 사이의 거리) 구하기
 
                     int differenceX = node.get(row).x - node.get(col).x;    // x2-x1 (row가 x2,y2)
@@ -219,52 +229,52 @@ public class RouteCanvasView extends View {
                     boolean isInRange = true;   // 그 직선 위에 있는지
                     if (coefficient == 0 && constant == 0) { // x=a
                         if (differenceY > 0) {  // row의 y가 더 클 때
-                            if (curLocation.y >= node.get(row).y || curLocation.y <= node.get(col).y) {
+                            if (footY >= node.get(row).y || footY <= node.get(col).y) {
                                 isInRange = false;
                             }
                         }
                         else {
-                            if (curLocation.y >= node.get(col).y || curLocation.y <= node.get(row).y) {
+                            if (footY >= node.get(col).y || footY <= node.get(row).y) {
                                 isInRange = false;
                             }
                         }
                     }
                     else if (coefficient == 0) {    // y=a
                         if (differenceX > 0) {  // row의 x가 더 클 때
-                            if (curLocation.x >= node.get(row).x || curLocation.x <= node.get(col).x) {
+                            if (footX >= node.get(row).x || footX <= node.get(col).x) {
                                 isInRange = false;
                             }
                         }
                         else {
-                            if (curLocation.x >= node.get(col).x || curLocation.x <= node.get(row).x) {
+                            if (footX >= node.get(col).x || footX <= node.get(row).x) {
                                 isInRange = false;
                             }
                         }
                     }
                     else if (coefficient > 0) {   // +/+, -/-
                         if (differenceX > 0) {  // +/+
-                            if (curLocation.x <= node.get(col).x || curLocation.x >= node.get(row).x
-                            || curLocation.y <= node.get(col).y || curLocation.y >= node.get(row).y) {
+                            if (footX <= node.get(col).x || footX >= node.get(row).x
+                            || footY <= node.get(col).y || footY >= node.get(row).y) {
                                 isInRange = false;
                             }
                         }
                         else {  // -/-
-                            if (curLocation.x <= node.get(row).x || curLocation.x >= node.get(col).x
-                                    || curLocation.y <= node.get(row).y || curLocation.y >= node.get(col).y) {
+                            if (footX <= node.get(row).x || footX >= node.get(col).x
+                                    || footY <= node.get(row).y || footY >= node.get(col).y) {
                                 isInRange = false;
                             }
                         }
                     }
                     else if (coefficient < 0) {   // -/+, +/-
                         if (differenceX > 0) {  // -/+
-                            if (curLocation.x <= node.get(col).x || curLocation.x >= node.get(row).x
-                                    || curLocation.y <= node.get(row).y || curLocation.y >= node.get(col).y) {
+                            if (footX <= node.get(col).x || footX >= node.get(row).x
+                                    || footY <= node.get(row).y || footY >= node.get(col).y) {
                                 isInRange = false;
                             }
                         }
                         else {  // +/-
-                            if (curLocation.x <= node.get(row).x || curLocation.x >= node.get(col).x
-                                    || curLocation.y <= node.get(col).y || curLocation.y >= node.get(row).y) {
+                            if (footX <= node.get(row).x || footX >= node.get(col).x
+                                    || footY <= node.get(col).y || footY >= node.get(row).y) {
                                 isInRange = false;
                             }
                         }
@@ -290,7 +300,7 @@ public class RouteCanvasView extends View {
         }
 
         // minEdge 리스트 중에서  node1, node2와의 유클리드 거리가 가장 짧은 것을 찾기
-        min = 100000;
+        min = 50000;
         for (int i = 0; i < minEdge.size(); i++) {
             // minEdge index 0:node1, 1:node2, 2:curLocationNode.x, 3:curLocationNode.y
             double distance1 = Math.sqrt(Math.pow(curLocation.x - node.get(minEdge.get(i)[0]).x, 2) + Math.pow(curLocation.y - node.get(minEdge.get(i)[0]).y, 2));
@@ -323,7 +333,7 @@ public class RouteCanvasView extends View {
         for (int i = 0; i < node.size() + 1; i++) {
             for (int j = 0; j < node.size() + 1; j++) {
                 if (i == j) { pathMatrix[i][j] = 0; }
-                else { pathMatrix[i][j] = 100000; }
+                else { pathMatrix[i][j] = 50000; }
             }
         }
 
@@ -339,8 +349,8 @@ public class RouteCanvasView extends View {
         int weight2 = (int) Math.sqrt(Math.pow(node.get(node2).x - curLocationNode.x, 2) + Math.pow(node.get(node2).y - curLocationNode.y, 2));
 
         // 원래 연결 끊기
-        pathMatrix[node1][node2] = 100000;
-        pathMatrix[node2][node1] = 100000;
+        pathMatrix[node1][node2] = 50000;
+        pathMatrix[node2][node1] = 50000;
 
         // 시작 노드의 edge 추가
         pathMatrix[node1][node.size()] = weight1;

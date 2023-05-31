@@ -106,7 +106,7 @@ public class FindPath {
             int index = 0;
             for (int i = 0; i < matrixSize; i++) {
                 for (int j = 0; j < matrixSize; j++) {
-                    if (splitValues[index].equals("100000")) {
+                    if (splitValues[index].equals("50000")) {
                         matrix[i][j] = Double.POSITIVE_INFINITY; // or any other appropriate value
                     } else {
                         matrix[i][j] = Double.parseDouble(splitValues[index])/2;//크기를 반으로 줄이기 때문에 2를 나눠야함
