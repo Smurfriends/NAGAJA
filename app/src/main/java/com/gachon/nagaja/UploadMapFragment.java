@@ -4,22 +4,17 @@ import static android.app.Activity.RESULT_OK;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.ImageDecoder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,11 +35,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 public class UploadMapFragment extends Fragment {
 
     private final String bname;
@@ -54,7 +44,6 @@ public class UploadMapFragment extends Fragment {
     //private final DatabaseReference root = FirebaseDatabase.getInstance().getReference("Image");
     private final StorageReference reference = FirebaseStorage.getInstance().getReference();
     private int fileId;
-    String mCurrentPhotoPath;
 
     private Activity activity;
 
@@ -65,7 +54,7 @@ public class UploadMapFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_upload, container, false);
 
@@ -81,13 +70,12 @@ public class UploadMapFragment extends Fragment {
         submitBtn = rootView.findViewById(R.id.submitBtn);
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if(ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
-            && ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            if(ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
 //                Log.d(TAG, "권한 설정 완료");
             }
             else {
 //                Log.d(TAG, "권한 설정 요청");
-                ActivityCompat.requestPermissions(activity, new String[]{android.Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                ActivityCompat.requestPermissions(activity, new String[]{android.Manifest.permission.CAMERA}, 1);
             }
         }
 
@@ -111,7 +99,7 @@ public class UploadMapFragment extends Fragment {
                 }
                 else {
                     // 카메라로 찍어서 올린 map이미지 업로드는 아직 구현 못함
-                     Toast.makeText(getActivity(), "사진을 선택해주세요.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "사진을 선택해주세요.", Toast.LENGTH_SHORT).show();
                 }
 
                 // TODO: then back to main
@@ -137,19 +125,7 @@ public class UploadMapFragment extends Fragment {
 
     private void pictureImageByCamera(){
         Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-
-            if(cameraIntent.resolveActivity(getContext().getPackageManager()) != null) {
-                File photoFile = null;
-
-                try { photoFile = createImageFile(); }
-                catch (IOException ex) { }
-                if(photoFile != null) {
-                    Uri photoURI = FileProvider.getUriForFile(getContext(), "com.gachon.nagaja.fileprovider", photoFile);
-                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                    startActivityForResult(cameraIntent, TAKE_PICTURE);
-                }
-            }
-
+        startActivityForResult(cameraIntent, TAKE_PICTURE);
     }
 
     private void selectImageFromGallery() {// Select Image
@@ -165,24 +141,12 @@ public class UploadMapFragment extends Fragment {
         switch (requestCode) {
             case TAKE_PICTURE:
                 if (resultCode == RESULT_OK && data.hasExtra("data")) {
-//                    Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-//                    if (bitmap != null) {
-//                        imageView.setImageBitmap(bitmap);
-//                        imageUri = null;    // initialize imageUri
-//                    }
-                    File file = new File(mCurrentPhotoPath);
-                    Bitmap bitmap;
-                    if (Build.VERSION.SDK_INT >= 29) {
-                        ImageDecoder.Source source = ImageDecoder.createSource(getContext().getContentResolver(), Uri.fromFile(file));
-                        try {
-                            bitmap = ImageDecoder.decodeBitmap(source);
-                            if (bitmap != null) {
-                                imageView.setImageBitmap(bitmap);
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                    Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+                    if (bitmap != null) {
+                        imageView.setImageBitmap(bitmap);
+                        imageUri = null;    // initialize imageUri
                     }
+
                 }
                 break;
             case REQUEST_CODE_PICK_IMAGE:
@@ -257,21 +221,6 @@ public class UploadMapFragment extends Fragment {
 
         if (context instanceof Activity)
             activity = (Activity) context;
-    }
-
-    // 사진 촬영 후 썸네일만 띄워줌. 이미지를 파일로 저장해야 함
-    private File createImageFile() throws IOException {
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "PNG_" + timeStamp + "_";
-        File storageDir = getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,
-                ".png",
-                storageDir
-        );
-
-        mCurrentPhotoPath = image.getAbsolutePath();
-        return image;
     }
 
 

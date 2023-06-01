@@ -1,9 +1,14 @@
 package com.gachon.nagaja;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -11,7 +16,9 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.RotateAnimation;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,6 +27,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.gms.common.images.ImageManager;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,6 +36,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BookmarkInnerFragment extends Fragment {
 
@@ -35,7 +46,7 @@ public class BookmarkInnerFragment extends Fragment {
 
 
     TextView bookmark;
-    ImageView imageView;
+    FrameLayout frameLayout;
     TextView info;
 
     String bname;
@@ -49,6 +60,7 @@ public class BookmarkInnerFragment extends Fragment {
 
 
     FindPathByTxt findPathByTxt;
+    RouteCanvasView routeCanvasView;
 
     public static BookmarkInnerFragment newInstance(ListItem thisItem) {
         BookmarkInnerFragment fragment = new BookmarkInnerFragment();
@@ -64,8 +76,7 @@ public class BookmarkInnerFragment extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.bookmark_inner, container, false);
 
         bookmark = rootView.findViewById(R.id.bookmark);
-        info = rootView.findViewById(R.id.info);
-        imageView = rootView.findViewById(R.id.img);
+        frameLayout = rootView.findViewById(R.id.frameLayout);
 
         Button deleteBtn = rootView.findViewById(R.id.deleteButton);
 
@@ -78,7 +89,7 @@ public class BookmarkInnerFragment extends Fragment {
         y = item.getY();
         node = item.getNode();
 
-        findPathByTxt = new FindPathByTxt(bname,buildingName,floorNum,fileId,nodenum,x,y,node);
+        bookmark.setText(buildingName);
 
         Log.d("InnerFragment", "nodeNum: " + nodenum);
         Log.d("InnerFragment", "fileId: " + fileId);
@@ -86,7 +97,21 @@ public class BookmarkInnerFragment extends Fragment {
         Log.d("InnerFragment", "y: " + y);
         Log.d("InnerFragment", "node: " + node);
 
+        //TODO 아래 코드들 정리해야함.
+        findPathByTxt = new FindPathByTxt(bname,buildingName,floorNum,nodenum,x,y,fileId,node);
+        //node point 생성 집어넣기
+        findPathByTxt.setNodeArrayList(x,y);
+        ArrayList<Point> nodeArray = findPathByTxt.getNodeArrayList();
+        //matrix 생성 집어넣기
+        findPathByTxt.setMatrix(node, nodenum);
+        ArrayList<double[][]> matrix = findPathByTxt.getMatrix();
 
+        routeCanvasView = new RouteCanvasView(getActivity().getApplicationContext(),findPathByTxt);
+
+        //하나하나 집어 넣어야함
+        routeCanvasView.setNode(nodeArray);
+        routeCanvasView.setMatrix(matrix);
+        frameLayout.addView(routeCanvasView);
 
         try {
             String filename = "image" + fileId;
@@ -99,7 +124,14 @@ public class BookmarkInnerFragment extends Fragment {
             }
 
             if (bitmap != null) {
-                imageView.setImageBitmap(bitmap);
+                //TODO 회전 시켜야함
+                Matrix rotateMatrix = new Matrix();
+                rotateMatrix.postRotate(90);
+
+                Bitmap sideInversionImg = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), rotateMatrix, false);
+                Drawable drawable = new BitmapDrawable(sideInversionImg);
+
+                routeCanvasView.setBackground(drawable);
                 Toast.makeText(getActivity(), "파일 로드 성공", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(getActivity(), "파일 로드 실패", Toast.LENGTH_SHORT).show();
@@ -108,38 +140,13 @@ public class BookmarkInnerFragment extends Fragment {
             Toast.makeText(getActivity(), "파일 로드 실패", Toast.LENGTH_SHORT).show();
         }
 
-        bookmark.setText(buildingName);
-        info.setText(floorNum);
 
-        imageView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-
-                findPathByTxt.setMatrix();
-                view.onTouchEvent(motionEvent);
-
-                float[] point = new float[] {motionEvent.getX(), motionEvent.getY()};
-                Log.d("InnerTouch", "변환 전: ("+point[0] + " , " + point[1] + ")");
-
-                // match with image
-                float density = getResources().getDisplayMetrics().density;
-                point[0] /= density;
-                point[1] /= density;
-
-                if (motionEvent.getAction() ==  MotionEvent.ACTION_DOWN)
-                {
-                    Log.d("InnerPoint", "변환 후: ("+point[0] + " , " + point[1] + ")");
-                }
-
-
-                return false;
-            }
-        });
 
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 RemoveBookmarkList(position);
+                Toast.makeText(getActivity(),"삭제 되었습니다",Toast.LENGTH_SHORT).show();
             }
         });
 

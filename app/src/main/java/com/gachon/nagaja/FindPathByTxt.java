@@ -24,8 +24,9 @@ public class FindPathByTxt extends FindPath {
         this.id = id;
         this.x = x;
         this.y = y;
-
         this.floorNum = floorNum;
+
+
     }
 
 

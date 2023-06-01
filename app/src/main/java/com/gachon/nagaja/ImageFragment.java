@@ -151,6 +151,8 @@ public class ImageFragment extends Fragment  {
 
                                               // add canvas view
                                               routeCanvasView = new RouteCanvasView(getActivity().getApplicationContext(),findPath);
+                                              routeCanvasView.setNode(findPath.getNodeArrayList());
+                                              routeCanvasView.setMatrix(findPath.getMatrix());
                                               frameLayout.addView(routeCanvasView);
 
                                               // 캔버스뷰에 background로 세팅

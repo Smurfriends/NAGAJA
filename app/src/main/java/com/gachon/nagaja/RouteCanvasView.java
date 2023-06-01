@@ -21,6 +21,7 @@ import java.util.Timer;
 
 public class RouteCanvasView extends View {
 
+    int firstIndexOfExit;
     Paint paint = new Paint();
     float density = getResources().getDisplayMetrics().density;
     int count = 0;  // for drag
@@ -33,11 +34,11 @@ public class RouteCanvasView extends View {
     public int node2;
 
     // TODO: 파베에서 정보 받아오는 코드 넣고 나면, 아래에 있는 테스트용 초기화 정보 지우고 선언만 남기기
-    public static ArrayList<Point> node = new ArrayList<>(
-            Arrays.asList(new Point(20,60),new Point(100,60),new Point(20,300), new Point(20,540), new Point(130,300), new Point(160,540), new Point(180,540))
-    );  // 테스트 용으로 초기화 값 넣어둠
-//    public ArrayList<Point> node = new ArrayList<>(); //원래는 이런식으로만
-    public ArrayList<double[][]> matrix = new ArrayList<>();    // 공간은 하나만 씀. 매번 배열 크기를 다르게 써야해서 사용
+//    public static ArrayList<Point> node = new ArrayList<>(
+//            Arrays.asList(new Point(20,60),new Point(100,60),new Point(20,300), new Point(20,540), new Point(130,300), new Point(160,540), new Point(180,540))
+//    );  // 테스트 용으로 초기화 값 넣어둠
+    public ArrayList<Point> node; //원래는 이런식으로만
+    public ArrayList<double[][]> matrix;    // 공간은 하나만 씀. 매번 배열 크기를 다르게 써야해서 사용
     public ArrayList<Integer> pathIndex;
 
     private FindPath findPath;
@@ -47,17 +48,26 @@ public class RouteCanvasView extends View {
         // paint 기본 설정
         paint.setStrokeWidth(10f);
         paint.setStyle(Paint.Style.STROKE);
+        firstIndexOfExit = 6; // 바꿔야함
 
         this.findPath = findPath;
 
         //받아 온 좌표를 CanvasView에 있는 node_corner ArrayList에 넣기
         //routeCanvasView.node = findPath.getNodeArrayList();
-        node = findPath.getNodeArrayList();
+//        node = findPath.getNodeArrayList();
         //routeCanvasView.matrix.add(findPath.getMatrix());
-        matrix = findPath.getMatrix();
+//        matrix = findPath.getMatrix();
 //        matrix.add(tempMatrix); // 임시로. 나중에 삭제
 
 
+    }
+
+    public void setNode(ArrayList<Point> node) {
+        this.node = node;
+    }
+
+    public void setMatrix(ArrayList<double[][]> matrix) {
+        this.matrix = matrix;
     }
 
     @Override
@@ -164,7 +174,7 @@ public class RouteCanvasView extends View {
 
                     setStartNode(); // 시작 노드 설정
                     addEdgeOfStartNodeToMatrix();   // 시작 노드의 edge 2개를 matrix에 추가
-                    findShortestPathToAllExits(6);    // exit 노드 개수만큼 다익스트라 //firstExitNodeIndex. nodeNum
+                    findShortestPathToAllExits(firstIndexOfExit);    // exit 노드 개수만큼 다익스트라 //firstExitNodeIndex. nodeNum
                     showPath = true;    // 다음 화면에서 drawPath 코드 실행되도록
 
                     invalidate();

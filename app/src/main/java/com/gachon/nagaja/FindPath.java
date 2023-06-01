@@ -60,9 +60,9 @@ public class FindPath {
             x = getStringValue(hashMap, "x");
             y = getStringValue(hashMap, "y");
 
-            setMatrix();
-            setNodeArrayList();
-
+            setMatrix(node,nodeNum);
+            setNodeArrayList(x, y);
+            nodeArrayList = getNodeArrayList();
             // Output or perform desired operations with the extracted values
             Log.d("Firebase", "node: " + node);
             Log.d("Firebase", "nodeNum: " + nodeNum);
@@ -91,7 +91,7 @@ public class FindPath {
         }
     }
 
-    public void setMatrix() {
+    public void setMatrix(String node, String nodeNum) {
         String values = node;
         String[] splitValues = values.split(",");
         matrix = new ArrayList<>();
@@ -131,7 +131,7 @@ public class FindPath {
 
     }
 
-    public void setNodeArrayList() {
+    public void setNodeArrayList(String x, String y) {
         String[] splitValuesX = x.split(", ");
         String[] splitValuesY = y.split(", ");
         nodeArrayList = new ArrayList<>();

@@ -1,54 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clipToOutline="true"
+    android:orientation="vertical"
     tools:context=".BookmarkInnerFragment">
 
-    <TextView
-        android:id="@+id/bookmark"
-        android:layout_width="300dp"
-        android:layout_height="50dp"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="20dp"
-        android:text="@string/bookmark"
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center">
+    </FrameLayout>
 
-        android:gravity="center_horizontal|top"
-        />
 
-    <ImageView
-        android:id="@+id/img"
-        android:layout_width="300dp"
-        android:layout_height="250dp"
-        android:layout_marginTop="100dp"
-        android:layout_centerHorizontal="true"
-        />
-
-    <TextView
-        android:id="@+id/info"
-        android:layout_width="0dp"
-        android:layout_height="300dp"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="30dp"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="30dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="426dp"
-        android:layout_marginBottom="100dp"
-        android:text="@string/info"
-
-        android:gravity="top"
-        />
-
-    <Button
-        android:id="@+id/deleteButton"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginTop="69dp"
-        android:layout_marginBottom="-7dp" />
+        android:layout_gravity="center"
+        android:orientation="horizontal">
 
-</RelativeLayout>
+
+        <TextView
+            android:id="@+id/bookmark"
+            android:layout_width="300dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:gravity="bottom"
+
+            android:text="@string/bookmark" />
+
+
+        <Button
+            android:id="@+id/deleteButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginRight="2dp"
+            android:text="삭제" />
+
+    </LinearLayout>
+
+</LinearLayout>
