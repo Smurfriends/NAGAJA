@@ -25,7 +25,7 @@ public class CanvasView extends View {
     public ArrayList<NewNodeData> node_exit = new ArrayList<>();
     public ArrayList<double[][]> matrix = new ArrayList<>();
     public int nodeNum;
-    private static final double MAX = 100000;
+    private static final double MAX = 50000;
 
     public CanvasView(Context context, FindPath findPath) {
         super(context);

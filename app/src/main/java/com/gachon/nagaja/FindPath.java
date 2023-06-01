@@ -20,9 +20,10 @@ import java.util.HashMap;
 public class FindPath {
     //Firebase read
     public DatabaseReference database;
-    private static final double INFINITY = Double.POSITIVE_INFINITY;
+    private static final double INFINITY = Double.POSITIVE_INFINITY;    // for dijkstra
+//    private static final double MAX = 100000; // for matrix
     private String node;
-    private String nodeNum;
+    private int nodeNum;
     private String id;
     private String x;
     private String y;
@@ -32,9 +33,9 @@ public class FindPath {
 
     private String buildingName;
 
+    private ArrayList<Point> nodeArrayList;
     private ArrayList<double[][]> matrix;
 
-    private ArrayList<Point> nodeArrayList;
     private ArrayList<Integer> pathIndex;
 
     public FindPath(String buildingName) {//like mains
@@ -55,15 +56,17 @@ public class FindPath {
 
             // Extract individual values and store them in separate variables
             node = getStringValue(hashMap, "node");
-            nodeNum = getStringValue(hashMap, "nodeNum");
+            String nodeNumS = getStringValue(hashMap, "nodeNum");
             id = getStringValue(hashMap, "id");
             x = getStringValue(hashMap, "x");
             y = getStringValue(hashMap, "y");
 
+            nodeNum = Integer.parseInt(nodeNumS);
             setNodeArrayList(x, y); // 1
             setMatrix(node,nodeNum); // 2
 
-            nodeArrayList = getNodeArrayList();
+//            nodeArrayList = getNodeArrayList();
+
             // Output or perform desired operations with the extracted values
             Log.d("Firebase", "node: " + node);
             Log.d("Firebase", "nodeNum: " + nodeNum);
@@ -92,13 +95,13 @@ public class FindPath {
         }
     }
 
-    public void setMatrix(String node, String nodeNum) {
+    public void setMatrix(String node, int nodeNum) {
         String values = node;
-        String[] splitValues = values.split(",");
+        String[] splitValues = values.split(", ");
         matrix = new ArrayList<>();
 
         int matrixSize = nodeArrayList.size(); // Size of the matrix //nodeNum 이 node 개수 똑같은 숫자인데 변수이름만 바꾸자. 하나를 더 만들죠?
-        if (matrixSize == -1) {
+        if (matrixSize == 0) {  // nodeNum == -1
             // findPath의 nodeNum 값이 -1인 경우 아무런 반응이 없도록 처리
             Log.e("matrix","No node info");
         }else {
@@ -108,11 +111,12 @@ public class FindPath {
             int index = 0;
             for (int i = 0; i < matrixSize; i++) {
                 for (int j = 0; j < matrixSize; j++) {
-                    if (splitValues[index].equals("50000")) {
-                        matrix.get(0)[i][j] = Double.POSITIVE_INFINITY; // or any other appropriate value
-                    } else {
-                        matrix.get(0)[i][j] = Double.parseDouble(splitValues[index])/2;//크기를 반으로 줄이기 때문에 2를 나눠야함
-                    }
+//                    if (splitValues[index].equals("MAX")) {
+//                        matrix.get(0)[i][j] = MAX; // or any other appropriate value
+//                    } else {
+                        // 크기를 반으로 줄이기 때문에 2로 나눠야함. 십만도 5만이 됨
+                        matrix.get(0)[i][j] = Double.parseDouble(splitValues[index]) / 2;
+//                    }
                     index++;
                 }
             }
@@ -239,7 +243,7 @@ public class FindPath {
         return id;
     }
 
-    public String getNodeNum() {
+    public int getNodeNum() {
         return nodeNum;
     }
 
@@ -264,4 +268,47 @@ public class FindPath {
     public ArrayList<Integer> getPathIndex() {
         return pathIndex;
     }
+
+    public String getNodeToString() {
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < matrix.get(0).length; i++) {
+            for (int j = 0; j < matrix.get(0).length; j++) {
+                sb.append(matrix.get(0)[i][j] *2);  // 받아올 땐 나눠줬으니 돌아갈 땐 곱하기
+                sb.append(", ");
+            }
+        }
+        sb.delete(sb.length()-2, sb.length());
+        String string = sb.toString();
+
+        return string;
+    }
+
+    public String getXToString() {
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < nodeArrayList.size() - 1; i++) {
+            sb.append(nodeArrayList.get(i).x *2);   // 받아올 땐 나눠줬으니 돌아갈 땐 곱하기
+            sb.append(", ");
+        }
+        sb.append(nodeArrayList.get(nodeArrayList.size() - 1).x);
+
+        String string = sb.toString();
+
+        return string;
+    }
+
+    public String getYToString() {
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < nodeArrayList.size() - 1; i++) {
+            sb.append(nodeArrayList.get(i).y *2);   // 받아올 땐 나눠줬으니 돌아갈 땐 곱하기
+            sb.append(", ");
+        }
+        sb.append(nodeArrayList.get(nodeArrayList.size() - 1).y);
+
+        String string = sb.toString();
+        return string;
+    }
+
 }

@@ -38,7 +38,7 @@ public class RouteCanvasView extends View {
     public ArrayList<double[][]> matrix;
     public ArrayList<Integer> pathIndex;
     private FindPath findPath;
-    private static final double MAX = 100000;
+    private static final double MAX = 50000;
 
     public RouteCanvasView(Context context, FindPath findPath) { //findPath에서 가져오면 안됌 이름을 넘겨받고 데이터를 받아오는게 나음
         super(context);
