@@ -15,6 +15,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 public class Edit3ExitFragment extends Fragment  {
     private Bitmap backgroundBitmap;
     private View rootView;
@@ -58,6 +61,10 @@ public class Edit3ExitFragment extends Fragment  {
 
                 canvasView.curEditTwo[0] = -1;
                 canvasView.curEditTwo[1] = -1;
+                if (canvasView.curDrag != -1) { // add 중이었다면
+                       canvasView.node_exit.remove(canvasView.curDrag);
+                    canvasView.curDrag = -1;
+                }
                 canvasView.invalidate();
             }
         });
@@ -90,21 +97,27 @@ public class Edit3ExitFragment extends Fragment  {
             public void onClick(View v) {
 
                 // exit node를 포함하게 matrix 재생성 (가중치 계산 필요)
-                canvasView.addEdgeOfExitNodeToMatrix(); // 이 함수에 파베에 edge matrix 업로드하는 거 포함되어있음
+                canvasView.addEdgeOfExitNodeToMatrix();
 
-                // 파이어베이스에 노드 좌표 정보, nodeNum(EndNode를 가르는 기준 index) 업로드
-                int indexExitNodeStart = canvasView.combineExitNodeToCornerNodeList();  // 노드 좌표 정보를 node_corner 이용해서 한번에 정리하기 위해 합치기
-                // nodeNum에 넣기. indexExitNodeStart까지는 isEndNode=false, 이후는 isEndNode=true 가 되는 셈
-                // TODO: 파베에 노드 좌표 정보, nodeNum 업로드
+                // 노드 좌표 정보를 node_corner 이용해서 한번에 정리하기 위해 합치기
+                canvasView.combineExitNodeToCornerNodeList(); 
+                
+                // 파이어베이스에 수정된 node 정보들 업데이트
+                FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+                DatabaseReference databaseReference = firebaseDatabase.getReference();
 
-                // canvasView에 있는 변수들 초기화
+                databaseReference.child("map").child(findPath.getBuildingName())
+                        .child("node").setValue(findPath.getNodeToString());
+                databaseReference.child("map").child(findPath.getBuildingName())
+                        .child("nodeNum").setValue(findPath.getNodeNum());
+                databaseReference.child("map").child(findPath.getBuildingName())
+                        .child("x").setValue(findPath.getXToString());
+                databaseReference.child("map").child(findPath.getBuildingName())
+                        .child("y").setValue(findPath.getYToString());
+                
+                
+                // curEdit 초기화
                 canvasView.curEdit = 0;
-                canvasView.curEditTwo[0] = -1;
-                canvasView.curEditTwo[1] = -1;
-                canvasView.curDrag = -1;
-                canvasView.node_corner.clear();
-                canvasView.node_exit.clear();
-                canvasView.matrix.clear();
 
                 // TODO: 홈 화면이든 북마크 화면이든 넘어가는 코드
                 // 변수 안꼬이게 activity 넘기고 나서 쓰는 finish()같은 거 넣어 주기. 이전 화면으로 못돌아오도록

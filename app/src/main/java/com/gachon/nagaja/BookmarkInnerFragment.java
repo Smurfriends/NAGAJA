@@ -103,7 +103,7 @@ public class BookmarkInnerFragment extends Fragment {
         findPathByTxt.setNodeArrayList(x,y);// setNode first.
         ArrayList<Point> nodeArray = findPathByTxt.getNodeArrayList();
         //matrix 생성 집어넣기
-        findPathByTxt.setMatrix(node, nodenum);// setMatrix second
+        findPathByTxt.setMatrix(node, Integer.parseInt(nodenum));// setMatrix second
         ArrayList<double[][]> matrix = findPathByTxt.getMatrix();
 
         routeCanvasView = new RouteCanvasView(getActivity().getApplicationContext(),findPathByTxt);

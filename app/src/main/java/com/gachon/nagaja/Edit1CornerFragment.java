@@ -162,6 +162,9 @@ public class Edit1CornerFragment extends Fragment  {
                 // curEdit 설정
                 canvasView.curEdit = -2;
 
+                // corner 노드가 바꼈으니 matrix 가중치 재계산
+                canvasView.recalculateMatrixWeights();
+
                 // TODO: 넘어가는 코드
                 // 변수 안꼬이게 activity 넘기고 나서 쓰는 finish()같은 거 넣어 주기. 이전 화면으로 못돌아오도록
                 FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();

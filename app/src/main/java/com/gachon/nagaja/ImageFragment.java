@@ -170,7 +170,7 @@ public class ImageFragment extends Fragment  {
                             String address = findPath.getBuildingName();
                             String floorNum = findPath.getFloorNum();
                             String id = findPath.getId();
-                            String nodeNum = findPath.getNodeNum();
+                            String nodeNum = Integer.toString(findPath.getNodeNum());
                             String x = findPath.getX();
                             String y = findPath.getY();
                             String node = findPath.getNode();

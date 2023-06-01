@@ -22,7 +22,7 @@ import java.util.Timer;
 public class RouteCanvasView extends View {
 
     final int noExitNum = -1; // Exit 노드가 설정 안되면 -1
-    int firstIndexOfExit;
+//    int firstIndexOfExit;
     Paint paint = new Paint();
     float density = getResources().getDisplayMetrics().density;
     int count = 0;  // for drag
@@ -34,15 +34,11 @@ public class RouteCanvasView extends View {
     public int node1;    // node1과 node2 사이에 curLocationNode가 위치. (index값 저장)
     public int node2;
 
-    // TODO: 파베에서 정보 받아오는 코드 넣고 나면, 아래에 있는 테스트용 초기화 정보 지우고 선언만 남기기
-//    public static ArrayList<Point> node = new ArrayList<>(
-//            Arrays.asList(new Point(20,60),new Point(100,60),new Point(20,300), new Point(20,540), new Point(130,300), new Point(160,540), new Point(180,540))
-//    );  // 테스트 용으로 초기화 값 넣어둠
-    public ArrayList<Point> node; //원래는 이런식으로만
-    public ArrayList<double[][]> matrix;    // 공간은 하나만 씀. 매번 배열 크기를 다르게 써야해서 사용
+    public ArrayList<Point> node;
+    public ArrayList<double[][]> matrix;
     public ArrayList<Integer> pathIndex;
-
     private FindPath findPath;
+    private static final double MAX = 100000;
 
     public RouteCanvasView(Context context, FindPath findPath) { //findPath에서 가져오면 안됌 이름을 넘겨받고 데이터를 받아오는게 나음
         super(context);
@@ -50,8 +46,7 @@ public class RouteCanvasView extends View {
         // paint 기본 설정
         paint.setStrokeWidth(10f);
         paint.setStyle(Paint.Style.STROKE);
-        firstIndexOfExit = 6; // 바꿔야함
-
+//        firstIndexOfExit = 6; // 바꿔야함
 
         this.findPath = findPath;
 
@@ -169,8 +164,8 @@ public class RouteCanvasView extends View {
                     //nodeNum 10, 3개추가 x의 개수가 13개가 되겠죠? 3개가 exit인걸 알고 싶다. Exit = x.size() - nodeNum exit; nodeNum 이게 전체 갯수 코너뿐,, nodeNum cornerNode개수
                     setStartNode(); // 시작 노드 설정
                     addEdgeOfStartNodeToMatrix();   // 시작 노드의 edge 2개를 matrix에 추가
-                    if(firstIndexOfExit != noExitNum) {//firstIndexOfExit == nodeNum
-                        findShortestPathToAllExits(firstIndexOfExit);    // exit 노드 개수만큼 다익스트라 //firstExitNodeIndex. nodeNum
+                    if(findPath.getNodeNum() != noExitNum) {//firstIndexOfExit == nodeNum
+                        findShortestPathToAllExits(findPath.getNodeNum());    // exit 노드 개수만큼 다익스트라 //firstExitNodeIndex. nodeNum
                         showPath = true;    // 다음 화면에서 drawPath 코드 실행되도록
                     }else{
                         Toast.makeText(getContext(),"No exit node",Toast.LENGTH_SHORT).show();
@@ -196,10 +191,10 @@ public class RouteCanvasView extends View {
         double coefficient = 0;
         double constant = 0;
 
-        double min = 50000;
+        double min = MAX;
         for (int row = 0; row < node.size(); row++) {
             for (int col = 0; col < node.size(); col++) {
-                if (row != col && temp[row][col] != 50000) {   // 연결 되어 있다면
+                if (row != col && temp[row][col] != MAX) {   // 연결 되어 있다면
                     // 수선의 발 & 수선의 길이 (점과 직선 사이의 거리) 구하기
 
                     int differenceX = node.get(row).x - node.get(col).x;    // x2-x1 (row가 x2,y2)
@@ -310,7 +305,7 @@ public class RouteCanvasView extends View {
         }
 
         // minEdge 리스트 중에서  node1, node2와의 유클리드 거리가 가장 짧은 것을 찾기
-        min = 50000;
+        min = MAX;
         for (int i = 0; i < minEdge.size(); i++) {
             // minEdge index 0:node1, 1:node2, 2:curLocationNode.x, 3:curLocationNode.y
             double distance1 = Math.sqrt(Math.pow(curLocation.x - node.get(minEdge.get(i)[0]).x, 2) + Math.pow(curLocation.y - node.get(minEdge.get(i)[0]).y, 2));
@@ -342,7 +337,7 @@ public class RouteCanvasView extends View {
         for (int i = 0; i < node.size() + 1; i++) {
             for (int j = 0; j < node.size() + 1; j++) {
                 if (i == j) { pathMatrix[i][j] = 0; }
-                else { pathMatrix[i][j] = 50000; }
+                else { pathMatrix[i][j] = MAX; }
             }
         }
 
@@ -358,8 +353,8 @@ public class RouteCanvasView extends View {
         int weight2 = (int) Math.sqrt(Math.pow(node.get(node2).x - curLocationNode.x, 2) + Math.pow(node.get(node2).y - curLocationNode.y, 2));
 
         // 원래 연결 끊기
-        pathMatrix[node1][node2] = 50000;
-        pathMatrix[node2][node1] = 50000;
+        pathMatrix[node1][node2] = MAX;
+        pathMatrix[node2][node1] = MAX;
 
         // 시작 노드의 edge 추가
         pathMatrix[node1][node.size()] = weight1;
