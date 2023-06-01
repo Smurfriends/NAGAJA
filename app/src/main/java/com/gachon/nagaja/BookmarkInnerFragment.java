@@ -100,17 +100,17 @@ public class BookmarkInnerFragment extends Fragment {
         //TODO 아래 코드들 정리해야함.
         findPathByTxt = new FindPathByTxt(bname,buildingName,floorNum,nodenum,x,y,fileId,node);
         //node point 생성 집어넣기
-        findPathByTxt.setNodeArrayList(x,y);
+        findPathByTxt.setNodeArrayList(x,y);// setNode first.
         ArrayList<Point> nodeArray = findPathByTxt.getNodeArrayList();
         //matrix 생성 집어넣기
-        findPathByTxt.setMatrix(node, nodenum);
+        findPathByTxt.setMatrix(node, nodenum);// setMatrix second
         ArrayList<double[][]> matrix = findPathByTxt.getMatrix();
 
         routeCanvasView = new RouteCanvasView(getActivity().getApplicationContext(),findPathByTxt);
 
         //하나하나 집어 넣어야함
-        routeCanvasView.setNode(nodeArray);
-        routeCanvasView.setMatrix(matrix);
+        routeCanvasView.setNode(nodeArray);//1
+        routeCanvasView.setMatrix(matrix); //2
         frameLayout.addView(routeCanvasView);
 
         try {

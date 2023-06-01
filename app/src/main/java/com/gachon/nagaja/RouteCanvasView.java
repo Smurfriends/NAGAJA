@@ -21,6 +21,7 @@ import java.util.Timer;
 
 public class RouteCanvasView extends View {
 
+    final int noExitNum = -1; // Exit 노드가 설정 안되면 -1
     int firstIndexOfExit;
     Paint paint = new Paint();
     float density = getResources().getDisplayMetrics().density;
@@ -42,6 +43,7 @@ public class RouteCanvasView extends View {
     public ArrayList<Integer> pathIndex;
 
     private FindPath findPath;
+
     public RouteCanvasView(Context context, FindPath findPath) { //findPath에서 가져오면 안됌 이름을 넘겨받고 데이터를 받아오는게 나음
         super(context);
 
@@ -49,6 +51,7 @@ public class RouteCanvasView extends View {
         paint.setStrokeWidth(10f);
         paint.setStyle(Paint.Style.STROKE);
         firstIndexOfExit = 6; // 바꿔야함
+
 
         this.findPath = findPath;
 
@@ -81,15 +84,6 @@ public class RouteCanvasView extends View {
             }
 
             double[][] temp = matrix.get(0);
-
-//            for (int row = 0; row < temp.length; row++) {
-//                for (int col = 0; col < temp.length; col++) {
-//                    if (temp[row][col] != 0 && temp[row][col] != 50000) {
-//                        paint.setColor(Color.rgb(255,228,225));   // 분홍색
-//                        canvas.drawLine(node.get(row).x *density, node.get(row).y *density, node.get(col).x *density, node.get(col).y *density, paint);
-//                    }   // 두 번 그려지긴 하는데 별 상관 없음
-//                }
-//            }
 
             Path path = new Path();
 
@@ -172,10 +166,16 @@ public class RouteCanvasView extends View {
                 case MotionEvent.ACTION_UP:
                     count = 0;  // 드래그 카운트 초기화
 
+                    //nodeNum 10, 3개추가 x의 개수가 13개가 되겠죠? 3개가 exit인걸 알고 싶다. Exit = x.size() - nodeNum exit; nodeNum 이게 전체 갯수 코너뿐,, nodeNum cornerNode개수
                     setStartNode(); // 시작 노드 설정
                     addEdgeOfStartNodeToMatrix();   // 시작 노드의 edge 2개를 matrix에 추가
-                    findShortestPathToAllExits(firstIndexOfExit);    // exit 노드 개수만큼 다익스트라 //firstExitNodeIndex. nodeNum
-                    showPath = true;    // 다음 화면에서 drawPath 코드 실행되도록
+                    if(firstIndexOfExit != noExitNum) {//firstIndexOfExit == nodeNum
+                        findShortestPathToAllExits(firstIndexOfExit);    // exit 노드 개수만큼 다익스트라 //firstExitNodeIndex. nodeNum
+                        showPath = true;    // 다음 화면에서 drawPath 코드 실행되도록
+                    }else{
+                        Toast.makeText(getContext(),"No exit node",Toast.LENGTH_SHORT).show();
+                    }
+
 
                     invalidate();
                     break;

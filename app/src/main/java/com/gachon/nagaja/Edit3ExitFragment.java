@@ -28,9 +28,9 @@ public class Edit3ExitFragment extends Fragment  {
 
     public void setBackground(Bitmap bitmap) {
         backgroundBitmap = bitmap;
-        if (rootView != null && backgroundBitmap != null) {
-            rootView.setBackground(new BitmapDrawable(getResources(), backgroundBitmap));
-        }
+//        if (rootView != null && backgroundBitmap != null) {
+//            rootView.setBackground(new BitmapDrawable(getResources(), backgroundBitmap));
+//        }
     }
     public void setFindPath(FindPath findPath){
         this.findPath = findPath;
@@ -39,14 +39,16 @@ public class Edit3ExitFragment extends Fragment  {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_edit3_exit, container, false);
-        if (backgroundBitmap != null) {
-            rootView.setBackground(new BitmapDrawable(getResources(), backgroundBitmap));
-        }
+
         frameLayout = rootView.findViewById(R.id.frameLayout);
         deselectButton = rootView.findViewById(R.id.deselectButton);
         addExitButton = rootView.findViewById(R.id.addExitButton);
         confirmButton = rootView.findViewById(R.id.confirmButton);
         doneButton = rootView.findViewById(R.id.doneButton);
+
+        if (backgroundBitmap != null) {
+            frameLayout.setBackground(new BitmapDrawable(getResources(), backgroundBitmap));
+        }
 
         // add canvas view
         canvasView = new CanvasView(getActivity().getApplicationContext(), findPath);

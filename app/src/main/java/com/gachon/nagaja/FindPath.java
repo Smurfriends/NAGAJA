@@ -60,8 +60,9 @@ public class FindPath {
             x = getStringValue(hashMap, "x");
             y = getStringValue(hashMap, "y");
 
-            setMatrix(node,nodeNum);
-            setNodeArrayList(x, y);
+            setNodeArrayList(x, y); // 1
+            setMatrix(node,nodeNum); // 2
+
             nodeArrayList = getNodeArrayList();
             // Output or perform desired operations with the extracted values
             Log.d("Firebase", "node: " + node);
@@ -96,7 +97,7 @@ public class FindPath {
         String[] splitValues = values.split(",");
         matrix = new ArrayList<>();
 
-        int matrixSize = Integer.parseInt(nodeNum); // Size of the matrix
+        int matrixSize = nodeArrayList.size(); // Size of the matrix //nodeNum 이 node 개수 똑같은 숫자인데 변수이름만 바꾸자. 하나를 더 만들죠?
         if (matrixSize == -1) {
             // findPath의 nodeNum 값이 -1인 경우 아무런 반응이 없도록 처리
             Log.e("matrix","No node info");
