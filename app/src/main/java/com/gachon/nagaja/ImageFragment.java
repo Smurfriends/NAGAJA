@@ -87,8 +87,6 @@ public class ImageFragment extends Fragment  {
         FindPath findPath = new FindPath(bname);
         //URL 저장
 
-        // TODO: 파베에서 좌표 정보 받아오는 코드
-
         // 파이어베이스에서 이미지 가져오기. scale 조정은 나중에 빼기.
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
@@ -108,45 +106,7 @@ public class ImageFragment extends Fragment  {
                                           @Override
                                           public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
 
-
-                                              // 긴 쪽이 세로로 보이도록 회전
-                                              if (resource.getWidth() > resource.getHeight()) {
-                                                  Matrix matrix = new Matrix();
-                                                  matrix.postRotate(90);
-                                                  resource = Bitmap.createBitmap(resource, 0, 0,
-                                                          resource.getWidth(), resource.getHeight(), matrix, true);
-
-                                              }
-
-                                              // 360dp*600dp 화면에 맞춰 scale 조정
-                                              float widthScale = resource.getWidth() / 360f;  // 아악 float 아아ㅏ아악
-                                              float heightScale = resource.getHeight() / 600f;
-
-                                              Matrix matrix = new Matrix();
-                                              if (widthScale > heightScale) {
-                                                  matrix.preScale(1 / widthScale, 1 / widthScale);
-                                              } else {
-                                                  matrix.preScale(1 / heightScale, 1 / heightScale);
-                                              }
-                                              resource = Bitmap.createBitmap(resource, 0, 0,
-                                                      resource.getWidth(), resource.getHeight(), matrix, true);
-
-                                              Log.d("Resource", "width: " + resource.getWidth() + ", height: " + resource.getHeight());
-
-                                              // 360dp*640dp 화면에서 딱 맞지 않는 부분은 투명으로 채우기
-                                              Bitmap result = Bitmap.createBitmap(360, 600, Bitmap.Config.ARGB_8888); // 기본이 투명
-                                              Canvas canvas = new Canvas(result);
-                                              Paint paint = new Paint();
-
-                                              if (widthScale > heightScale) {
-                                                  canvas.drawBitmap(resource, 0, (600 - resource.getHeight()) / 2f, paint);
-                                              } else {
-                                                  canvas.drawBitmap(resource, (360 - resource.getWidth()) / 2f, 0, paint);
-                                              }
-
-                                              // 비트맵을 drawable로 변환
-                                              Drawable drawable = new BitmapDrawable(result);
-                                              bitmap = result;
+                                              bitmap = resource;
                                               check = 1;
 
                                               // add canvas view
@@ -156,6 +116,7 @@ public class ImageFragment extends Fragment  {
                                               frameLayout.addView(routeCanvasView);
 
                                               // 캔버스뷰에 background로 세팅
+                                              Drawable drawable = new BitmapDrawable(resource);
                                               routeCanvasView.setBackground(drawable); // background로 넣어야지만 drawPath 가능
                                           }
                                       });

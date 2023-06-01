@@ -124,12 +124,8 @@ public class BookmarkInnerFragment extends Fragment {
             }
 
             if (bitmap != null) {
-                //TODO 회전 시켜야함
-                Matrix rotateMatrix = new Matrix();
-                rotateMatrix.postRotate(90);
 
-                Bitmap sideInversionImg = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), rotateMatrix, false);
-                Drawable drawable = new BitmapDrawable(sideInversionImg);
+                Drawable drawable = new BitmapDrawable(bitmap);
 
                 routeCanvasView.setBackground(drawable);
                 Toast.makeText(getActivity(), "파일 로드 성공", Toast.LENGTH_SHORT).show();
