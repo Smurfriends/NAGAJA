@@ -5,13 +5,17 @@ import static android.app.Activity.RESULT_OK;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,7 +23,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -35,6 +38,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
+
 public class UploadMapFragment extends Fragment {
 
     private final String bname;
@@ -44,7 +49,8 @@ public class UploadMapFragment extends Fragment {
     //private final DatabaseReference root = FirebaseDatabase.getInstance().getReference("Image");
     private final StorageReference reference = FirebaseStorage.getInstance().getReference();
     private int fileId;
-
+    private Bitmap imageToUpload;
+    byte[] bytesToUploadImage;
     private Activity activity;
 
 
@@ -102,7 +108,12 @@ public class UploadMapFragment extends Fragment {
                     Toast.makeText(getActivity(), "사진을 선택해주세요.", Toast.LENGTH_SHORT).show();
                 }
 
-                // TODO: then back to main
+                // 홈 화면으로 돌아가기
+                FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.menu_frame_layout, new MapFragment())
+                        .addToBackStack(null)
+                        .commit();
             }
         });
 
@@ -154,7 +165,7 @@ public class UploadMapFragment extends Fragment {
                     imageUri = data.getData();
                     // Set the image in ImageView
                     imageView.setImageURI(imageUri);
-
+                    transformateImageBitmap();
                 }
                 break;
 
@@ -177,7 +188,7 @@ public class UploadMapFragment extends Fragment {
 
                     StorageReference fileRef = reference.child("image" + fileId + ".png");
 
-                    fileRef.putFile(imgUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    fileRef.putBytes(bytesToUploadImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -188,8 +199,7 @@ public class UploadMapFragment extends Fragment {
 
                                     // 데이터 넣기
                                     databaseReference.child("map").child(bname).setValue(newMap);
-                                    // 층별 구분 넣기 필요
-                                    Toast.makeText(getActivity(), "업로드 성공.", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getActivity(), "업로드 성공", Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }
@@ -207,13 +217,61 @@ public class UploadMapFragment extends Fragment {
         });
     }
 
+    // 720*1200 사이즈로 이미지 변환
+    private void transformateImageBitmap() {
+//        Bitmap temp = BitmapFactory.decodeResource(imageView.getForeground());
+        Bitmap temp = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
 
-    //파일타입 가져오기
-    private String getFileExtension(Uri uri) {
-        ContentResolver cr = requireContext().getContentResolver();
-        MimeTypeMap mime = MimeTypeMap.getSingleton();
-        return mime.getExtensionFromMimeType(cr.getType(uri));
+        // 긴 쪽이 세로로 보이도록 회전
+        if (temp.getWidth() > temp.getHeight()) {
+            Matrix matrix = new Matrix();
+            matrix.postRotate(90);
+            temp = Bitmap.createBitmap(temp, 0, 0,
+                    temp.getWidth(), temp.getHeight(), matrix, true);
+
+        }
+
+        // 720*1200으로 통일해서 scale 조정 (화면엔 360dp*600dp로 띄워질 예정)
+        float widthScale = temp.getWidth() / 720f;  // float 잊지 말기
+        float heightScale = temp.getHeight() / 1200f;
+
+        Matrix matrix = new Matrix();
+        if (widthScale > heightScale) {
+            matrix.preScale(1 / widthScale, 1 / widthScale);
+        } else {
+            matrix.preScale(1 / heightScale, 1 / heightScale);
+        }
+        temp = Bitmap.createBitmap(temp, 0, 0,
+                temp.getWidth(), temp.getHeight(), matrix, true);
+
+        Log.d("Resource", "width: " + temp.getWidth() + ", height: " + temp.getHeight());
+
+        // 720*1200 화면에서 딱 맞지 않는 부분은 투명으로 채우기
+        Bitmap result = Bitmap.createBitmap(720, 1200, Bitmap.Config.ARGB_8888); // 기본이 투명
+        Canvas canvas = new Canvas(result);
+        Paint paint = new Paint();
+
+        if (widthScale > heightScale) {
+            canvas.drawBitmap(temp, 0, (1200 - temp.getHeight()) / 2f, paint);
+        } else {
+            canvas.drawBitmap(temp, (720 - temp.getWidth()) / 2f, 0, paint);
+        }
+
+        // 데이터베이스에 올릴 bitmap 저장
+        imageToUpload = result;
+
+        // imageView에 띄우기
+        imageView.setImageBitmap(imageToUpload);
+
+        // 비트맵을 ByteArray로 변환
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        imageToUpload.compress(Bitmap.CompressFormat.PNG, 100, baos);   // 퀄리티 100이면 원본
+
+        // bytesToUploadImage가 파이어베이스 스토리지에 올라감
+        bytesToUploadImage = baos.toByteArray();
     }
+
+
 
     @Override
     public void onAttach(Context context) {

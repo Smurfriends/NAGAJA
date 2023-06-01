@@ -28,9 +28,6 @@ public class Edit3ExitFragment extends Fragment  {
 
     public void setBackground(Bitmap bitmap) {
         backgroundBitmap = bitmap;
-//        if (rootView != null && backgroundBitmap != null) {
-//            rootView.setBackground(new BitmapDrawable(getResources(), backgroundBitmap));
-//        }
     }
     public void setFindPath(FindPath findPath){
         this.findPath = findPath;
@@ -53,11 +50,6 @@ public class Edit3ExitFragment extends Fragment  {
         // add canvas view
         canvasView = new CanvasView(getActivity().getApplicationContext(), findPath);
         frameLayout.addView(canvasView);
-
-        // TODO: 파베에서 이미지 받아와서 canvasView에 background로 띄우는 코드
-        // 원래는 이미지 들어가는데 테스트 용으로 지금만 color 넣음
-//        canvasView.setBackgroundColor(Color.WHITE);
-//        canvasView.setBackground(파베에서 받아온 사진 파일 drawable);
 
         // node 선택 해제 버튼
         deselectButton.setOnClickListener(new View.OnClickListener() {

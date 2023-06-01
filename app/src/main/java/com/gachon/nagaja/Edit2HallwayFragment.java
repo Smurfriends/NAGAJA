@@ -26,9 +26,6 @@ public class Edit2HallwayFragment extends Fragment  {
 
     public void setBackground(Bitmap bitmap) {
         backgroundBitmap = bitmap;
-//        if (rootView != null && backgroundBitmap != null) {
-//            rootView.setBackground(new BitmapDrawable(getResources(), backgroundBitmap));
-//        }
     }
     public void setFindPath(FindPath findPath){
         this.findPath = findPath;
@@ -51,32 +48,6 @@ public class Edit2HallwayFragment extends Fragment  {
         // add canvas view
         canvasView = new CanvasView(getActivity().getApplicationContext(),findPath);
         frameLayout.addView(canvasView);
-
-        // TODO: 파베에서 이미지 받아와서 canvasView에 background로 띄우는 코드
-        // 원래는 이미지 들어가는데 테스트 용으로 지금만 color 넣음
-//        canvasView.setBackgroundColor(Color.WHITE);
-//        canvasView.setBackground(파베에서 받아온 사진 파일 drawable);
-
-        // TODO: 파베에서 matrix 정보 받아오는 코드
-
-        // 받아 온 matrix를 CanvasView에 있는 edge 2차원 ArrayList에 넣기
-        // 아래같은 느낌으로
-//        for (int row = 0; row < canvasView.node_corner.size(); row++) {
-//            for (int col = 0; col < canvasView.node_corner.size(); col++) {
-//                canvasView.tempList.add(col);
-//            }
-//            canvasView.edge.add(canvasView.tempList);
-//            canvasView.tempList.clear();
-//        }
-        
-        // test용. 자기 자신은 0, 연결 안된 모든 건 100000
-//        canvasView.matrix = new int [canvasView.node_corner.size()][canvasView.node_corner.size()];
-//        for (int row = 0; row < canvasView.node_corner.size(); row++) {
-//            for (int col = 0; col < canvasView.node_corner.size(); col++) {
-//                if (row == col) { canvasView.matrix[row][col] = 0; }
-//                else { canvasView.matrix[row][col] = 100000; }
-//            }
-//        }
 
         // node 선택 해제 버튼
         deselectButton.setOnClickListener(new View.OnClickListener() {

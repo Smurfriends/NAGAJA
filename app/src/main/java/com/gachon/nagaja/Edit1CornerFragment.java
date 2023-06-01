@@ -71,9 +71,6 @@ public class Edit1CornerFragment extends Fragment  {
 
     public void setBackground(Bitmap bitmap) {
         backgroundBitmap = bitmap;
-//        if (rootView != null && backgroundBitmap != null) {
-//            frameLayout.setBackground(new BitmapDrawable(getResources(), backgroundBitmap));
-//        }
     }
 
     public void setFindPath(FindPath findPath){
@@ -103,15 +100,6 @@ public class Edit1CornerFragment extends Fragment  {
         // add canvas view
         canvasView = new CanvasView(getActivity().getApplicationContext(),findPath);
         frameLayout.addView(canvasView);
-
-        // TODO: 파베에서 이미지 받아와서 canvasView에 background로 띄우는 코드
-        // 원래는 이미지 들어가는데 테스트 용으로 지금만 color 넣음
-//        canvasView.setBackgroundColor(Color.WHITE);
-//        canvasView.setBackground(파베에서 받아온 사진 파일 drawable);
-
-        // TODO: 파베에서 좌표 정보 받아오는 코드
-        // 받아 온 좌표를 CanvasView에 있는 node_corner ArrayList에 넣기
-//        canvasView.node_corner.add(new Point(82,64));
 
         // node 추가 버튼
         addNodeButton.setOnClickListener(new View.OnClickListener() {
