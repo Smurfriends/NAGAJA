@@ -54,7 +54,7 @@ public class RouteCanvasView extends View {
         //routeCanvasView.node = findPath.getNodeArrayList();
         node = findPath.getNodeArrayList();
         //routeCanvasView.matrix.add(findPath.getMatrix());
-        matrix.add(findPath.getMatrix());
+        matrix = findPath.getMatrix();
 //        matrix.add(tempMatrix); // 임시로. 나중에 삭제
 
 

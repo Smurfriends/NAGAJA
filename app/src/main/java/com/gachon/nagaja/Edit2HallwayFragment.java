@@ -26,9 +26,9 @@ public class Edit2HallwayFragment extends Fragment  {
 
     public void setBackground(Bitmap bitmap) {
         backgroundBitmap = bitmap;
-        if (rootView != null && backgroundBitmap != null) {
-            rootView.setBackground(new BitmapDrawable(getResources(), backgroundBitmap));
-        }
+//        if (rootView != null && backgroundBitmap != null) {
+//            rootView.setBackground(new BitmapDrawable(getResources(), backgroundBitmap));
+//        }
     }
     public void setFindPath(FindPath findPath){
         this.findPath = findPath;
@@ -37,13 +37,16 @@ public class Edit2HallwayFragment extends Fragment  {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_edit2_hallway, container, false);
-        if (backgroundBitmap != null) {
-            rootView.setBackground(new BitmapDrawable(getResources(), backgroundBitmap));
-        }
+
         frameLayout = rootView.findViewById(R.id.frameLayout);
         deselectButton = rootView.findViewById(R.id.deselectButton);
         connectButton = rootView.findViewById(R.id.connectButton);
         nextButton = rootView.findViewById(R.id.nextButton);
+
+        // frameLayout에 이미지 세팅
+        if (backgroundBitmap != null) {
+            frameLayout.setBackground(new BitmapDrawable(getResources(), backgroundBitmap));
+        }
 
         // add canvas view
         canvasView = new CanvasView(getActivity().getApplicationContext(),findPath);

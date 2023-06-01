@@ -95,7 +95,7 @@ public class Edit1CornerFragment extends Fragment  {
         moveToRightButton = rootView.findViewById(R.id.moveToRightButton);
         nextButton = rootView.findViewById(R.id.nextButton);
 
-        // frameLayout에 지도 이미지 세팅
+        // frameLayout에 이미지 세팅
         if (backgroundBitmap != null) {
             frameLayout.setBackground(new BitmapDrawable(getResources(), backgroundBitmap));
         }
@@ -118,8 +118,10 @@ public class Edit1CornerFragment extends Fragment  {
             @Override
             public void onClick(View v) {
 
-                canvasView.node_corner.add(new Point(10,10));
+                canvasView.setMatrixAfterAddCornerNode();    // matrix에 반영
+                canvasView.node_corner.add(new Point(20,20));
                 canvasView.curEdit = canvasView.node_corner.size() - 1; // 추가한 게 바로 초록색으로
+
                 canvasView.invalidate();
             }
         });
@@ -129,9 +131,13 @@ public class Edit1CornerFragment extends Fragment  {
             @Override
             public void onClick(View v) {
 
-                canvasView.node_corner.remove(canvasView.curEdit);
-                canvasView.curEdit = -1;
-                canvasView.invalidate();
+                if (canvasView.curEdit != -1) {
+                    canvasView.setMatrixAfterDeleteCornerNode();    // matrix에 반영
+                    canvasView.node_corner.remove(canvasView.curEdit);
+                    canvasView.curEdit = -1;
+
+                    canvasView.invalidate();
+                }
             }
         });
 

@@ -16,17 +16,17 @@ import java.util.Arrays;
 public class CanvasView extends View {
 
     Paint paint = new Paint();
-    static int curEdit = 0;   // 지금 선택해서 좌표 수정 중인 node의 index
+    public static int curEdit = 0;   // 지금 선택해서 좌표 수정 중인 node의 index
 //    int curEdit = -3; // 원래는 0으로 초기화. 지금은 테스트용
     int[] curEditTwo = {-1,-1};
     int count = 0;  // for drag
     int curDrag = -1; // 라인 위에서만 좌표 위치 선택하게 할 때 사용
 
     // TODO: 파베에서 정보 받아오는 코드 넣고 나면, 아래에 있는 테스트용 초기화 정보 지우고 선언만 남기기
-    public ArrayList<Point> node_corner = new ArrayList<>(
-            Arrays.asList(new Point(20,60),new Point(100,60),new Point(20,300), new Point(20,540), new Point(130,300), new Point(160,540), new Point(180,540))
-    );  // 테스트 용으로 초기화 값 넣어둠
-//    public static ArrayList<Point> node_corner = new ArrayList<>(); //원래는 이런식으로만
+//    public ArrayList<Point> node_corner = new ArrayList<>(
+//            Arrays.asList(new Point(20,60),new Point(100,60),new Point(20,300), new Point(20,540), new Point(130,300), new Point(160,540), new Point(180,540))
+//    );  // 테스트 용으로 초기화 값 넣어둠
+    public ArrayList<Point> node_corner = new ArrayList<>(); //원래는 이런식으로만
     public ArrayList<NewNodeData> node_exit = new ArrayList<>();
     public ArrayList<double[][]> matrix = new ArrayList<>();    // 공간은 하나만 씀. 매번 배열 크기를 다르게 써야해서 사용
     
@@ -46,8 +46,11 @@ public class CanvasView extends View {
         paint.setStrokeWidth(10f);
         paint.setStyle(Paint.Style.STROKE);
 
+        node_corner = findPath.getNodeArrayList();  // 나중엔 만약에 exit 노드가 수정된 후인지 아닌지를 알기 위해 
+        // 파이썬에서 올릴 때 nodeNum에 -1을 넣어서 표시한다던지 구분 필요
+
 //        matrix.add(tempMatrix); // 임시로. 나중에 삭제
-        matrix.add(findPath.getMatrix());
+        matrix = findPath.getMatrix();
     }
 
     @Override
@@ -63,7 +66,7 @@ public class CanvasView extends View {
 
             for (int row = 0; row < temp.length; row++) {
                 for (int col = 0; col < temp.length; col++) {
-                    if (temp[row][col] != 0 && temp[row][col] != 100000) {
+                    if (temp[row][col] != 0 && temp[row][col] != 50000) {
                         if ((row == curEditTwo[0] && col == curEditTwo[1]) || (row == curEditTwo[1] && col == curEditTwo[0])) {
                             paint.setColor(Color.rgb(152, 251, 152)); // 연두색
                         } else { paint.setColor(Color.rgb(255,228,225)); }  // 분홍색
@@ -250,6 +253,60 @@ public class CanvasView extends View {
         invalidate();
     }
 
+    // 추가한 노드를 반영하기 위해 matrix 사이즈 늘리기
+    public void setMatrixAfterAddCornerNode() {
+        
+        int originSize = matrix.get(0).length;
+        double[][] temp = new double[originSize + 1][originSize + 1];   // 사이즈 하나 늘리기
+        
+        // 원래 matrix 넣기
+        for (int i = 0; i < originSize; i++) {
+            for (int j = 0; j < originSize; j++) {
+                temp[i][j] = matrix.get(0)[i][j];
+            }
+        }
+        
+        // 새로 add한 node는 아무 연결도 없는 걸로 초기화
+        for (int i = 0; i < originSize; i++) {
+            temp[i][originSize] = 50000;
+            temp[originSize][i] = 50000;
+        }
+        temp[originSize][originSize] = 0;   // 본인
+
+        // matrix update
+        matrix.set(0, temp);
+    }
+
+    // 삭제한 노드를 반영하기 위해 matrix 사이즈 줄이고 연결 바꾸기
+    public void setMatrixAfterDeleteCornerNode() {
+        
+        int originSize = matrix.get(0).length;
+        double[][] temp = new double[originSize - 1][originSize - 1];   // 사이즈 하나 줄이기
+
+        // curEdit 부분을 제외하고 matrix 재구성
+        for (int i = 0; i < originSize - 1; i++) {
+            for (int j = 0; j < originSize - 1; j++) {
+
+                if (i < curEdit && j < curEdit) {
+                    temp[i][j] = matrix.get(0)[i][j];
+                }
+                else if (i < curEdit) { // && j >= curEdit
+                    temp[i][j] = matrix.get(0)[i][j+1];
+                }
+                else if (j < curEdit) { // && i >= curEdit
+                    temp[i][j] = matrix.get(0)[i+1][j];
+                }
+                else {    // i >= curEdit && j >= curEdit
+                    temp[i][j] = matrix.get(0)[i+1][j+1];
+                }
+            }
+        }
+
+        // matrix update
+        matrix.set(0, temp);
+    }
+
+
     // Hallway edit할 때 라인 connect/disconnect 하는 함수
     public void editConnection() {
         int a = curEditTwo[0];
@@ -257,19 +314,23 @@ public class CanvasView extends View {
 
         double[][] temp = matrix.get(0);
 
-        if (temp[a][b] == 100000) {    // connect
+        if (temp[a][b] == 50000) {    // connect
             int weight = (int) Math.sqrt(Math.pow(node_corner.get(a).x - node_corner.get(b).x, 2) + (Math.pow(node_corner.get(a).y - node_corner.get(b).y, 2)));
 
             temp[a][b] = weight;
             temp[b][a] = weight;
         }
         else {  // disconnect
-            temp[a][b] = 100000;
-            temp[b][a] = 100000;
+            temp[a][b] = 50000;
+            temp[b][a] = 50000;
         }
 
         // apply edit result
         matrix.set(0, temp);
+
+        // deselect
+        curEditTwo[0] = -1;
+        curEditTwo[1] = -1;
 
         invalidate();
     }
@@ -280,7 +341,7 @@ public class CanvasView extends View {
         if (curEditTwo[0] != -1 && curEditTwo[1] != -1) {
 
             double[][] temp = matrix.get(0);
-            if (temp[curEditTwo[0]][curEditTwo[1]] != 100000) {
+            if (temp[curEditTwo[0]][curEditTwo[1]] != 50000) {
 
                 // 중간 좌표 계산
                 int newX = (node_corner.get(curEditTwo[0]).x + node_corner.get(curEditTwo[1]).x) / 2;
@@ -319,7 +380,7 @@ public class CanvasView extends View {
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 if (i == j) { finalMatrix[i][j] = 0; }
-                else { finalMatrix[i][j] = 100000; }
+                else { finalMatrix[i][j] = 50000; }
             }
         }
 
@@ -336,9 +397,9 @@ public class CanvasView extends View {
             int weight1 = (int) Math.sqrt(Math.pow(node_corner.get(node_exit.get(i).node1).x - node_exit.get(i).x, 2) + Math.pow(node_corner.get(node_exit.get(i).node1).y - node_exit.get(i).y, 2));
             int weight2 = (int) Math.sqrt(Math.pow(node_corner.get(node_exit.get(i).node2).x - node_exit.get(i).x, 2) + Math.pow(node_corner.get(node_exit.get(i).node2).y - node_exit.get(i).y, 2));
 
-            if (finalMatrix[node_exit.get(i).node1][node_exit.get(i).node2] == 100000) { // 그 간선에 이미 누가 있어서 원래 연결이 끊겼다면 (같은 간선에 exit node는 2개까지만 가능하게 짰음)
+            if (finalMatrix[node_exit.get(i).node1][node_exit.get(i).node2] == 50000) { // 그 간선에 이미 누가 있어서 원래 연결이 끊겼다면 (같은 간선에 exit node는 2개까지만 가능하게 짰음)
                 for (int j = 0; j < i; i++) {   // 범인 찾기
-                    if (finalMatrix[node_exit.get(i).node1][j + node_corner.size()] != 100000 && finalMatrix[node_exit.get(i).node2][j + node_corner.size()] != 100000) {
+                    if (finalMatrix[node_exit.get(i).node1][j + node_corner.size()] != 50000 && finalMatrix[node_exit.get(i).node2][j + node_corner.size()] != 50000) {
                         // 나는 i, 범인은 j
                         // 서로의 node1과 node2가 반대일 수도 있으니까 맞추기
                         if (node_exit.get(i).node1 != node_exit.get(j).node1) {
@@ -355,8 +416,8 @@ public class CanvasView extends View {
                         // 가중치 비교
                         if (weight1 < finalMatrix[node_exit.get(j).node1][j + node_corner.size()]) { // 내가 node1이랑 더 가까우면
                             // node1과 j의 연결 끊기
-                            finalMatrix[node_exit.get(j).node1][j + node_corner.size()] = 100000;
-                            finalMatrix[j + node_corner.size()][node_exit.get(j).node1] = 100000;
+                            finalMatrix[node_exit.get(j).node1][j + node_corner.size()] = 50000;
+                            finalMatrix[j + node_corner.size()][node_exit.get(j).node1] = 50000;
 
                             // 나를 node1과 j 사이에 새로 연결
                             finalMatrix[node_exit.get(i).node1][i + node_corner.size()] = weight1;
@@ -366,8 +427,8 @@ public class CanvasView extends View {
                         }
                         else {  // 내가 node2랑 더 가까우면
                             // node2과 j의 연결 끊기
-                            finalMatrix[node_exit.get(j).node2][j + node_corner.size()] = 100000;
-                            finalMatrix[j + node_corner.size()][node_exit.get(j).node2] = 100000;
+                            finalMatrix[node_exit.get(j).node2][j + node_corner.size()] = 50000;
+                            finalMatrix[j + node_corner.size()][node_exit.get(j).node2] = 50000;
 
                             // 나를 node2과 j 사이에 새로 연결
                             finalMatrix[node_exit.get(i).node2][i + node_corner.size()] = weight1;
@@ -380,8 +441,8 @@ public class CanvasView extends View {
             }
             else {   // 그 간선에 첫 입장
                 // 원래 연결 끊기
-                finalMatrix[node_exit.get(i).node1][node_exit.get(i).node2] = 100000;
-                finalMatrix[node_exit.get(i).node2][node_exit.get(i).node1] = 100000;
+                finalMatrix[node_exit.get(i).node1][node_exit.get(i).node2] = 50000;
+                finalMatrix[node_exit.get(i).node2][node_exit.get(i).node1] = 50000;
 
                 // 나를 node1과 node2 사이에 새로 연결
                 finalMatrix[node_exit.get(i).node1][i + node_corner.size()] = weight1;

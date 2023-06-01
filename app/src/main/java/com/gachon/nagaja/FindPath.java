@@ -32,7 +32,7 @@ public class FindPath {
 
     private String buildingName;
 
-    private double[][] matrix;
+    private ArrayList<double[][]> matrix;
 
     private ArrayList<Point> nodeArrayList;
     private ArrayList<Integer> pathIndex;
@@ -94,22 +94,23 @@ public class FindPath {
     public void setMatrix() {
         String values = node;
         String[] splitValues = values.split(",");
+        matrix = new ArrayList<>();
 
         int matrixSize = Integer.parseInt(nodeNum); // Size of the matrix
         if (matrixSize == -1) {
             // findPath의 nodeNum 값이 -1인 경우 아무런 반응이 없도록 처리
             Log.e("matrix","No node info");
         }else {
-            matrix = new double[matrixSize][matrixSize];
+            matrix.add(new double[matrixSize][matrixSize]);
 
             // Convert the split values to doubles and populate the matrix
             int index = 0;
             for (int i = 0; i < matrixSize; i++) {
                 for (int j = 0; j < matrixSize; j++) {
                     if (splitValues[index].equals("50000")) {
-                        matrix[i][j] = Double.POSITIVE_INFINITY; // or any other appropriate value
+                        matrix.get(0)[i][j] = Double.POSITIVE_INFINITY; // or any other appropriate value
                     } else {
-                        matrix[i][j] = Double.parseDouble(splitValues[index])/2;//크기를 반으로 줄이기 때문에 2를 나눠야함
+                        matrix.get(0)[i][j] = Double.parseDouble(splitValues[index])/2;//크기를 반으로 줄이기 때문에 2를 나눠야함
                     }
                     index++;
                 }
@@ -119,7 +120,7 @@ public class FindPath {
             for (int i = 0; i < matrixSize; i++) {
                 StringBuilder rowBuilder = new StringBuilder();
                 for (int j = 0; j < matrixSize; j++) {
-                    rowBuilder.append(matrix[i][j]).append(" ");
+                    rowBuilder.append(matrix.get(0)[i][j]).append(" ");
                 }
                 Log.d("Matrix", rowBuilder.toString());
             }
@@ -253,9 +254,7 @@ public class FindPath {
         return node;
     }
 
-    public double[][] getMatrix() {
-        return matrix;
-    }
+    public ArrayList<double[][]> getMatrix() { return matrix; }
 
     public ArrayList<Point> getNodeArrayList() {
         return nodeArrayList;

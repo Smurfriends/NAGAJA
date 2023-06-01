@@ -3,12 +3,17 @@ package com.gachon.nagaja;
 import static android.app.Activity.RESULT_OK;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
+import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -40,6 +45,9 @@ public class UploadMapFragment extends Fragment {
     private final StorageReference reference = FirebaseStorage.getInstance().getReference();
     private int fileId;
 
+    private Activity activity;
+
+
     public UploadMapFragment(String buildingName) {
         this.bname = buildingName;
     }
@@ -60,6 +68,16 @@ public class UploadMapFragment extends Fragment {
         imageView = rootView.findViewById(R.id.imageView);
         floorOfMap = rootView.findViewById(R.id.floorOfMap);
         submitBtn = rootView.findViewById(R.id.submitBtn);
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if(ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+//                Log.d(TAG, "권한 설정 완료");
+            }
+            else {
+//                Log.d(TAG, "권한 설정 요청");
+                ActivityCompat.requestPermissions(activity, new String[]{android.Manifest.permission.CAMERA}, 1);
+            }
+        }
 
         submitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -197,7 +215,13 @@ public class UploadMapFragment extends Fragment {
         return mime.getExtensionFromMimeType(cr.getType(uri));
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
 
+        if (context instanceof Activity)
+            activity = (Activity) context;
+    }
 
 
     // declaration
