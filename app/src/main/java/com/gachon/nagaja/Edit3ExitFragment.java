@@ -6,17 +6,24 @@ import android.graphics.drawable.BitmapDrawable;
 import android.media.Image;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Edit3ExitFragment extends Fragment  {
     private Bitmap backgroundBitmap;
@@ -83,6 +90,11 @@ public class Edit3ExitFragment extends Fragment  {
             @Override
             public void onClick(View v) {
 
+                Log.d("exitNode x", String.valueOf(canvasView.node_exit.get(canvasView.curDrag).x));
+                Log.d("exitNode y", String.valueOf(canvasView.node_exit.get(canvasView.curDrag).y));
+                Log.d("exitNode coefficient", String.valueOf(canvasView.node_exit.get(canvasView.curDrag).coefficient));
+                Log.d("exitNode constant", String.valueOf(canvasView.node_exit.get(canvasView.curDrag).constant));
+
                 // 다 초기화
                 canvasView.curDrag = -1;
                 canvasView.curEditTwo[0] = -1;
@@ -100,8 +112,8 @@ public class Edit3ExitFragment extends Fragment  {
                 canvasView.addEdgeOfExitNodeToMatrix();
 
                 // 노드 좌표 정보를 node_corner 이용해서 한번에 정리하기 위해 합치기
-                canvasView.combineExitNodeToCornerNodeList(); 
-                
+                canvasView.combineExitNodeToCornerNodeList();
+
                 // 파이어베이스에 수정된 node 정보들 업데이트
                 FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
                 DatabaseReference databaseReference = firebaseDatabase.getReference();
@@ -114,18 +126,25 @@ public class Edit3ExitFragment extends Fragment  {
                         .child("x").setValue(findPath.getXToString());
                 databaseReference.child("map").child(findPath.getBuildingName())
                         .child("y").setValue(findPath.getYToString());
-                
-                
+
+
                 // curEdit 초기화
                 canvasView.curEdit = 0;
 
                 // TODO: 홈 화면이든 북마크 화면이든 넘어가는 코드
                 // 변수 안꼬이게 activity 넘기고 나서 쓰는 finish()같은 거 넣어 주기. 이전 화면으로 못돌아오도록
-                FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-                fragmentManager.beginTransaction()
-                        .replace(R.id.menu_frame_layout, new ImageFragment(findPath.getBuildingName()))
-                        .addToBackStack(null)
-                        .commit();
+
+                Timer timer = new Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+                        fragmentManager.beginTransaction()
+                                .replace(R.id.menu_frame_layout, new ImageFragment(findPath.getBuildingName()))
+                                .addToBackStack(null)
+                                .commit();
+                    }
+        }, 1000);
             }
         });
 

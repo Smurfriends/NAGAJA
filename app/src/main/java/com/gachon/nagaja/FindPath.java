@@ -186,6 +186,10 @@ public class FindPath {
     }
 
     public double dijkstra(double[][] graph, int startNode, int endNode) {
+        String[] splitValuesX = x.split(", ");
+        if(nodeNum == splitValuesX.length){
+            return -1;
+        }
         String tag = "Dijkstra";
         Log.d(tag, "No path found.");
         int numNodes = graph.length;

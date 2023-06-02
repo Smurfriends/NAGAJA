@@ -195,11 +195,12 @@ public class CanvasView extends View {
                             node_exit.set(curDrag, new NewNodeData(curEditTwo[0], curEditTwo[1], x, y, tempNew.coefficient, tempNew.constant));
                         }
 
-                        Log.d("exitNode x", String.valueOf(node_exit.get(curDrag).x));
-                        Log.d("exitNode y", String.valueOf(node_exit.get(curDrag).y));
-                        Log.d("exitNode coefficient", String.valueOf(node_exit.get(curDrag).coefficient));
-                        Log.d("exitNode constant", String.valueOf(node_exit.get(curDrag).constant));
+//
                         invalidate();
+//                        Log.d("exitNode x", String.valueOf(node_exit.get(curDrag).x));
+//                        Log.d("exitNode y", String.valueOf(node_exit.get(curDrag).y));
+//                        Log.d("exitNode coefficient", String.valueOf(node_exit.get(curDrag).coefficient));
+//                        Log.d("exitNode constant", String.valueOf(node_exit.get(curDrag).constant));
                     }
                 }
                 break;
@@ -488,6 +489,9 @@ public class CanvasView extends View {
 
         for (int i = 0; i < node_exit.size(); i++) {
             node_corner.add(new Point(node_exit.get(i).x, node_exit.get(i).y));
+            Log.d("combineExitNodeIndex", String.valueOf(i));
+            Log.d("combineExitNode", String.valueOf(node_exit.get(i).x));
+            Log.d("combineExitNode", String.valueOf(node_exit.get(i).y));
         }
     }
 
