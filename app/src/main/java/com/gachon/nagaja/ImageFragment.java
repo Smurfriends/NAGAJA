@@ -85,8 +85,7 @@ public class ImageFragment extends Fragment  {
 
         //findPath 선언 이거 해야 URL등 firebase에서 값 읽어옴
         FindPath findPath = new FindPath(bname);
-        //URL 저장
-
+        //findPath 데이터가 없으면
         // 파이어베이스에서 이미지 가져오기. scale 조정은 나중에 빼기.
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
@@ -108,16 +107,28 @@ public class ImageFragment extends Fragment  {
 
                                               bitmap = resource;
                                               check = 1;
-
-                                              // add canvas view
-                                              routeCanvasView = new RouteCanvasView(getActivity().getApplicationContext(),findPath);
-                                              routeCanvasView.setNode(findPath.getNodeArrayList());
-                                              routeCanvasView.setMatrix(findPath.getMatrix());
-                                              frameLayout.addView(routeCanvasView);
-
-                                              // 캔버스뷰에 background로 세팅
                                               Drawable drawable = new BitmapDrawable(resource);
-                                              routeCanvasView.setBackground(drawable); // background로 넣어야지만 drawPath 가능
+                                              if(findPath.getNoData()){//ture면 단순하게 이미지를 띄우는 view만 추가
+                                                    ImageView imageView1 = new ImageView(getActivity().getApplicationContext());
+                                                    imageView1.setBackground(drawable);
+                                                    frameLayout.addView(imageView1);
+
+
+
+                                              }else{//false 즉 데이터가 있으면 기존 routeView 띄우기
+                                                  // add canvas view
+                                                  routeCanvasView = new RouteCanvasView(getActivity().getApplicationContext(),findPath);
+                                                  routeCanvasView.setNode(findPath.getNodeArrayList());
+                                                  routeCanvasView.setMatrix(findPath.getMatrix());
+                                                  frameLayout.addView(routeCanvasView);
+                                                  downloadButton.setVisibility(View.VISIBLE);
+                                                  adjustNodeButton.setVisibility(View.VISIBLE);
+
+                                                  // 캔버스뷰에 background로 세팅
+
+                                                  routeCanvasView.setBackground(drawable); // background로 넣어야지만 drawPath 가능
+                                              }
+
                                           }
                                       });
                         check = 1;

@@ -2,6 +2,7 @@ package com.gachon.nagaja;
 
 import android.graphics.Point;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -49,6 +50,7 @@ public class FindPath {
         database.child("building").child(buildingName).addValueEventListener(postListener1);
     }
 
+    private boolean noData;
     ValueEventListener postListener = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -62,8 +64,15 @@ public class FindPath {
             y = getStringValue(hashMap, "y");
 
             nodeNum = Integer.parseInt(nodeNumS);
-            setNodeArrayList(x, y); // 1
-            setMatrix(node,nodeNum); // 2
+
+            if(nodeNum == -1){
+                noData = true;
+                Log.d("FindPathNoUpdate","No update");
+            }else{
+                noData = false;
+                setNodeArrayList(x, y); // 1
+                setMatrix(node,nodeNum); // 2
+            }
 
 //            nodeArrayList = getNodeArrayList();
 
@@ -267,6 +276,9 @@ public class FindPath {
 
     public ArrayList<Integer> getPathIndex() {
         return pathIndex;
+    }
+    public boolean getNoData(){
+        return noData;
     }
 
     public String getNodeToString() {

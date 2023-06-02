@@ -50,14 +50,6 @@ public class RouteCanvasView extends View {
 
         this.findPath = findPath;
 
-        //받아 온 좌표를 CanvasView에 있는 node_corner ArrayList에 넣기
-        //routeCanvasView.node = findPath.getNodeArrayList();
-//        node = findPath.getNodeArrayList();
-        //routeCanvasView.matrix.add(findPath.getMatrix());
-//        matrix = findPath.getMatrix();
-//        matrix.add(tempMatrix); // 임시로. 나중에 삭제
-
-
     }
 
     public void setNode(ArrayList<Point> node) {
@@ -159,6 +151,9 @@ public class RouteCanvasView extends View {
                     break;
 
                 case MotionEvent.ACTION_UP:
+//                    if(findPath.getNodeNum() == -1){
+//                        Toast.makeText(getContext(),"아직 업데이트 되기 전입니다.",Toast.l)
+//                    }
                     count = 0;  // 드래그 카운트 초기화
 
                     //nodeNum 10, 3개추가 x의 개수가 13개가 되겠죠? 3개가 exit인걸 알고 싶다. Exit = x.size() - nodeNum exit; nodeNum 이게 전체 갯수 코너뿐,, nodeNum cornerNode개수

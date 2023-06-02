@@ -19,7 +19,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ImageProcessor {
+public class ImageProcessor {// 안씀 지울 예정
     public static Bitmap processImage(Bitmap inputImage) {
         // Convert input image to OpenCV Mat object
         Mat inputMat = new Mat();

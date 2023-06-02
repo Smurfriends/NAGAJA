@@ -37,7 +37,7 @@ public class MapFragment extends Fragment {
         mEtAddress.setFocusable(false);
         scanbtn = rootView.findViewById(R.id.scanBtn);
 
-        scanbtn.setEnabled(false);
+        scanbtn.setVisibility(View.INVISIBLE);
         mEtAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -67,7 +67,7 @@ public class MapFragment extends Fragment {
                         buildingName = result.getData().getStringExtra("data");
                         Log.d("Result: ", buildingName);
                         mEtAddress.setText(buildingName);
-                        scanbtn.setEnabled(true);
+                        scanbtn.setVisibility(View.VISIBLE);
                     }
                 }
             }
