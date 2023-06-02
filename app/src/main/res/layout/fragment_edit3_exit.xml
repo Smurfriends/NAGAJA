@@ -7,6 +7,10 @@
     android:gravity="center"
     tools:context=".Edit3ExitFragment">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Edit Exit node" />
     <FrameLayout
         android:layout_width="360dp"
         android:layout_height="600dp"

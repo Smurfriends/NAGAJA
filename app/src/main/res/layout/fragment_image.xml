@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:text="Download"
             android:layout_gravity="center"
-            android:visibility="invisible"
+            android:visibility="gone"
             android:layout_marginRight="10dp"/>
 
         <Button
@@ -32,8 +32,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:visibility="invisible"
+            android:visibility="gone"
             android:text="Adjust node data" />
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="아직 인식한 데이터가 들어오지 않았습니다."
+            android:visibility="gone"
+            />
 
     </LinearLayout>
 

@@ -28,6 +28,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -76,6 +77,8 @@ public class ImageFragment extends Fragment  {
         adjustNodeButton = rootView.findViewById(R.id.adjustNodeButton);
         check = 0;
 
+        TextView textView = rootView.findViewById(R.id.text);
+
         // Storage 객체 만들기
         FirebaseStorage storage = FirebaseStorage.getInstance("gs://nagaja-3bb34.appspot.com");
         StorageReference storageRef = storage.getReference();
@@ -112,6 +115,7 @@ public class ImageFragment extends Fragment  {
                                                     ImageView imageView1 = new ImageView(getActivity().getApplicationContext());
                                                     imageView1.setBackground(drawable);
                                                     frameLayout.addView(imageView1);
+                                                    textView.setVisibility(View.VISIBLE);
 
 
 
