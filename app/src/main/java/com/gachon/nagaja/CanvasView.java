@@ -376,12 +376,12 @@ public class CanvasView extends View {
                 int differenceX = node_corner.get(curEditTwo[0]).x - node_corner.get(curEditTwo[1]).x;
                 int differenceY = node_corner.get(curEditTwo[0]).y - node_corner.get(curEditTwo[1]).y;
 
-                float coefficient;
-                float constant;
+                double coefficient;
+                double constant;
                 if (differenceX == 0) { coefficient = 0; constant = 0; }  // x=1 이런 형태
                 else if (differenceY == 0) { coefficient = 0; constant = node_corner.get(curEditTwo[0]).y; }    // y=2 이런 형태
                 else {  // y=ax+b 기본 형태
-                    coefficient = (float) differenceY / (float) differenceX;
+                    coefficient = (double) differenceY / (double) differenceX;
                     constant = node_corner.get(curEditTwo[1]).y - (coefficient * node_corner.get(curEditTwo[1]).x);
                 }
 
@@ -497,9 +497,9 @@ public class CanvasView extends View {
 
     public class NewNodeData {
         int node1, node2, x, y;
-        float coefficient, constant;
+        double coefficient, constant;
 
-        public NewNodeData(int node1, int node2, int x, int y, float coefficient, float constant) {
+        public NewNodeData(int node1, int node2, int x, int y, double coefficient, double constant) {
 
             this.node1 = node1;
             this.node2 = node2;

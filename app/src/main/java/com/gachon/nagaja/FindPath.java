@@ -307,7 +307,7 @@ public class FindPath {
             sb.append(nodeArrayList.get(i).x *2);   // 받아올 땐 나눠줬으니 돌아갈 땐 곱하기
             sb.append(", ");
         }
-        sb.append(nodeArrayList.get(nodeArrayList.size() - 1).x);
+        sb.append(nodeArrayList.get(nodeArrayList.size() - 1).x *2);
 
         String string = sb.toString();
 
@@ -321,7 +321,7 @@ public class FindPath {
             sb.append(nodeArrayList.get(i).y *2);   // 받아올 땐 나눠줬으니 돌아갈 땐 곱하기
             sb.append(", ");
         }
-        sb.append(nodeArrayList.get(nodeArrayList.size() - 1).y);
+        sb.append(nodeArrayList.get(nodeArrayList.size() - 1).y*2);
 
         String string = sb.toString();
         return string;
