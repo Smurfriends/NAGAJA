@@ -134,17 +134,11 @@ public class Edit3ExitFragment extends Fragment  {
                 // TODO: 홈 화면이든 북마크 화면이든 넘어가는 코드
                 // 변수 안꼬이게 activity 넘기고 나서 쓰는 finish()같은 거 넣어 주기. 이전 화면으로 못돌아오도록
 
-                Timer timer = new Timer();
-                timer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
                         FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
                         fragmentManager.beginTransaction()
-                                .replace(R.id.menu_frame_layout, new ImageFragment(findPath.getBuildingName()))
-                                .addToBackStack(null)
+                                .replace(R.id.menu_frame_layout, new MapFragment())
                                 .commit();
-                    }
-                    }, 1000);
+
             }
         });
 
