@@ -6,7 +6,12 @@ import json
 import os
 import random
 import math
+from tensorflow import keras
+import requests
+from PIL import Image
+import io
 
+# 같은 계층에 있는 컨투어들을 지우는 함수
 def drawSameLevelContours(img, contours, hierarchy, contourIndex):
     if contourIndex == -1:
         return
@@ -23,50 +28,35 @@ def drawSameLevelContours(img, contours, hierarchy, contourIndex):
         cv2.drawContours(img,[contours[previousIndex]],0,(0,0,0),cv2.FILLED)
         previousIndex = hierarchy[0][previousIndex][0]
 
-def img_Contrast(img):
-    # -----Converting image to LAB Color model-----------------------------------
-    lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
-
-    # -----Splitting the LAB image to different channels-------------------------
-    l, a, b = cv2.split(lab)
-
-    # -----Applying CLAHE to L-channel-------------------------------------------
-    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(3, 3))
-    cl = clahe.apply(l)
-
-    # -----Merge the CLAHE enhanced L-channel with the a and b channel-----------
-    limg = cv2.merge((cl, a, b))
-
-    # -----Converting image from LAB Color model to RGB model--------------------
-    final = cv2.cvtColor(limg, cv2.COLOR_LAB2BGR)
-
-    return final
-
+# 복도를 검출하는 함수
 def findHall(img):
     outputImg = img.copy()
     onlyContourImg = np.zeros_like(img)
 
     gray=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
     gray=255-gray
-    gray=cv2.threshold(gray,4,255,cv2.THRESH_BINARY)[1]
-    gray=cv2.blur(gray,(15,1))
+    gray=cv2.threshold(gray,90,255,cv2.THRESH_BINARY)[1]
+    gray=cv2.blur(gray,(7,1))
 
-    # 구조화 요소 커널, 사각형 (5x5) 생성 ---①
     k = cv2.getStructuringElement(cv2.MORPH_RECT, (12,12))
 
     # 닫힘 연산 적용 ---③
     closing = cv2.morphologyEx(gray, cv2.MORPH_CLOSE, k)
-    
+    cv2.imshow('closing', closing)
+    cv2.waitKey(0)
+
     # 외곽선 검출
     contours,hierarchy = cv2.findContours(closing,cv2.RETR_TREE ,cv2.CHAIN_APPROX_NONE )
-    
-    for cnt, hier in zip(contours, hierarchy[0]):
-        area = cv2.contourArea(cnt)
-        if area>150000 and area<500000:
-            cv2.drawContours(outputImg,[cnt],0,(255,0,0),cv2.FILLED)
-            drawSameLevelContours(outputImg, contours, hierarchy, hier[2])
+    # Contour 검출
+    contours2, _ = cv2.findContours(closing, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
+
+    # 전체 Contour의 넓이 계산
+    total_area = 0
+    image_result = outputImg.copy()
 
     for cnt, hier in zip(contours, hierarchy[0]):
+        if hier[3] == -1:
+            continue
         area = cv2.contourArea(cnt)
         if area>50000 and area<400000:
             cv2.drawContours(onlyContourImg,[cnt],0,(255,255,255),cv2.FILLED)
@@ -76,13 +66,16 @@ def findHall(img):
     
     _, onlyContourImg = cv2.threshold(onlyContourImg, 100, 255, cv2.THRESH_BINARY)
 
+    # 이건 이 다음단계에서 이미지 내에 0과 1만 있어야 해서 255를 1로 강제 변환시켜주는 부분
     for idxY, y in enumerate(onlyContourImg):
         for idxX, x in enumerate(y):
             if x == 255:
                 onlyContourImg[idxY][idxX] = 1
-    
+    cv2.imshow('contourimg', onlyContourImg)
+    cv2.waitKey(0)
     return onlyContourImg
 
+# 복도 중심선을 검출하는 함수
 def findCenterLine(image):
    
     skeleton = skeletonize(image)
@@ -114,6 +107,7 @@ def findCenterLine(image):
 
     return thinned
 
+# 바이너리 이미지를 그레이 스케일로 변환하는 함수
 def binaryToGray(image):
     output_image = np.zeros_like(image, dtype=np.uint8)  # Create output image
 
@@ -127,6 +121,7 @@ def binaryToGray(image):
     image = output_image
     return image
 
+# 복도의 꺾이는 부분 좌표를 검출하는 함수
 def findJunction(originalImage, image):
     # make a copy to display result
     im_or = image.copy()
@@ -149,6 +144,7 @@ def findJunction(originalImage, image):
     
     return loc
 
+# 찾은 점들 중 가까이 있는 것들은 하나만 남기고 지우는 함수
 def deleteDuplicateJunctions(image, loc):
     pointList = []
     for x, y in zip(loc[1], loc[0]):
@@ -194,9 +190,10 @@ def deleteDuplicateJunctions(image, loc):
 
     return pointList
 
+# 점들 주변 픽셀을 지우는 함수
 def removeAroundPoint(image, pointList):
     for x in range(len(pointList)):
-            cv2.circle(image,(pointList[x][0],pointList[x][1]),10,(0),-1)
+            cv2.circle(image,(pointList[x][0],pointList[x][1]),5,(0),-1)
             
     #display result
     cv2.imshow('Result',image)
@@ -204,7 +201,8 @@ def removeAroundPoint(image, pointList):
     
     return image
 
-def findContours(image):
+# 선들의 양끝점을 구하는 함수
+def findEndpoints(image):
     outputImg = image.copy()
     outputImg = cv2.cvtColor(outputImg, cv2.COLOR_GRAY2BGR)
 
@@ -260,14 +258,15 @@ def findContours(image):
     
     cv2.imshow('Result',outputImg)
     cv2.waitKey(0)    
-    print("endPoints ", endPoints)
+    # print("endPoints ", endPoints)
     return endPoints
 
+# junction들끼리의 연결성을 찾는 함수
 def findConnectivity(endPoints, junctions):
     connections = []
 
     for point in endPoints:
-        print("point: ", point)
+        # print("point: ", point)
         start_junction = (-1, -1)
         end_junction = (-1, -1)
 
@@ -284,9 +283,9 @@ def findConnectivity(endPoints, junctions):
         if best_distance < 12:
             start_junction = best_junction
             
-        # end_point와 가장 가까운 junction을 찾는다.
+        # end_point와 가장 가까운 노드를 찾는다.
         end_point = point[1]
-        print("end_point: ", end_point)
+        # print("end_point: ", end_point)
         best_distance = 1000000
         best_junction = (-1, -1)
         for junction in junctions:
@@ -294,6 +293,7 @@ def findConnectivity(endPoints, junctions):
             if best_distance > distance:
                 best_distance = distance
                 best_junction = junction
+
         if best_distance < 12:
             end_junction = best_junction
 
@@ -302,7 +302,7 @@ def findConnectivity(endPoints, junctions):
         else:
             connections.append((start_junction, end_junction))
         
-    print('connections', connections)
+    # print('connections', connections)
 
         
     connections_index = []
@@ -316,13 +316,17 @@ def findConnectivity(endPoints, junctions):
 
     return connections_index, dist
 
-def distanceTable(connections, dists):
-    table = np.full((9, 9), 100000)
+# 인접행렬 구하는 함수
+def distanceTable(nodeNum, connections, dists):
+    table = np.full((nodeNum, nodeNum), 100000)
     np.fill_diagonal(table, 0)
     for connection, dist in zip(connections, dists):
         table[connection[0]][connection[1]] = dist
         table[connection[1]][connection[0]] = dist
+    
     print(table)
+    
+    return table
     
 
 def euclidean_distance(point1, point2):
@@ -341,6 +345,7 @@ class NpEncoder(json.JSONEncoder):
             return obj.tolist()
         return super(NpEncoder, self).default(obj)
 
+# 데이터를 json file로 저장
 def dumpInJsonFile(list, fileName):
     
     jsonString = json.dumps(list, cls = NpEncoder)
@@ -352,11 +357,54 @@ def dumpInJsonFile(list, fileName):
         
     return jsonString
 
-if __name__ == "__main__":
-    img_list = os.listdir("downloadImage/")
+# 도면인지 아닌지 분류하는 모델 사용하는 함수
+def validImageCheck(imageName):
+    
+    # Specify the URL
+    url = "http://127.0.0.1:5000/predict"
 
+    # Open the image file in binary mode
+    with Image.open("downloadImage/" + imageName) as img:
+    # with Image.open("data/train/floor/image15.png") as img:
+        
+        # Convert the image to RGB format
+        rgb_img = img.convert("RGB")
+
+        # Create a temporary file in memory to send the image
+        temp_file = io.BytesIO()
+        rgb_img.save(temp_file, format="JPEG")
+
+        # Seek to the beginning of the file
+        temp_file.seek(0)
+
+        # Create the payload with the image file
+        payload = {"image": temp_file}
+
+        # Send the POST request
+        response = requests.post(url, files=payload)
+
+        # Print the response content
+        # print("Response Content:", response.text)
+        output = response.json().get('prediction') # if 1, not floor. elif 0, floor.
+        
+        if output == 1:
+            return False
+        elif output == 0:
+            return True
+
+if __name__ == "__main__":
+    
+    # 사용할 이미지를 downloadImage 폴더에 넣으세여
+    img_list = os.listdir("downloadImage/")
     print(img_list)
+
     for img_name in img_list:
+
+        # 이건 도면인지 아닌지 체크하는 CNN모델 쓰는 부분
+        # if validImageCheck(img_name) == False:
+        #     print("not valid image")            
+        #     continue
+
         img = cv2.imread("downloadImage/"+img_name)
 
         print(img.shape)
@@ -365,15 +413,40 @@ if __name__ == "__main__":
 
         # 복도 부분을 찾음.
         hallImg = findHall(img)
+        cv2.imshow('hallImg', hallImg)
+        cv2.waitKey(0)
+
+        # 복도의 중심 선을 찾음.(skeletonize해서)
         centerLineImg = findCenterLine(hallImg)
+        cv2.imshow('centerLineImg', centerLineImg)
+        cv2.waitKey(0)
+
+        # 복도에서 꺾이는 부분의 점의 좌표를 검출
         junctions = findJunction(img, centerLineImg)
+
+        # 중복되는 점들을 제거 -> 최종적으로 복도에 꺾이는 점을 노드로 해서 검출
         finalJunction = deleteDuplicateJunctions(centerLineImg.copy(), junctions)
         deleteDuplicateJunctions(img.copy(), junctions)
+        # finalJunctionDivide2 = finalJunction/2
+        print("finalJunction: ", finalJunction)
+        # 여기서부터는 노드끼리의 연결성을 찾기 위한 코드
+        # 복도에 꺾이는 점 주변을 10픽셀정도를 지워버림 
+        # -> 그럼 이어져있던 복도 선이 끊어져서 보이겠지?
         removeAroundPointImg = removeAroundPoint(centerLineImg.copy(), finalJunction)
-        endPoints = findContours(removeAroundPointImg.copy())
         
+        # 각 선의 양 끝점이 있을텐데, 그 끝점의 좌표를 가지고 와. 
+        endPoints = findEndpoints(removeAroundPointImg.copy())
+        # endPointDivide2 = endPoints/2
+        # 그 끝점의 좌표들을 아까 찾은 노드들과 대응시켜(끝점에서 가장 가까운 노드에다가)
+        # ex) 끝점이 (144, 299)이면 -> 가장 가까운 노드인 노드1(137, 296)에 대응 
+        # 그렇게 해서 "노드1과 노드2는 연결되어있다" 이런식으로 노드의 연결성을 찾아내
         connections, dists = findConnectivity(endPoints, finalJunction)
-        distanceTable(connections, dists)
+
+        # 찾아낸 노드들의 연결성과 거리들을 바탕으로 인접행렬을 만든다.
+        table = distanceTable(len(finalJunction), connections, dists)
+
+        # 결과 저장
+        # jsonFile에는 노드 정보를 저장
+        # jsonFile2에는 노드끼리의 연결성 정보를 저장
         jsonFile = dumpInJsonFile(finalJunction, img_name+".junction")
-        # jsonFile2 = dumpInJsonFile(arr, "id1.png.connectivity")
-        print(jsonFile)
+        jsonFile2 = dumpInJsonFile(table, img_name+".png.connectivity")
