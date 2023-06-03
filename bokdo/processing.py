@@ -68,7 +68,7 @@ def findHall(img):
 
     for cnt, hier in zip(contours, hierarchy[0]):
         area = cv2.contourArea(cnt)
-        if area>150000 and area<500000:
+        if area>50000 and area<400000:
             cv2.drawContours(onlyContourImg,[cnt],0,(255,255,255),cv2.FILLED)
             drawSameLevelContours(onlyContourImg, contours, hierarchy, hier[2])
 
@@ -358,7 +358,12 @@ if __name__ == "__main__":
     print(img_list)
     for img_name in img_list:
         img = cv2.imread("downloadImage/"+img_name)
-        img=cv2.resize(img,(1700,700))
+
+        print(img.shape)
+        # img=cv2.resize(img,(1200,720))
+        # img = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
+
+        # 복도 부분을 찾음.
         hallImg = findHall(img)
         centerLineImg = findCenterLine(hallImg)
         junctions = findJunction(img, centerLineImg)

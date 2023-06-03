@@ -13,3 +13,9 @@
 .externalNativeBuild
 .cxx
 local.properties
+bokdo/data/test/floor/image901.png
+bokdo/data/test/floor/image903.png
+*.png
+*.jpg
+bokdo/model_imagesize_256.pth
+bokdo/tempCodeRunnerFile.py

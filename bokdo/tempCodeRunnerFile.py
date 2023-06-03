@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 initialize_app(cred, {
 #     'storageBucket': # gs://가 없는 경로 - 붙이면 에러남
 # })
@@ -16,3 +17,6 @@ initialize_app(cred, {
 #     blob.upload_from_string(bs.getvalue(), content_type="image/png") # 이미지 저장
 
 #     return True
+=======
+findHall
+>>>>>>> Stashed changes
