@@ -136,7 +136,7 @@ public class Edit3ExitFragment extends Fragment  {
 
                         FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
                         fragmentManager.beginTransaction()
-                                .replace(R.id.menu_frame_layout, new MapFragment())
+                                .replace(R.id.menu_frame_layout, new BookmarkFragment())
                                 .commit();
 
             }

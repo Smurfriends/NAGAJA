@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="default_web_client_id" translatable="false">804024428721-45hhqio7t2ptuhlvmcobhi65ouds0k4c.apps.googleusercontent.com</string>
+    <string name="firebase_database_url" translatable="false">https://nagaja-3bb34-default-rtdb.asia-southeast1.firebasedatabase.app</string>
+    <string name="gcm_defaultSenderId" translatable="false">804024428721</string>
+    <string name="google_api_key" translatable="false">AIzaSyBGpRLLt0vGIBFxP6AMW9m5mYqLOLBTZA8</string>
+    <string name="google_app_id" translatable="false">1:804024428721:android:fd399cbcd3dc1d113c1a90</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyBGpRLLt0vGIBFxP6AMW9m5mYqLOLBTZA8</string>
+    <string name="google_storage_bucket" translatable="false">nagaja-3bb34.appspot.com</string>
+    <string name="project_id" translatable="false">nagaja-3bb34</string>
+</resources>
