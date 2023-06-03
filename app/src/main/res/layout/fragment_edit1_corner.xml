@@ -39,14 +39,6 @@
             android:layout_marginRight="8dp"
             android:text="Delete" />
 
-        <Button
-            android:id="@+id/nextButton"
-            android:layout_width="45dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginRight="5dp"
-            android:text="N" />
-
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -77,12 +69,17 @@
                 android:layout_width="45dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
-                android:layout_marginRight="2dp"
+                android:layout_marginRight="5dp"
                 android:text="→" />
         </LinearLayout>
 
-
         <!-- UI 크기 모자라서 Next를 N까지밖에 못적음... 수정 필요 -->
+        <Button
+            android:id="@+id/nextButton"
+            android:layout_width="45dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:text="N" />
 
     </LinearLayout>
 

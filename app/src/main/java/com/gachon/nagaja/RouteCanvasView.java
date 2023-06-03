@@ -29,7 +29,7 @@ public class RouteCanvasView extends View {
     public boolean showPath;   // drawPath 보여줄지말지
 
     // 시작노드를 위한 변수들
-    public Point curLocation = new Point();    // 현 위치 터치 좌표
+    public Point curLocation = new Point(-5, -5);    // 현 위치 터치 좌표 (처음엔 안보이게)
     public Point curLocationNode = new Point();    // 현 위치 노드 좌표 (수선의 발)
     public int node1;    // node1과 node2 사이에 curLocationNode가 위치. (index값 저장)
     public int node2;
@@ -63,6 +63,18 @@ public class RouteCanvasView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
 
+        // node 그리기
+        paint.setColor(Color.LTGRAY); // 분홍색
+        for (int i = 0; i < node.size(); i++) {
+            canvas.drawCircle(node.get(i).x *density,node.get(i).y *density,5, paint);
+        }
+
+        // 현위치가 들어갈 node1, node2 그리기
+        paint.setColor(Color.GRAY);
+        canvas.drawCircle(node.get(node1).x *density,node.get(node1).y *density,5, paint);
+        canvas.drawCircle(node.get(node2).x *density,node.get(node2).y *density,5, paint);
+
+
         if (showPath == true) {
             if (pathIndex == null) {
                 // Show toast message indicating no path found
@@ -73,10 +85,14 @@ public class RouteCanvasView extends View {
             double[][] temp = matrix.get(0);
 
             Path path = new Path();
+            paint.setColor(Color.rgb(253, 77, 7));  // 우리 주황색
 
             // 현위치부터 시작 노드좌표까지는 drawLine
             canvas.drawLine(curLocation.x *density, curLocation.y *density,
                     curLocationNode.x *density,curLocationNode.y *density, paint);
+
+            // 시작 노드좌표(수선의 발) 동그라미
+            canvas.drawCircle(curLocationNode.x *density,curLocationNode.y *density, 5, paint);
 
             // 노드좌표부터 drawPath
             path.moveTo(curLocationNode.x *density,curLocationNode.y *density); // 출발지 좌표
@@ -94,23 +110,8 @@ public class RouteCanvasView extends View {
         }
 
         // 현위치 좌표 그리기
-        paint.setColor(Color.RED);
+        paint.setColor(Color.rgb(253, 77, 7));  // 우리 주황색
         canvas.drawCircle(curLocation.x*density,curLocation.y*density,10, paint);
-
-        // node 그리기 // test용
-        paint.setColor(Color.rgb(255,228,225)); // 분홍색
-        for (int i = 0; i < node.size(); i++) {
-            canvas.drawCircle(node.get(i).x *density,node.get(i).y *density,5, paint);
-        }
-
-        // node 그리기 // test용
-        paint.setColor(Color.GREEN);
-        canvas.drawCircle(node.get(node1).x *density,node.get(node1).y *density,5, paint);
-        canvas.drawCircle(node.get(node2).x *density,node.get(node2).y *density,5, paint);
-
-        paint.setColor(Color.rgb(0,150,0)); // darkgreen
-        canvas.drawCircle(curLocationNode.x *density,curLocationNode.y *density,5, paint);
-
 
     }
 
@@ -160,7 +161,7 @@ public class RouteCanvasView extends View {
                     setStartNode(); // 시작 노드 설정
                     addEdgeOfStartNodeToMatrix();   // 시작 노드의 edge 2개를 matrix에 추가
                     if(findPath.getNodeNum() != noExitNum) {//firstIndexOfExit == nodeNum
-                        findShortestPathToAllExits(findPath.getNodeNum());    // exit 노드 개수만큼 다익스트라 //firstExitNodeIndex. nodeNum
+                        findShortestPathToAllExits(findPath.getNodeNum() + 1);    // exit 노드 개수만큼 다익스트라 //firstExitNodeIndex. nodeNum
                         showPath = true;    // 다음 화면에서 drawPath 코드 실행되도록
                     }else{
                         Toast.makeText(getContext(),"No exit node",Toast.LENGTH_SHORT).show();

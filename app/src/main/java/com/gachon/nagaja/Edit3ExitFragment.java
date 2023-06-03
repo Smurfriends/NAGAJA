@@ -144,7 +144,7 @@ public class Edit3ExitFragment extends Fragment  {
                                 .addToBackStack(null)
                                 .commit();
                     }
-        }, 1000);
+                    }, 1000);
             }
         });
 
