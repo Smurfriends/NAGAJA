@@ -25,7 +25,7 @@ public class ActivityMenu extends AppCompatActivity implements BottomNavigationV
         mBottomNavigationView = findViewById(R.id.menu_bottom_navigation);
         mBottomNavigationView.setOnNavigationItemSelectedListener(this);
 
-        //처으에 앱을 실행했을떄 Bookmark창이 디폴트로 보여지기 위함
+        //처음에 앱을 실행했을떄 Bookmark창이 디폴트로 보여지기 위함
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.menu_frame_layout, new BookmarkFragment())
                 .commit();
